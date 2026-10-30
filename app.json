@@ -1,17 +1,25 @@
 {
   "expo": {
     "name": "Wayfare",
-    "slug": "Wayfare",
+    "slug": "wayfare",
+    "scheme": "wayfare",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#1A1C2E",
+    "plugins": ["expo-router", "expo-font"],
+    "experiments": {
+      "typedRoutes": true
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "app.wayfare.game"
     },
     "android": {
+      "package": "app.wayfare.game",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#1A1C2E",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -19,7 +27,17 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png",
+      "name": "Wayfare",
+      "shortName": "Wayfare",
+      "description": "Study the Word. Enjoy the Journey.",
+      "themeColor": "#1A1C2E",
+      "backgroundColor": "#1A1C2E",
+      "display": "standalone",
+      "orientation": "portrait",
+      "lang": "en"
     }
   }
 }

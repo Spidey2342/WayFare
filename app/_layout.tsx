@@ -1,0 +1,44 @@
+import { useFonts } from 'expo-font';
+import { Stack, type ErrorBoundaryProps } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import { RouteError } from '@/components/RouteError';
+import { useAppStore } from '@/store';
+import { fontAssets, ThemeProvider } from '@/theme';
+
+SplashScreen.preventAutoHideAsync().catch(() => undefined);
+
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  return <RouteError error={error} retry={retry} />;
+}
+
+export default function RootLayout() {
+  const preference = useAppStore((state) => state.themePreference);
+  const hydrated = useAppStore((state) => state.hydrated);
+  const [loaded, error] = useFonts(fontAssets);
+
+  useEffect(() => {
+    if ((loaded || error) && hydrated) {
+      SplashScreen.hideAsync().catch(() => undefined);
+    }
+  }, [loaded, error, hydrated]);
+
+  if ((!loaded && !error) || !hydrated) {
+    return null;
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <ThemeProvider preference={preference}>
+          <StatusBar style={preference === 'dark' ? 'light' : 'auto'} />
+          <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
+        </ThemeProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
