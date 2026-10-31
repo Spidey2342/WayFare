@@ -14,6 +14,7 @@ export interface PersistedApp {
   guidelinesSeen: boolean;
   foundingMember: boolean;
   notifyInterest: boolean;
+  favoriteDeckIds: string[];
 }
 
 export const STORE_VERSION = 1;
@@ -31,7 +32,13 @@ export function defaultPersisted(): PersistedApp {
     guidelinesSeen: false,
     foundingMember: false,
     notifyInterest: false,
+    favoriteDeckIds: [],
   };
+}
+
+function readStringList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === 'string');
 }
 
 function isPreference(value: unknown): value is ThemePreference {
@@ -72,5 +79,6 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
     guidelinesSeen: record.guidelinesSeen === true,
     foundingMember: record.foundingMember === true,
     notifyInterest: record.notifyInterest === true,
+    favoriteDeckIds: readStringList(record.favoriteDeckIds),
   };
 }

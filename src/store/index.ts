@@ -15,6 +15,7 @@ interface AppActions {
   setGuidelinesSeen: (seen: boolean) => void;
   setFoundingMember: (joined: boolean) => void;
   setNotifyInterest: (interested: boolean) => void;
+  toggleFavorite: (deckId: string) => void;
   resetGuest: () => void;
 }
 
@@ -42,6 +43,12 @@ export const useAppStore = create<AppStore>()(
       setGuidelinesSeen: (guidelinesSeen) => set({ guidelinesSeen }),
       setFoundingMember: (foundingMember) => set({ foundingMember }),
       setNotifyInterest: (notifyInterest) => set({ notifyInterest }),
+      toggleFavorite: (deckId) =>
+        set((state) => ({
+          favoriteDeckIds: state.favoriteDeckIds.includes(deckId)
+            ? state.favoriteDeckIds.filter((id) => id !== deckId)
+            : [...state.favoriteDeckIds, deckId],
+        })),
       resetGuest: () => set({ ...defaultPersisted(), onboarded: false, hydrated: true }),
     }),
     {
@@ -58,6 +65,7 @@ export const useAppStore = create<AppStore>()(
         guidelinesSeen: state.guidelinesSeen,
         foundingMember: state.foundingMember,
         notifyInterest: state.notifyInterest,
+        favoriteDeckIds: state.favoriteDeckIds,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
