@@ -1,0 +1,8 @@
+[
+  { "level": 1, "title": "Seeker", "displayTitle": "Faith Seeker", "xp": 0 },
+  { "level": 2, "title": "Learner", "displayTitle": "Learner", "xp": 40 },
+  { "level": 3, "title": "Follower", "displayTitle": "Follower", "xp": 100 },
+  { "level": 4, "title": "Disciple", "displayTitle": "Faith Disciple", "xp": 180 },
+  { "level": 5, "title": "Servant", "displayTitle": "Servant", "xp": 280 },
+  { "level": 6, "title": "Leader", "displayTitle": "Leader", "xp": 400 }
+]

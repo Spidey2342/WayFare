@@ -4,6 +4,7 @@ import { BookOpen, Compass, Heart, Share2 } from 'lucide-react-native';
 
 import { Avatar, Button, Chip, DeckTile, QuoteCard, Screen } from '@/components/ui';
 import { deckCatalog, sampleVerse } from '@/data/catalog';
+import { levelForXp } from '@/features/journey/progress';
 import { useOnline } from '@/hooks/useOnline';
 import { useAppStore } from '@/store';
 import { greeting } from '@/utils/greeting';
@@ -13,6 +14,8 @@ export default function HomeScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const name = useAppStore((state) => state.profile.name);
+  const progress = useAppStore((state) => state.progress);
+  const level = levelForXp(progress.xp);
   const color = useAppStore((state) => state.profile.avatarColor);
   const online = useOnline();
   const quick = deckCatalog.filter((deck) => deck.id === 'identity' || deck.id === 'courage');
@@ -33,7 +36,10 @@ export default function HomeScreen() {
         <View style={styles.journey}>
           <View style={styles.journeyTop}>
             <Text style={styles.journeyTitle}>Continue Journey</Text>
-            <Chip label="Start here" tone="solidGold" />
+            <Chip
+              label={progress.streakDays > 0 ? `${progress.streakDays} DAY STREAK` : 'Start here'}
+              tone="solidGold"
+            />
           </View>
           <View style={styles.path}>
             {['1', '2', '3', '4'].map((node, index) => (
@@ -42,7 +48,9 @@ export default function HomeScreen() {
               </View>
             ))}
           </View>
-          <Text style={styles.journeyMeta}>Level 1 · Seeker</Text>
+          <Text style={styles.journeyMeta}>
+            Level {level.level} · {level.displayTitle}
+          </Text>
           <Button
             label="Start playing"
             variant="gold"

@@ -2,12 +2,16 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Button, EmptyState, Screen } from '@/components/ui';
+import { unityPercent } from '@/features/game/engine';
 import { useSessionStore } from '@/features/game/sessionStore';
+import type { SessionAward } from '@/features/journey/progress';
+import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
 
 export default function LeaderboardScreen() {
   const router = useRouter();
   const session = useSessionStore((state) => state.session);
+  const applySessionAward = useAppStore((state) => state.applySessionAward);
 
   if (!session) {
     return (
@@ -62,7 +66,22 @@ export default function LeaderboardScreen() {
         <Button
           label="Finish session"
           variant="gold"
-          onPress={() => router.push('/game/complete')}
+          onPress={() => {
+            const cardTypes: SessionAward['cardTypes'] = [];
+            for (const cardId of session.cardsPlayed) {
+              const card = session.cardsById[cardId];
+              if (card) cardTypes.push(card.type);
+            }
+            applySessionAward({
+              id: session.id,
+              mode: session.mode,
+              cardsPlayed: session.cardsPlayed.length,
+              cardTypes,
+              unity: unityPercent(session),
+              actsOfService: session.actsOfService,
+            });
+            router.push('/game/complete');
+          }}
         />
       </View>
     </Screen>

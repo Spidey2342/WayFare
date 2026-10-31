@@ -13,6 +13,7 @@ import {
   SettingsRow,
   StatTile,
 } from '@/components/ui';
+import { badges, levelForXp } from '@/features/journey/progress';
 import { useAppStore } from '@/store';
 import { palette, radii, spacing, typeScale, useTheme } from '@/theme';
 
@@ -20,6 +21,8 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const profile = useAppStore((state) => state.profile);
+  const progress = useAppStore((state) => state.progress);
+  const level = levelForXp(progress.xp);
   const preference = useAppStore((state) => state.themePreference);
   const setThemePreference = useAppStore((state) => state.setThemePreference);
   const setProfileName = useAppStore((state) => state.setProfileName);
@@ -34,18 +37,25 @@ export default function ProfileScreen() {
         <View style={[styles.hero, { backgroundColor: palette.midnight }]}>
           <Avatar name={profile.name} color={profile.avatarColor} size={84} ring />
           <Text style={styles.name}>{profile.name}</Text>
-          <Text style={styles.rank}>FAITH SEEKER</Text>
+          <Text style={styles.rank}>{level.displayTitle.toUpperCase()}</Text>
         </View>
         <View style={styles.stats}>
-          <StatTile value="0" label="Cards played" />
-          <StatTile value="0" label="Day streak" />
-          <StatTile value="0" label="Acts of service" />
+          <StatTile value={String(progress.cardsPlayed)} label="Cards played" />
+          <StatTile value={String(progress.streakDays)} label="Day streak" />
+          <StatTile value={String(progress.actsOfService)} label="Acts of service" />
         </View>
-        <Text style={[typeScale.h3, { color: colors.textPrimary }]}>Your badges · 0/24</Text>
+        <Text style={[typeScale.h3, { color: colors.textPrimary }]}>
+          Your badges · {progress.badgesEarned.length}/24
+        </Text>
         <View style={styles.badges}>
-          <BadgeTile name="Scripture Seeker" icon="📖" earned={false} />
-          <BadgeTile name="Team Titan" icon="🤝" earned={false} />
-          <BadgeTile name="Hot Start" icon="🔥" earned={false} />
+          {badges.map((badge) => (
+            <BadgeTile
+              key={badge.id}
+              name={badge.name}
+              icon={badge.icon}
+              earned={progress.badgesEarned.includes(badge.id)}
+            />
+          ))}
         </View>
         <Text style={[typeScale.h3, { color: colors.textPrimary }]}>Account & settings</Text>
         <SettingsRow

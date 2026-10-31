@@ -45,4 +45,11 @@ describe('migratePersisted', () => {
     expect(migrated.preferredMode).toBeNull();
     expect(migrated.profile.name).toBe('Kofi');
   });
+
+  test('adds a fresh progress record when an older save has none', () => {
+    const migrated = migratePersisted({ onboarded: true, profile: { name: 'Ama' } }, 1);
+    expect(migrated.progress.xp).toBe(0);
+    expect(migrated.progress.badgesEarned).toEqual([]);
+    expect(migrated.profile.name).toBe('Ama');
+  });
 });

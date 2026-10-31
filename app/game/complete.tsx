@@ -1,16 +1,17 @@
-import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Button, Confetti, Screen, StatTile } from '@/components/ui';
 import { unityPercent } from '@/features/game/engine';
 import { useSessionStore } from '@/features/game/sessionStore';
+import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
 
 export default function CompleteScreen() {
   const router = useRouter();
   const session = useSessionStore((state) => state.session);
-  const [marked, setMarked] = useState(false);
+  const marked = useAppStore((state) => state.progress.weeklyCompleted);
+  const completeWeeklyChallenge = useAppStore((state) => state.completeWeeklyChallenge);
   const cardsPlayed = session?.cardsPlayed.length ?? 0;
   const unity = session ? unityPercent(session) : 100;
   return (
@@ -38,7 +39,7 @@ export default function CompleteScreen() {
             label={marked ? 'Completed' : 'Mark complete'}
             variant="secondary"
             disabled={marked}
-            onPress={() => setMarked(true)}
+            onPress={completeWeeklyChallenge}
           />
         </View>
         <Button label="Share the moment" variant="gold" onPress={() => router.push('/share')} />

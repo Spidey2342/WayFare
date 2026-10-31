@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { applySession, completeWeekly, type SessionAward } from '@/features/journey/progress';
 import { storage } from '@/services/storage';
 
 import { defaultPersisted, migratePersisted, STORE_VERSION, type PersistedApp } from './persist';
@@ -16,6 +17,8 @@ interface AppActions {
   setFoundingMember: (joined: boolean) => void;
   setNotifyInterest: (interested: boolean) => void;
   toggleFavorite: (deckId: string) => void;
+  applySessionAward: (award: SessionAward) => void;
+  completeWeeklyChallenge: () => void;
   resetGuest: () => void;
 }
 
@@ -49,6 +52,10 @@ export const useAppStore = create<AppStore>()(
             ? state.favoriteDeckIds.filter((id) => id !== deckId)
             : [...state.favoriteDeckIds, deckId],
         })),
+      applySessionAward: (award) =>
+        set((state) => ({ progress: applySession(state.progress, award, new Date()) })),
+      completeWeeklyChallenge: () =>
+        set((state) => ({ progress: completeWeekly(state.progress, new Date()) })),
       resetGuest: () => set({ ...defaultPersisted(), onboarded: false, hydrated: true }),
     }),
     {
@@ -66,6 +73,7 @@ export const useAppStore = create<AppStore>()(
         foundingMember: state.foundingMember,
         notifyInterest: state.notifyInterest,
         favoriteDeckIds: state.favoriteDeckIds,
+        progress: state.progress,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {

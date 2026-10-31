@@ -1,3 +1,4 @@
+import { defaultProgress, type GameProgress } from '@/features/journey/progress';
 import type { ThemePreference } from '@/theme';
 
 export interface Profile {
@@ -15,9 +16,10 @@ export interface PersistedApp {
   foundingMember: boolean;
   notifyInterest: boolean;
   favoriteDeckIds: string[];
+  progress: GameProgress;
 }
 
-export const STORE_VERSION = 1;
+export const STORE_VERSION = 2;
 
 export function defaultPersisted(): PersistedApp {
   return {
@@ -33,6 +35,7 @@ export function defaultPersisted(): PersistedApp {
     foundingMember: false,
     notifyInterest: false,
     favoriteDeckIds: [],
+    progress: defaultProgress(),
   };
 }
 
@@ -80,5 +83,36 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
     foundingMember: record.foundingMember === true,
     notifyInterest: record.notifyInterest === true,
     favoriteDeckIds: readStringList(record.favoriteDeckIds),
+    progress: readProgress(record.progress, base.progress),
+  };
+}
+
+function readCount(record: Record<string, unknown>, key: string): number {
+  const value = record[key];
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : 0;
+}
+
+function readProgress(value: unknown, fallback: GameProgress): GameProgress {
+  if (!value || typeof value !== 'object') return fallback;
+  const record = value as Record<string, unknown>;
+  return {
+    xp: readCount(record, 'xp'),
+    streakDays: readCount(record, 'streakDays'),
+    lastPlayedDate: typeof record.lastPlayedDate === 'string' ? record.lastPlayedDate : null,
+    cardsPlayed: readCount(record, 'cardsPlayed'),
+    actsOfService: readCount(record, 'actsOfService'),
+    sessionsCompleted: readCount(record, 'sessionsCompleted'),
+    completedWeeks: readStringList(record.completedWeeks),
+    badgesEarned: readStringList(record.badgesEarned),
+    wordCards: readCount(record, 'wordCards'),
+    questionCards: readCount(record, 'questionCards'),
+    dareCards: readCount(record, 'dareCards'),
+    challengeCards: readCount(record, 'challengeCards'),
+    testimonyCards: readCount(record, 'testimonyCards'),
+    weeklyCompleted: record.weeklyCompleted === true,
+    weeklyWeekKey:
+      typeof record.weeklyWeekKey === 'string' ? record.weeklyWeekKey : fallback.weeklyWeekKey,
+    lastAppliedSessionId:
+      typeof record.lastAppliedSessionId === 'string' ? record.lastAppliedSessionId : null,
   };
 }
