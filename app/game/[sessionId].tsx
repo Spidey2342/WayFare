@@ -76,7 +76,7 @@ export default function GameScreen() {
             <Text style={styles.kicker}>{session.mode === 'team' ? 'Score' : 'Together'}</Text>
             <Text style={styles.player}>{score}</Text>
           </View>
-          <TurnTimer key={cardId ?? 'idle'} cardId={cardId} paused={paused} />
+          <TurnTimer cardId={cardId} duration={card?.timerSeconds ?? 45} paused={paused} />
         </View>
         <Text style={styles.round}>
           Round {session.currentRound} of {session.roundsTotal}
@@ -166,16 +166,33 @@ export default function GameScreen() {
   );
 }
 
-function TurnTimer({ cardId, paused }: { cardId: string | null; paused: boolean }) {
-  const [seconds, setSeconds] = useState(45);
+function TurnTimer({
+  cardId,
+  duration,
+  paused,
+}: {
+  cardId: string | null;
+  duration: number;
+  paused: boolean;
+}) {
+  if (!cardId) {
+    return <TimerRing secondsLeft={duration} total={duration} />;
+  }
+  return <TurnTimerActive key={`${cardId}-${duration}`} duration={duration} paused={paused} />;
+}
+
+function TurnTimerActive({ duration, paused }: { duration: number; paused: boolean }) {
+  const [seconds, setSeconds] = useState(duration);
 
   useEffect(() => {
-    if (paused || !cardId || seconds <= 0) return;
-    const timer = setInterval(() => setSeconds((value) => Math.max(0, value - 1)), 1000);
+    if (paused) return;
+    const timer = setInterval(() => {
+      setSeconds((value) => Math.max(0, value - 1));
+    }, 1000);
     return () => clearInterval(timer);
-  }, [cardId, paused, seconds]);
+  }, [paused]);
 
-  return <TimerRing secondsLeft={cardId ? seconds : 45} />;
+  return <TimerRing secondsLeft={seconds} total={duration} />;
 }
 
 const styles = StyleSheet.create({

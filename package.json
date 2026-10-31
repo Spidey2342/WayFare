@@ -52,7 +52,9 @@
     "lint": "expo lint -- --max-warnings 0",
     "test": "jest --ci --watchAll=false",
     "test:coverage": "jest --ci --watchAll=false --coverage",
-    "build:web": "expo export --platform web",
+    "validate:content": "node scripts/validate-content.mjs",
+    "sync:public-content": "node scripts/sync-public-content.mjs",
+    "build:web": "npm run validate:content && npm run sync:public-content && expo export --platform web",
     "audit:capture": "node scripts/capture-ui-audit.mjs",
     "format": "prettier --write \"app\" \"src\" \"docs\" \"*.json\" \"*.js\" \"*.ts\" \"*.tsx\""
   },

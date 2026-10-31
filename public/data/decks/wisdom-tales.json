@@ -1,0 +1,133 @@
+{
+  "id": "wisdom-tales",
+  "name": "Wisdom Tales",
+  "tagline": "Explore the depths of proverbs and parables in modern life.",
+  "series": "Wisdom Series",
+  "description": "Old wisdom for everyday life. Dig into proverbs, act out parables, and talk honestly about how wisdom shapes friendships, words, and choices.",
+  "coverColor": "#A29BFE",
+  "icon": ["#A29BFE", "#4D98FF"],
+  "difficulty": "book-open",
+  "estMinutes": "beginner",
+  "locked": 20,
+  "isPro": false,
+  "translation": "KJV",
+  "coverGradient": "New Released",
+  "cards": [
+    {
+      "id": "wisdom-tales-w01",
+      "deckId": "wisdom-tales",
+      "type": "word",
+      "title": "A Soft Answer",
+      "prompt": "Describe a time a gentle reply calmed a situation, or a harsh one made it worse.",
+      "reference": "Proverbs 15:1",
+      "body": "A soft answer turneth away wrath: but grievous words stir up anger.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "wisdom-tales-w02",
+      "deckId": "wisdom-tales",
+      "type": "word",
+      "title": "Iron Sharpens Iron",
+      "prompt": "Name a friend who makes you better and say how.",
+      "reference": "Proverbs 27:17",
+      "body": "Iron sharpeneth iron; so a man sharpeneth the countenance of his friend.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "wisdom-tales-w03",
+      "deckId": "wisdom-tales",
+      "type": "word",
+      "title": "A Friend at All Times",
+      "prompt": "Explain this verse to the group using only 5 words.",
+      "reference": "Proverbs 17:17",
+      "body": "A friend loveth at all times, and a brother is born for adversity.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "wisdom-tales-q01",
+      "deckId": "wisdom-tales",
+      "type": "question",
+      "prompt": "What's a proverb or saying you grew up hearing from family?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "wisdom-tales-q02",
+      "deckId": "wisdom-tales",
+      "type": "question",
+      "prompt": "Which friend sharpens you the most, and how?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "wisdom-tales-q03",
+      "deckId": "wisdom-tales",
+      "type": "question",
+      "prompt": "When is it hardest for you to give a soft answer?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "wisdom-tales-d01",
+      "deckId": "wisdom-tales",
+      "type": "dare",
+      "title": "Soft Answer",
+      "prompt": "Someone in the group says a pretend rude comment. Reply with a kind, calm answer.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "wisdom-tales-d02",
+      "deckId": "wisdom-tales",
+      "type": "dare",
+      "title": "Proverb Remix",
+      "prompt": "Turn a Bible proverb into a short, encouraging text for a friend and read it aloud.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "wisdom-tales-c01",
+      "deckId": "wisdom-tales",
+      "type": "challenge",
+      "title": "Parable Charades",
+      "prompt": "Act out parables: the Good Samaritan, the Prodigal Son, the Lost Sheep, the Sower, the Mustard Seed.",
+      "instruction": "No talking. The team guesses. Most correct wins.",
+      "timerSeconds": 90,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "wisdom-tales-c02",
+      "deckId": "wisdom-tales",
+      "type": "challenge",
+      "title": "Finish the Proverb",
+      "prompt": "The host reads the first half of a proverb and teams finish it: 'A soft answer...', 'Iron sharpeneth iron...', 'Pride goeth before...', 'Trust in the LORD...'",
+      "instruction": "First team to finish correctly scores.",
+      "timerSeconds": 60,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "wisdom-tales-t01",
+      "deckId": "wisdom-tales",
+      "type": "testimony",
+      "prompt": "Share a piece of wise advice that changed you.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "wisdom-tales-t02",
+      "deckId": "wisdom-tales",
+      "type": "testimony",
+      "prompt": "Tell about a time a friend's honesty helped you grow.",
+      "points": 1,
+      "difficulty": "medium"
+    }
+  ]
+}

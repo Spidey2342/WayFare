@@ -26,8 +26,30 @@ Round count is `max(1, round(minutes / 5))`. Ten minutes is two rounds. A round 
 
 ## Progress
 
-A finished session awards 10 XP plus 2 XP for each card played. Levels come from `src/data/levels.json`. A streak increases only on a new local calendar day and resets when a day is missed. The previous day is computed from the local year, month, and date, so a daylight-saving change does not skip or double a day. Applying the same session id twice does not add XP again. The weekly challenge resets when the local week key changes.
+A finished session awards 10 XP plus 2 XP per card played. Lessons award 15 XP; quizzes award 10 XP. Levels come from `src/data/levels.json`. A streak increases only on a new local calendar day and resets when a day is missed. Applying the same session id twice does not add XP again. The weekly challenge resets when the local week key changes. Store schema version 3 adds `completedLessons`, `booksRead`, and `quizzesCompleted`. Default theme preference is `light`.
 
-## Playable cards before the full library
+## Deck and Learn content
 
-Gameplay uses a small Identity card bank in `src/data/previewCards.ts` so the engine, scoring, dice, and resume-after-refresh can be verified. Deck screens still show the planned catalog counts. Stage 6 replaces this bank with validated JSON and real counts.
+Authoritative JSON lives under `src/data/decks/` and `src/data/learn/`, copied from read-only `reference/`. Gameplay and deck screens load cards through `src/features/decks/repository.ts` with Zod validation.
+
+### Shipped deck metadata repair
+
+Some deck JSON files in reference have shifted fields (for example icon name in `difficulty`, minutes in `locked`). The app repairs rows in `src/features/decks/repairDeckRaw.ts` before Zod parse. Locked flags follow the deck README table. Do not edit `reference/`; fix upstream content separately if needed.
+
+### Lesson mini-quiz categories
+
+Lesson screens pick three quiz questions by mapping each study path to the closest quiz category (`identity` → `people`, `courage` → `old-testament`, `serving` → `new-testament`, `the-journey` → `jesus`). There is no per-lesson quiz id in the source files.
+
+### Badges (24 total)
+
+Learn badges use Lucide icon keys in `src/data/badges.json`. `scripture-seeker` triggers on the first completed lesson (`lessons:1`), not on the first word card in a game session.
+
+## Offline
+
+Learn and deck content is bundled via Metro imports, so it works offline without network. For web, `npm run sync:public-content` copies JSON into `public/data/` before export; `public/sw.js` precaches those URLs plus the app shell. Native builds rely on the bundled JS.
+
+## Placeholders
+
+- Community feed remains sample copy; no live API.
+- Pro / Outing deck is navigational only until billing exists.
+- Team quiz mode reuses solo UI; shared leaderboard wiring for Learn quiz is unchanged from the main game leaderboard pattern.

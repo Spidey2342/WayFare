@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Lock } from 'lucide-react-native';
 
+import { BadgeIconView } from '@/features/learn/badgeIcons';
 import { fontFamily, palette, radii, spacing, useTheme } from '@/theme';
 
 export function BadgeTile({ name, earned, icon }: { name: string; earned: boolean; icon: string }) {
@@ -10,7 +11,12 @@ export function BadgeTile({ name, earned, icon }: { name: string; earned: boolea
       accessibilityLabel={`${name}, ${earned ? 'earned' : 'locked'}`}
       style={[styles.tile, { backgroundColor: colors.surface }, !earned && styles.locked]}
     >
-      <Text style={styles.icon}>{icon}</Text>
+      <BadgeIconView
+        name={icon}
+        color={earned ? palette.goldDeep : palette.warmGray}
+        size={22}
+        strokeWidth={2.2}
+      />
       <Text style={[styles.name, { color: colors.textPrimary }]} numberOfLines={2}>
         {name}
       </Text>
@@ -30,7 +36,6 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   locked: { opacity: 0.55 },
-  icon: { fontSize: 22 },
   name: {
     fontFamily: fontFamily.bodySemi,
     fontSize: 11,

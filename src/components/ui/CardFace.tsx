@@ -64,6 +64,8 @@ export function CardFace({
         ? '#3E4560'
         : 'rgba(255,255,255,0.85)';
 
+  const showKjv = type === 'word' && (body || reference) && !footer;
+
   return (
     <View style={[styles.card, { backgroundColor: colors.base }]}>
       <View style={styles.badge}>
@@ -72,12 +74,13 @@ export function CardFace({
       <Text style={[styles.kicker, { color: muted }]}>{labels[type]}</Text>
       {title ? <Text style={[styles.title, { color: ink }]}>{title}</Text> : null}
       {body ? <Text style={[styles.scripture, { color: ink }]}>{body}</Text> : null}
-      <Text style={[styles.prompt, { color: ink }]}>{prompt}</Text>
       {reference ? <Text style={[styles.reference, { color: muted }]}>{reference}</Text> : null}
+      <Text style={[styles.prompt, { color: ink }]}>{prompt}</Text>
       {instruction ? (
         <Text style={[styles.instruction, { color: muted }]}>{instruction}</Text>
       ) : null}
       {footer}
+      {showKjv ? <Text style={[styles.kjv, { color: muted }]}>KJV</Text> : null}
     </View>
   );
 }
@@ -132,5 +135,11 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.body,
     fontSize: 14,
     lineHeight: 20,
+  },
+  kjv: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 12,
+    letterSpacing: 0.6,
+    marginTop: spacing.sm,
   },
 });

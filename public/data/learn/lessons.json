@@ -1,0 +1,330 @@
+{
+  "paths": [
+    {
+      "id": "identity",
+      "name": "Identity",
+      "tagline": "Know who you are.",
+      "deckId": "identity"
+    },
+    {
+      "id": "courage",
+      "name": "Courage",
+      "tagline": "Face the giants.",
+      "deckId": "courage"
+    },
+    {
+      "id": "serving",
+      "name": "Serving",
+      "tagline": "Life for others.",
+      "deckId": "serving"
+    },
+    {
+      "id": "the-journey",
+      "name": "The Journey",
+      "tagline": "The path ahead.",
+      "deckId": "the-journey"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "identity-lesson-1",
+      "pathId": "identity",
+      "order": 1,
+      "title": "Made in God's Image",
+      "passage": "Genesis 1:26-31",
+      "estMinutes": 10,
+      "summary": "On the sixth day God made people in His own image and gave them care over the earth. When He finished, He looked at everything and called it very good. That includes you: your worth was set by the One who made you, before you ever did anything.",
+      "keyVerse": {
+        "reference": "Genesis 1:27",
+        "text": "So God created man in his own image, in the image of God created he him; male and female created he them.",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "Every person carries God's image.",
+        "Your worth is given by God, not earned.",
+        "God called His creation very good."
+      ],
+      "reflectionQuestions": [
+        "What does it mean to you that you were made in God's image?",
+        "Where do you struggle to see yourself the way God does?",
+        "How could this truth change the way you treat other people?"
+      ],
+      "actionStep": "Write 'Made in God's image' on a note and put it somewhere you'll see it every day."
+    },
+    {
+      "id": "identity-lesson-2",
+      "pathId": "identity",
+      "order": 2,
+      "title": "God Looks at the Heart",
+      "passage": "1 Samuel 16:1-13",
+      "estMinutes": 10,
+      "summary": "God sent Samuel to anoint a new king from Jesse's family. Samuel assumed the tallest, strongest son would be chosen, but God passed over each one. David, the youngest, was out with the sheep and was not even invited at first, yet he was the one God picked. People look at appearances, but God looks at the heart.",
+      "keyVerse": {
+        "reference": "1 Samuel 16:7",
+        "text": "for the LORD seeth not as man seeth; for man looketh on the outward appearance, but the LORD looketh on the heart.",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "God does not choose people the way the world does.",
+        "Being overlooked by people doesn't mean being overlooked by God.",
+        "A faithful heart matters more than a polished image."
+      ],
+      "reflectionQuestions": [
+        "Have you ever felt overlooked or left out? How did it feel?",
+        "What does your heart say about you right now?",
+        "Who around you might need to hear that God sees them?"
+      ],
+      "actionStep": "Tell someone about a quality in them that isn't visible on the outside."
+    },
+    {
+      "id": "identity-lesson-3",
+      "pathId": "identity",
+      "order": 3,
+      "title": "A Father Who Runs",
+      "passage": "Luke 15:11-32",
+      "estMinutes": 10,
+      "summary": "A younger son took his inheritance, wasted it all, and ended up hungry and ashamed. He decided to go home and ask to be a servant. While he was still far away, his father saw him, ran to him, and welcomed him as a son with a feast. The story shows how God receives us when we return.",
+      "keyVerse": {
+        "reference": "Luke 15:20",
+        "text": "But when he was yet a great way off, his father saw him, and had compassion, and ran, and fell on his neck, and kissed him.",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "God welcomes us back with open arms.",
+        "We are sons and daughters, not servants trying to earn a place.",
+        "Grace is bigger than our mistakes."
+      ],
+      "reflectionQuestions": [
+        "Which person in the story do you relate to most?",
+        "What makes it hard to believe God would welcome you back?",
+        "How can you show the father's welcome to someone this week?"
+      ],
+      "actionStep": "Reach out to someone you've drifted from and tell them they matter."
+    },
+    {
+      "id": "courage-lesson-1",
+      "pathId": "courage",
+      "order": 1,
+      "title": "David and Goliath",
+      "passage": "1 Samuel 17:1-50",
+      "estMinutes": 10,
+      "summary": "A giant named Goliath mocked Israel's army for forty days, and no soldier would fight him. David, a young shepherd bringing food to his brothers, said the giant had insulted the living God. Without armor, he went out with a sling and five stones and trusted God for the victory. David's courage came from knowing who was with him.",
+      "keyVerse": {
+        "reference": "1 Samuel 17:45",
+        "text": "Then said David to the Philistine, Thou comest to me with a sword, and with a spear, and with a shield: but I come to thee in the name of the LORD of hosts, the God of the armies of Israel, whom thou hast defied.",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "Courage comes from trusting God, not from our size or strength.",
+        "David used what he had: a sling and his experience.",
+        "Giants look big until we remember how big God is."
+      ],
+      "reflectionQuestions": [
+        "What 'giant' are you facing right now?",
+        "What tools or strengths has God already given you?",
+        "Who has shown you courage you want to copy?"
+      ],
+      "actionStep": "Name your giant in a prayer and ask a friend to pray with you."
+    },
+    {
+      "id": "courage-lesson-2",
+      "pathId": "courage",
+      "order": 2,
+      "title": "Daniel in the Lions' Den",
+      "passage": "Daniel 6",
+      "estMinutes": 10,
+      "summary": "Daniel served faithfully in Babylon, and jealous officials tricked the king into a law that banned prayer to anyone but the king. Daniel kept praying to God three times a day, openly, as he always had. He was thrown into the lions' den, and God sent an angel to shut the lions' mouths. The king saw that Daniel's God was alive and powerful.",
+      "keyVerse": {
+        "reference": "Daniel 6:23",
+        "text": "Then was the king exceeding glad for him, and commanded that they should take Daniel up out of the den. So Daniel was taken up out of the den, and no manner of hurt was found upon him, because he believed in his God.",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "Daniel's faith was a daily habit, not a one-time act.",
+        "Standing for God can cost something.",
+        "God is faithful to those who trust Him."
+      ],
+      "reflectionQuestions": [
+        "What daily habit keeps your faith strong?",
+        "When is it hardest to stand for God around others?",
+        "How could your faithfulness point someone else to God?"
+      ],
+      "actionStep": "Choose one daily time to pray this week and keep it, even when it's inconvenient."
+    },
+    {
+      "id": "courage-lesson-3",
+      "pathId": "courage",
+      "order": 3,
+      "title": "For Such a Time as This",
+      "passage": "Esther 4:1-17",
+      "estMinutes": 10,
+      "summary": "Esther was a Jewish queen in Persia when she learned of a plan to destroy her people. Approaching the king without being called could mean death. Her cousin Mordecai told her that she may have been placed in her position for this very moment. Esther asked her people to fast and pray, then went to the king, saying, 'if I perish, I perish.'",
+      "keyVerse": {
+        "reference": "Esther 4:14",
+        "text": "and who knoweth whether thou art come to the kingdom for such a time as this?",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "God places people where they can make a difference.",
+        "Courage often means acting even when afraid.",
+        "Prayer and community support brave steps."
+      ],
+      "reflectionQuestions": [
+        "Where has God placed you right now, and why might that matter?",
+        "What is one brave step you've been avoiding?",
+        "Who can you ask to pray with you before you act?"
+      ],
+      "actionStep": "Take one small brave step you've been putting off and tell a friend about it."
+    },
+    {
+      "id": "serving-lesson-1",
+      "pathId": "serving",
+      "order": 1,
+      "title": "The Good Samaritan",
+      "passage": "Luke 10:25-37",
+      "estMinutes": 10,
+      "summary": "A lawyer asked Jesus who his neighbor was. Jesus told of a man beaten and left on the road. A priest and a Levite walked past, but a Samaritan, someone looked down on by the Jews, stopped, treated his wounds, and paid for his care. Jesus asked which one was a neighbor, and told the lawyer to go and do the same.",
+      "keyVerse": {
+        "reference": "Luke 10:37",
+        "text": "And he said, He that shewed mercy on him. Then said Jesus unto him, Go, and do thou likewise.",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "A neighbor is anyone in need whom we can help.",
+        "Mercy crosses social and cultural lines.",
+        "Faith shows up in practical, costly love."
+      ],
+      "reflectionQuestions": [
+        "Who is hard for you to see as a neighbor?",
+        "What keeps us from stopping to help?",
+        "What is one practical way you can show mercy this week?"
+      ],
+      "actionStep": "Look for one person in need this week and help in a practical way."
+    },
+    {
+      "id": "serving-lesson-2",
+      "pathId": "serving",
+      "order": 2,
+      "title": "Washing the Disciples' Feet",
+      "passage": "John 13:1-17",
+      "estMinutes": 10,
+      "summary": "Before the Last Supper, Jesus took a towel and a basin and washed His disciples' feet, a job normally done by the lowest servant. Peter was uncomfortable, but Jesus said it was an example for them. If their Lord and Teacher served, they should serve one another.",
+      "keyVerse": {
+        "reference": "John 13:14",
+        "text": "If I then, your Lord and Master, have washed your feet; ye also ought to wash one another's feet.",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "Real leadership looks like humble service.",
+        "No job is too small when it's done in love.",
+        "Jesus gives us an example to follow."
+      ],
+      "reflectionQuestions": [
+        "Why do you think Jesus chose such a humble task?",
+        "What 'towel and basin' job are you tempted to avoid?",
+        "How can you serve someone without needing credit?"
+      ],
+      "actionStep": "Do a behind-the-scenes job this week without telling anyone."
+    },
+    {
+      "id": "serving-lesson-3",
+      "pathId": "serving",
+      "order": 3,
+      "title": "A Boy's Lunch",
+      "passage": "John 6:1-14",
+      "estMinutes": 10,
+      "summary": "A huge crowd followed Jesus, and the disciples had no way to feed them. A boy offered his five barley loaves and two small fish. Jesus gave thanks, shared the food, and everyone ate until they were full, with twelve baskets left over. A small gift in Jesus' hands became more than enough.",
+      "keyVerse": {
+        "reference": "John 6:9",
+        "text": "There is a lad here, which hath five barley loaves, and two small fishes: but what are they among so many?",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "God can multiply what we offer, however small.",
+        "Generosity starts with giving what we have.",
+        "Jesus cares about practical needs."
+      ],
+      "reflectionQuestions": [
+        "What small thing could you offer to God?",
+        "What makes you think your gift isn't enough?",
+        "How have you seen God use a small act in a big way?"
+      ],
+      "actionStep": "Give something small but real this week: time, money, a skill, or a meal."
+    },
+    {
+      "id": "the-journey-lesson-1",
+      "pathId": "the-journey",
+      "order": 1,
+      "title": "The Call of Abram",
+      "passage": "Genesis 12:1-9",
+      "estMinutes": 10,
+      "summary": "God told Abram to leave his country and his family for a land He would show him, and promised to make him a great nation and to bless all peoples through him. Abram obeyed without a full map. He walked in faith, built altars to worship God, and trusted God's promise along the way.",
+      "keyVerse": {
+        "reference": "Genesis 12:1",
+        "text": "Now the LORD had said unto Abram, Get thee out of thy country, and from thy kindred, and from thy father's house, unto a land that I will shew thee:",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "Faith often means taking the next step without seeing the whole path.",
+        "God's promises are bigger than our plans.",
+        "Worship keeps us anchored while we travel."
+      ],
+      "reflectionQuestions": [
+        "What is God asking you to trust Him with right now?",
+        "What would you need to leave behind to follow Him more closely?",
+        "How can you remind yourself of God's promises?"
+      ],
+      "actionStep": "Write down one promise from God and one step of obedience you can take today."
+    },
+    {
+      "id": "the-journey-lesson-2",
+      "pathId": "the-journey",
+      "order": 2,
+      "title": "The Road to Emmaus",
+      "passage": "Luke 24:13-35",
+      "estMinutes": 10,
+      "summary": "Two disciples walked sadly toward Emmaus after Jesus' death, not realizing the risen Jesus had joined them. He walked with them and explained from the Scriptures how the Messiah had to suffer and rise. When He broke bread with them, their eyes were opened, and they hurried back to share the news.",
+      "keyVerse": {
+        "reference": "Luke 24:32",
+        "text": "And they said one to another, Did not our heart burn within us, while he talked with us by the way, and while he opened to us the scriptures?",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "Jesus walks with us even when we don't recognize Him.",
+        "Scripture helps us see Jesus clearly.",
+        "Encounters with Jesus make us want to share."
+      ],
+      "reflectionQuestions": [
+        "When have you felt discouraged but later saw God was near?",
+        "How does reading Scripture help you see Jesus?",
+        "Who do you want to tell about what God has done?"
+      ],
+      "actionStep": "Read a short passage of Scripture with a friend and talk about what stood out."
+    },
+    {
+      "id": "the-journey-lesson-3",
+      "pathId": "the-journey",
+      "order": 3,
+      "title": "Ruth: Where You Go I Will Go",
+      "passage": "Ruth 1:1-18",
+      "estMinutes": 10,
+      "summary": "After her husband and sons died, Naomi decided to return to Bethlehem and urged her daughters-in-law to stay in Moab. Orpah turned back, but Ruth held on to Naomi and chose Naomi's people and Naomi's God. That choice led Ruth to a new home, a new family, and a place in the line of King David.",
+      "keyVerse": {
+        "reference": "Ruth 1:16",
+        "text": "And Ruth said, Intreat me not to leave thee, or to return from following after thee: for whither thou goest, I will go; and where thou lodgest, I will lodge: thy people shall be my people, and thy God my God:",
+        "translation": "KJV"
+      },
+      "keyPoints": [
+        "Faithful companions help us stay on the journey.",
+        "Loyalty to people and to God can change the future.",
+        "God brings good from hard seasons."
+      ],
+      "reflectionQuestions": [
+        "Who has walked a hard season with you?",
+        "Who might need your faithful presence right now?",
+        "What does it look like to say 'your God will be my God' today?"
+      ],
+      "actionStep": "Send a message to someone going through a hard season and commit to checking in weekly."
+    }
+  ]
+}

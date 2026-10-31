@@ -19,11 +19,11 @@ export interface PersistedApp {
   progress: GameProgress;
 }
 
-export const STORE_VERSION = 2;
+export const STORE_VERSION = 3;
 
 export function defaultPersisted(): PersistedApp {
   return {
-    themePreference: 'system',
+    themePreference: 'light',
     onboarded: false,
     preferredMode: null,
     profile: {
@@ -114,5 +114,8 @@ function readProgress(value: unknown, fallback: GameProgress): GameProgress {
       typeof record.weeklyWeekKey === 'string' ? record.weeklyWeekKey : fallback.weeklyWeekKey,
     lastAppliedSessionId:
       typeof record.lastAppliedSessionId === 'string' ? record.lastAppliedSessionId : null,
+    completedLessons: readStringList(record.completedLessons),
+    booksRead: readStringList(record.booksRead),
+    quizzesCompleted: readCount(record, 'quizzesCompleted'),
   };
 }

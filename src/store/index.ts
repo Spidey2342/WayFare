@@ -1,7 +1,14 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { applySession, completeWeekly, type SessionAward } from '@/features/journey/progress';
+import {
+  applyLessonComplete,
+  applyQuizComplete,
+  applySession,
+  completeWeekly,
+  toggleBookRead,
+  type SessionAward,
+} from '@/features/journey/progress';
 import { storage } from '@/services/storage';
 
 import { defaultPersisted, migratePersisted, STORE_VERSION, type PersistedApp } from './persist';
@@ -19,6 +26,9 @@ interface AppActions {
   toggleFavorite: (deckId: string) => void;
   applySessionAward: (award: SessionAward) => void;
   completeWeeklyChallenge: () => void;
+  completeLesson: (lessonId: string) => void;
+  toggleBook: (bookId: string) => void;
+  completeQuiz: () => void;
   resetGuest: () => void;
 }
 
@@ -56,6 +66,12 @@ export const useAppStore = create<AppStore>()(
         set((state) => ({ progress: applySession(state.progress, award, new Date()) })),
       completeWeeklyChallenge: () =>
         set((state) => ({ progress: completeWeekly(state.progress, new Date()) })),
+      completeLesson: (lessonId) =>
+        set((state) => ({ progress: applyLessonComplete(state.progress, lessonId, new Date()) })),
+      toggleBook: (bookId) =>
+        set((state) => ({ progress: toggleBookRead(state.progress, bookId) })),
+      completeQuiz: () =>
+        set((state) => ({ progress: applyQuizComplete(state.progress, new Date()) })),
       resetGuest: () => set({ ...defaultPersisted(), onboarded: false, hydrated: true }),
     }),
     {

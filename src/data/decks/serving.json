@@ -1,0 +1,245 @@
+{
+  "id": "serving",
+  "name": "Serving",
+  "tagline": "Life for others.",
+  "series": "Heart Series",
+  "description": "Jesus came to serve. This deck turns faith into action with kind dares, quiet acts of service, and honest talk about what it really means to help.",
+  "coverColor": "#4ECDC4",
+  "icon": null,
+  "difficulty": "hand-heart",
+  "estMinutes": "beginner",
+  "locked": 25,
+  "isPro": true,
+  "translation": "KJV",
+  "cards": [
+    {
+      "id": "serving-w01",
+      "deckId": "serving",
+      "type": "word",
+      "title": "Not to Be Served",
+      "prompt": "Who is a leader you know who serves? Share what they do.",
+      "reference": "Mark 10:45",
+      "body": "For even the Son of man came not to be ministered unto, but to minister, and to give his life a ransom for many.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-w02",
+      "deckId": "serving",
+      "type": "word",
+      "title": "By Love Serve",
+      "prompt": "Finish the sentence: 'One way I can serve someone with love is...'",
+      "reference": "Galatians 5:13",
+      "body": "For, brethren, ye have been called unto liberty; only use not liberty for an occasion to the flesh, but by love serve one another.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-w03",
+      "deckId": "serving",
+      "type": "word",
+      "title": "Let Your Light Shine",
+      "prompt": "Name a good deed someone did that made you think of God.",
+      "reference": "Matthew 5:16",
+      "body": "Let your light so shine before men, that they may see your good works, and glorify your Father which is in heaven.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-w04",
+      "deckId": "serving",
+      "type": "word",
+      "title": "Use Your Gift",
+      "prompt": "Name a gift or skill you have and how it could help someone this week.",
+      "reference": "1 Peter 4:10",
+      "body": "As every man hath received the gift, even so minister the same one to another, as good stewards of the manifold grace of God.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-w05",
+      "deckId": "serving",
+      "type": "word",
+      "title": "Do Good",
+      "prompt": "Explain this verse to the group using only 5 words.",
+      "reference": "Hebrews 13:16",
+      "body": "But to do good and to communicate forget not: for with such sacrifices God is well pleased.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-q01",
+      "deckId": "serving",
+      "type": "question",
+      "prompt": "Who has served you in a way you'll never forget?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "serving-q02",
+      "deckId": "serving",
+      "type": "question",
+      "prompt": "What's your favorite way to help: cooking, organizing, encouraging, fixing, or something else?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "serving-q03",
+      "deckId": "serving",
+      "type": "question",
+      "prompt": "Why is serving harder than it sounds?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-q04",
+      "deckId": "serving",
+      "type": "question",
+      "prompt": "Who around you is often overlooked, and how could you show up for them?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-q05",
+      "deckId": "serving",
+      "type": "question",
+      "prompt": "Do you ever serve just to be noticed? How can you serve quietly instead?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "serving-q06",
+      "deckId": "serving",
+      "type": "question",
+      "prompt": "What's one thing you could give up this month to help someone else?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "serving-d01",
+      "deckId": "serving",
+      "type": "dare",
+      "title": "Secret Service",
+      "prompt": "Do one kind thing for someone today and don't tell them it was you.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "serving-d02",
+      "deckId": "serving",
+      "type": "dare",
+      "title": "Helping Hand",
+      "prompt": "Offer to carry something or open a door for someone near you.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "serving-d03",
+      "deckId": "serving",
+      "type": "dare",
+      "title": "Clean-Up Crew",
+      "prompt": "Volunteer right now to tidy up, stack chairs, or help with the next task in your space.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "serving-d04",
+      "deckId": "serving",
+      "type": "dare",
+      "title": "Thank You Note",
+      "prompt": "Write a two-line thank-you to someone who serves you: a teacher, parent, leader, or driver.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "serving-d05",
+      "deckId": "serving",
+      "type": "dare",
+      "title": "Free Hour",
+      "prompt": "Offer an hour of your time to help someone this week and tell the group who.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "serving-c01",
+      "deckId": "serving",
+      "type": "challenge",
+      "title": "Serve Scavenger Hunt",
+      "prompt": "Teams complete acts of kindness from a list: encourage a stranger, pick up litter, offer water, help carry bags.",
+      "instruction": "Stay safe, keep everyone in sight, and ask permission before taking any photos. Most acts wins.",
+      "timerSeconds": 300,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-c02",
+      "deckId": "serving",
+      "type": "challenge",
+      "title": "Compliment Circle",
+      "prompt": "Everyone writes a name on a card. Pass the cards around so each person writes one genuine strength. Read them aloud.",
+      "instruction": "Keep every comment kind and specific.",
+      "timerSeconds": 180,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-c03",
+      "deckId": "serving",
+      "type": "challenge",
+      "title": "Serve Brainstorm",
+      "prompt": "List as many ways to serve your community as you can. The best idea becomes the group's next project.",
+      "instruction": "Teams write ideas. The group votes for the best one.",
+      "timerSeconds": 60,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-c04",
+      "deckId": "serving",
+      "type": "challenge",
+      "title": "Kindness Charades",
+      "prompt": "Act out acts of kindness without talking. The team guesses.",
+      "instruction": "Most correct guesses wins.",
+      "timerSeconds": 90,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-t01",
+      "deckId": "serving",
+      "type": "testimony",
+      "prompt": "Share a time someone served you and it changed how you saw God.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-t02",
+      "deckId": "serving",
+      "type": "testimony",
+      "prompt": "Tell about a time you served and received more than you gave.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-t03",
+      "deckId": "serving",
+      "type": "testimony",
+      "prompt": "Share a time you felt God ask you to help someone.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "serving-t04",
+      "deckId": "serving",
+      "type": "testimony",
+      "prompt": "Tell about a servant leader who shaped your faith.",
+      "points": 1,
+      "difficulty": "medium"
+    }
+  ]
+}

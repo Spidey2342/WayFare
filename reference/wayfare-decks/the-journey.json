@@ -1,0 +1,245 @@
+{
+  "id": "the-journey",
+  "name": "The Journey",
+  "tagline": "The path ahead.",
+  "series": "Pilgrim Series",
+  "description": "God guides step by step. Look back at what He has done, trust Him with what is next, and commit to the habits that will keep you walking together.",
+  "coverColor": "#4D98FF",
+  "icon": null,
+  "difficulty": "compass",
+  "estMinutes": "beginner",
+  "locked": 25,
+  "isPro": true,
+  "translation": "KJV",
+  "cards": [
+    {
+      "id": "the-journey-w01",
+      "deckId": "the-journey",
+      "type": "word",
+      "title": "Trust in the LORD",
+      "prompt": "Where do you most need to trust God with the whole map right now?",
+      "reference": "Proverbs 3:5-6",
+      "body": "Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-w02",
+      "deckId": "the-journey",
+      "type": "word",
+      "title": "Press Forward",
+      "prompt": "Name one thing behind you that you're ready to leave and one thing ahead you're reaching for.",
+      "reference": "Philippians 3:13-14",
+      "body": "Brethren, I count not myself to have apprehended: but this one thing I do, forgetting those things which are behind, and reaching forth unto those things which are before, I press toward the mark for the prize of the high calling of God in Christ Jesus.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-w03",
+      "deckId": "the-journey",
+      "type": "word",
+      "title": "A Lamp for My Feet",
+      "prompt": "If God's Word is a lamp, what step is it lighting up for you today?",
+      "reference": "Psalm 119:105",
+      "body": "Thy word is a lamp unto my feet, and a light unto my path.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-w04",
+      "deckId": "the-journey",
+      "type": "word",
+      "title": "Commit Your Way",
+      "prompt": "Share one plan or dream you want to commit to God.",
+      "reference": "Psalm 37:5",
+      "body": "Commit thy way unto the LORD; trust also in him; and he shall bring it to pass.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-w05",
+      "deckId": "the-journey",
+      "type": "word",
+      "title": "He Will Guide",
+      "prompt": "Explain this verse to the group using only 5 words.",
+      "reference": "Psalm 32:8",
+      "body": "I will instruct thee and teach thee in the way which thou shalt go: I will guide thee with mine eye.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-q01",
+      "deckId": "the-journey",
+      "type": "question",
+      "prompt": "What's the best trip or journey you've ever taken?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "the-journey-q02",
+      "deckId": "the-journey",
+      "type": "question",
+      "prompt": "If your life were a road, what would you name the road you're on now?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "the-journey-q03",
+      "deckId": "the-journey",
+      "type": "question",
+      "prompt": "What's something God led you into that you didn't see coming?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-q04",
+      "deckId": "the-journey",
+      "type": "question",
+      "prompt": "Which habit do you most want to grow: Word, prayer, serving, or gratitude? Why?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-q05",
+      "deckId": "the-journey",
+      "type": "question",
+      "prompt": "What area of your life is hardest to trust God with?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "the-journey-q06",
+      "deckId": "the-journey",
+      "type": "question",
+      "prompt": "Looking back over this journey, what has God taught you most?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "the-journey-d01",
+      "deckId": "the-journey",
+      "type": "dare",
+      "title": "Draw Your Road",
+      "prompt": "Draw your faith journey in 60 seconds with hills, valleys, and signposts, then explain one part.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "the-journey-d02",
+      "deckId": "the-journey",
+      "type": "dare",
+      "title": "Map Partner",
+      "prompt": "Choose someone in the group to pray with once this week and agree on a time.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "the-journey-d03",
+      "deckId": "the-journey",
+      "type": "dare",
+      "title": "Verse Pocket",
+      "prompt": "Write today's verse on a card and put it where you'll see it every day.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "the-journey-d04",
+      "deckId": "the-journey",
+      "type": "dare",
+      "title": "One Habit",
+      "prompt": "Say one spiritual habit you'll keep going out loud, with the day you'll start.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "the-journey-d05",
+      "deckId": "the-journey",
+      "type": "dare",
+      "title": "Pray Forward",
+      "prompt": "Pray one sentence thanking God for the past and one asking for guidance tomorrow.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "the-journey-c01",
+      "deckId": "the-journey",
+      "type": "challenge",
+      "title": "Journey Map",
+      "prompt": "Draw a road with hills and signposts for a Bible journey (Abraham, Moses, Paul) and let the other team guess whose it is.",
+      "instruction": "One drawer per team. No letters or words. First correct guess scores.",
+      "timerSeconds": 120,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-c02",
+      "deckId": "the-journey",
+      "type": "challenge",
+      "title": "Bible Road Trip",
+      "prompt": "Put these in order, fastest team wins: Creation, Noah, Abraham, Moses, David, Jesus' birth, the Resurrection, Pentecost.",
+      "instruction": "Write the order on paper and show it to the group when finished.",
+      "timerSeconds": 90,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-c03",
+      "deckId": "the-journey",
+      "type": "challenge",
+      "title": "Verse Memory Sprint",
+      "prompt": "Memorize Proverbs 3:5-6 and recite it together without looking.",
+      "instruction": "The whole team must say it together to score.",
+      "timerSeconds": 120,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-c04",
+      "deckId": "the-journey",
+      "type": "challenge",
+      "title": "Landmark Quiz",
+      "prompt": "Name places in the Bible: Bethlehem, the Jordan River, Jericho, Galilee, Nazareth, and more.",
+      "instruction": "Most correct places wins.",
+      "timerSeconds": 60,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-t01",
+      "deckId": "the-journey",
+      "type": "testimony",
+      "prompt": "Share a time God redirected your plans for the better.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-t02",
+      "deckId": "the-journey",
+      "type": "testimony",
+      "prompt": "Tell about a time you needed direction and found it.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-t03",
+      "deckId": "the-journey",
+      "type": "testimony",
+      "prompt": "Share a small step of faith that became a big change.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "the-journey-t04",
+      "deckId": "the-journey",
+      "type": "testimony",
+      "prompt": "Tell about one thing God taught you over these four weeks.",
+      "points": 1,
+      "difficulty": "medium"
+    }
+  ]
+}

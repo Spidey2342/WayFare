@@ -68,6 +68,7 @@ export default function SetupScreen() {
         : [];
     try {
       const id = useSessionStore.getState().start({
+        deckId,
         mode,
         minutes,
         players: players.map((player, index) => ({

@@ -1,10 +1,12 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { BookOpen, Compass, Heart, Share2 } from 'lucide-react-native';
+import { Compass, Share2 } from 'lucide-react-native';
 
 import { Avatar, Button, Chip, DeckTile, QuoteCard, Screen } from '@/components/ui';
 import { deckCatalog, sampleVerse } from '@/data/catalog';
-import { levelForXp } from '@/features/journey/progress';
+import { DeckIconView } from '@/features/decks/deckIcons';
+import { journeyNodes, levelForXp } from '@/features/journey/progress';
+import { todayLesson } from '@/features/learn/repository';
 import { useOnline } from '@/hooks/useOnline';
 import { useAppStore } from '@/store';
 import { greeting } from '@/utils/greeting';
@@ -19,12 +21,16 @@ export default function HomeScreen() {
   const color = useAppStore((state) => state.profile.avatarColor);
   const online = useOnline();
   const quick = deckCatalog.filter((deck) => deck.id === 'identity' || deck.id === 'courage');
+  const lesson = todayLesson(progress.completedLessons);
+  const nodes = journeyNodes(progress);
+  const lessonProgress =
+    progress.completedLessons.length === 0 ? 0 : Math.min(1, progress.completedLessons.length / 12);
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.content}>
         {!online ? (
-          <Text style={styles.offline}>You are offline. Saved decks still play.</Text>
+          <Text style={styles.offline}>You are offline. Saved decks and Learn still work.</Text>
         ) : null}
         <View style={styles.header}>
           <View>
@@ -42,21 +48,64 @@ export default function HomeScreen() {
             />
           </View>
           <View style={styles.path}>
-            {['1', '2', '3', '4'].map((node, index) => (
-              <View key={node} style={[styles.node, index === 0 && styles.nodeOn]}>
-                <Text style={styles.nodeText}>{node}</Text>
+            {nodes.map((node) => (
+              <View
+                key={node.id}
+                style={[
+                  styles.node,
+                  node.state === 'complete' && styles.nodeDone,
+                  node.state === 'current' && styles.nodeOn,
+                ]}
+              >
+                <Text style={[styles.nodeText, node.state === 'current' && styles.nodeTextOn]}>
+                  {node.label.replace('W', '')}
+                </Text>
               </View>
             ))}
           </View>
           <Text style={styles.journeyMeta}>
-            Level {level.level} · {level.displayTitle}
+            Level {level.level} · {level.displayTitle} · {progress.completedLessons.length}/12
+            lessons
           </Text>
+          <View style={styles.lessonBarTrack}>
+            <View
+              style={[styles.lessonBarFill, { width: `${Math.round(lessonProgress * 100)}%` }]}
+            />
+          </View>
           <Button
             label="Start playing"
             variant="gold"
             onPress={() => router.push('/deck/identity')}
           />
         </View>
+        {lesson ? (
+          <View
+            style={[styles.today, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          >
+            <Text style={[typeScale.caption, { color: palette.goldDeep, letterSpacing: 1 }]}>
+              TODAY&apos;S LESSON
+            </Text>
+            <Text style={[typeScale.h3, { color: colors.textPrimary }]}>{lesson.title}</Text>
+            <Text style={{ color: colors.textSecondary, fontFamily: fontFamily.body }}>
+              {lesson.estMinutes} min · {lesson.passage}
+            </Text>
+            <Button
+              label="Open lesson"
+              variant="secondary"
+              onPress={() => router.push(`/learn/lesson/${lesson.id}`)}
+            />
+          </View>
+        ) : (
+          <View
+            style={[styles.today, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          >
+            <Text style={[typeScale.h3, { color: colors.textPrimary }]}>All lessons complete</Text>
+            <Text style={{ color: colors.textSecondary, fontFamily: fontFamily.body }}>
+              Replay a path or try the Bible Quiz.
+            </Text>
+            <Button label="Learn hub" variant="secondary" onPress={() => router.push('/learn')} />
+          </View>
+        )}
         <Text style={[styles.section, { color: colors.textPrimary }]}>Quick Decks</Text>
         <ScrollView
           horizontal
@@ -70,13 +119,7 @@ export default function HomeScreen() {
                 tagline={deck.tagline}
                 count={deck.count}
                 colors={deck.colors}
-                icon={
-                  deck.id === 'identity' ? (
-                    <BookOpen color="#fff" size={18} />
-                  ) : (
-                    <Heart color="#fff" size={18} />
-                  )
-                }
+                icon={<DeckIconView name={deck.icon} color={palette.white} size={18} />}
                 onPress={() => router.push(`/deck/${deck.id}`)}
               />
             </View>
@@ -136,9 +179,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  nodeDone: { backgroundColor: '#3D4460' },
   nodeOn: { backgroundColor: palette.gold },
-  nodeText: { fontFamily: fontFamily.headingSemi, color: palette.midnight },
+  nodeText: { fontFamily: fontFamily.headingSemi, color: '#C9CDD6', fontSize: 14 },
+  nodeTextOn: { color: palette.midnight },
   journeyMeta: { fontFamily: fontFamily.body, color: '#C9CDD6' },
+  lessonBarTrack: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#2A2D42',
+    overflow: 'hidden',
+  },
+  lessonBarFill: { height: '100%', backgroundColor: palette.gold },
+  today: {
+    borderRadius: radii.card,
+    padding: spacing.lg,
+    gap: spacing.sm,
+    borderWidth: 1,
+  },
   section: { ...typeScale.h3 },
   quick: { gap: spacing.sm },
   quickItem: { width: 180 },

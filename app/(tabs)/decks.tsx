@@ -1,27 +1,20 @@
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { BookOpen, Church, Compass, HandHeart, Heart, Sparkles } from 'lucide-react-native';
 
 import { DeckTile, EmptyState, ProDeckBanner, Screen, SegmentedTabs } from '@/components/ui';
 import { deckCatalog, type DeckSummary } from '@/data/catalog';
+import { DeckIconView } from '@/features/decks/deckIcons';
 import { useAppStore } from '@/store';
 import { palette, spacing, typeScale, useTheme } from '@/theme';
-
-const icons = {
-  identity: BookOpen,
-  courage: Heart,
-  serving: HandHeart,
-  journey: Compass,
-  church: Church,
-  wisdom: Sparkles,
-} as const;
 
 export default function DecksScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const favorites = useAppStore((state) => state.favoriteDeckIds);
-  const [tab, setTab] = useState<'all' | 'challenges' | 'favorites'>('all');
+  type DeckTab = 'all' | 'challenges' | 'favorites';
+  type DeckSegment = DeckTab | 'learn';
+  const [tab, setTab] = useState<DeckTab>('all');
 
   const decks = useMemo(() => {
     const playable = deckCatalog.filter((deck) => !deck.isPro);
@@ -43,13 +36,20 @@ export default function DecksScreen() {
     <Screen>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Explore Decks</Text>
-        <SegmentedTabs
+        <SegmentedTabs<DeckSegment>
           value={tab}
-          onChange={setTab}
+          onChange={(value) => {
+            if (value === 'learn') {
+              router.push('/learn');
+              return;
+            }
+            setTab(value);
+          }}
           tabs={[
             { id: 'all', label: 'All Decks' },
             { id: 'challenges', label: 'Challenges' },
             { id: 'favorites', label: 'Favorites' },
+            { id: 'learn', label: 'Learn' },
           ]}
         />
         {decks.length === 0 ? (
@@ -59,22 +59,19 @@ export default function DecksScreen() {
           />
         ) : (
           <View style={styles.grid}>
-            {decks.map((deck) => {
-              const Icon = icons[deck.icon];
-              return (
-                <View key={deck.id} style={styles.cell}>
-                  <DeckTile
-                    title={deck.name}
-                    tagline={deck.locked ? (deck.lockReason ?? 'Locked') : deck.tagline}
-                    count={deck.count}
-                    colors={deck.colors}
-                    locked={deck.locked}
-                    icon={<Icon color={palette.white} size={18} />}
-                    onPress={() => open(deck)}
-                  />
-                </View>
-              );
-            })}
+            {decks.map((deck) => (
+              <View key={deck.id} style={styles.cell}>
+                <DeckTile
+                  title={deck.name}
+                  tagline={deck.locked ? (deck.lockReason ?? 'Locked') : deck.tagline}
+                  count={deck.count}
+                  colors={deck.colors}
+                  locked={deck.locked}
+                  icon={<DeckIconView name={deck.icon} color={palette.white} size={18} />}
+                  onPress={() => open(deck)}
+                />
+              </View>
+            ))}
           </View>
         )}
         <ProDeckBanner onPress={() => router.push('/outing')} />

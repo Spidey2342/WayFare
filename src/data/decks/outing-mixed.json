@@ -1,0 +1,134 @@
+{
+  "id": "outing-mixed",
+  "name": "Outing (Mixed)",
+  "tagline": "Perfect for youth camps and larger gatherings.",
+  "series": "Pro Series",
+  "description": "A mixed deck made for the road: parks, cafes, camps, and big groups. Games and questions that turn any place into a moment with God.",
+  "coverColor": "#FFB800",
+  "icon": ["#1A1C2E", "#2B2E4A"],
+  "difficulty": "bus",
+  "estMinutes": "intermediate",
+  "locked": 40,
+  "isPro": true,
+  "translation": "KJV",
+  "badge": true,
+  "coverGradient": "Pro Deck",
+  "cards": [
+    {
+      "id": "outing-mixed-w01",
+      "deckId": "outing-mixed",
+      "type": "word",
+      "title": "Today Is a Gift",
+      "prompt": "Say one thing you're thankful for about today.",
+      "reference": "Psalm 118:24",
+      "body": "This is the day which the LORD hath made; we will rejoice and be glad in it.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "outing-mixed-w02",
+      "deckId": "outing-mixed",
+      "type": "word",
+      "title": "Gracious Words",
+      "prompt": "Give one example of a gracious word you could say to someone nearby.",
+      "reference": "Colossians 4:6",
+      "body": "Let your speech be alway with grace, seasoned with salt, that ye may know how ye ought to answer every man.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "outing-mixed-w03",
+      "deckId": "outing-mixed",
+      "type": "word",
+      "title": "The Heavens Declare",
+      "prompt": "Point out one thing in your surroundings that shows God's creativity.",
+      "reference": "Psalm 19:1",
+      "body": "The heavens declare the glory of God; and the firmament sheweth his handywork.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "outing-mixed-q01",
+      "deckId": "outing-mixed",
+      "type": "question",
+      "prompt": "What's one thing in this place that shows God's creativity?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "outing-mixed-q02",
+      "deckId": "outing-mixed",
+      "type": "question",
+      "prompt": "Who here would you like to know better, and what's one question you'd ask them?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "outing-mixed-q03",
+      "deckId": "outing-mixed",
+      "type": "question",
+      "prompt": "What's your best memory of being outdoors with friends or family?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "outing-mixed-d01",
+      "deckId": "outing-mixed",
+      "type": "dare",
+      "title": "Grateful Group Photo",
+      "prompt": "Take a group photo and have each person say one thing they're thankful for. Ask permission if anyone outside the group is in the frame.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "outing-mixed-d02",
+      "deckId": "outing-mixed",
+      "type": "dare",
+      "title": "Kindness Run",
+      "prompt": "Do one small act of kindness for someone nearby, like offering to take a photo for a visitor.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "outing-mixed-c01",
+      "deckId": "outing-mixed",
+      "type": "challenge",
+      "title": "Nature Scavenger Hunt",
+      "prompt": "Teams find things that remind them of a verse: a light, a path, a rock, a seed. Photograph and explain each one.",
+      "instruction": "Stay together and stay safe. Most creative explanations win.",
+      "timerSeconds": 300,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "outing-mixed-c02",
+      "deckId": "outing-mixed",
+      "type": "challenge",
+      "title": "Verse Spotting",
+      "prompt": "Find five things around you that connect to a Bible story and explain each connection.",
+      "instruction": "The group votes for the best connection.",
+      "timerSeconds": 180,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "outing-mixed-t01",
+      "deckId": "outing-mixed",
+      "type": "testimony",
+      "prompt": "Share a time you felt God's presence in nature or a quiet place.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "outing-mixed-t02",
+      "deckId": "outing-mixed",
+      "type": "testimony",
+      "prompt": "Share a favorite memory of a trip or outing where you saw God at work.",
+      "points": 1,
+      "difficulty": "medium"
+    }
+  ]
+}

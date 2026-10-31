@@ -61,7 +61,6 @@ describe('progress', () => {
     expect(first.badgesEarned).toEqual(
       expect.arrayContaining([
         'first-step',
-        'scripture-seeker',
         'hot-start',
         'team-player',
         'peacemaker',
@@ -94,7 +93,6 @@ describe('progress', () => {
         'kingdom-builder',
         'clash-ready',
         'testimony-bearer',
-        'journey-starter',
         'disciple-mark',
       ]),
     );

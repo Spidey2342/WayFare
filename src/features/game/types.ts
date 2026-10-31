@@ -11,6 +11,8 @@ export interface EngineCard {
   reference?: string;
   body?: string;
   instruction?: string;
+  timerSeconds?: number;
+  difficulty?: 'light' | 'medium' | 'deep';
   points: number;
 }
 

@@ -41,7 +41,7 @@ describe('migratePersisted', () => {
       { themePreference: 'sepia', preferredMode: 'arena', profile: { name: '   ' } },
       0,
     );
-    expect(migrated.themePreference).toBe('system');
+    expect(migrated.themePreference).toBe('light');
     expect(migrated.preferredMode).toBeNull();
     expect(migrated.profile.name).toBe('Kofi');
   });
@@ -51,5 +51,22 @@ describe('migratePersisted', () => {
     expect(migrated.progress.xp).toBe(0);
     expect(migrated.progress.badgesEarned).toEqual([]);
     expect(migrated.profile.name).toBe('Ama');
+  });
+
+  test('reads learn progress fields on version 3 saves', () => {
+    const migrated = migratePersisted(
+      {
+        progress: {
+          xp: 5,
+          completedLessons: ['identity-lesson-1'],
+          booksRead: ['genesis'],
+          quizzesCompleted: 2,
+        },
+      },
+      3,
+    );
+    expect(migrated.progress.completedLessons).toEqual(['identity-lesson-1']);
+    expect(migrated.progress.booksRead).toEqual(['genesis']);
+    expect(migrated.progress.quizzesCompleted).toBe(2);
   });
 });

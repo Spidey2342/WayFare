@@ -1,0 +1,11 @@
+{
+  "name": "Wayfare",
+  "short_name": "Wayfare",
+  "description": "Study the Word. Enjoy the Journey.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F5F8",
+  "theme_color": "#F8F9FA",
+  "lang": "en"
+}

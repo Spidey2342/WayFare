@@ -1,0 +1,660 @@
+{
+  "categories": [
+    {
+      "id": "old-testament",
+      "name": "Old Testament"
+    },
+    {
+      "id": "new-testament",
+      "name": "New Testament"
+    },
+    {
+      "id": "people",
+      "name": "People of the Bible"
+    },
+    {
+      "id": "books",
+      "name": "Books of the Bible"
+    },
+    {
+      "id": "jesus",
+      "name": "Life of Jesus"
+    },
+    {
+      "id": "verses",
+      "name": "Know Your Verses"
+    }
+  ],
+  "questions": [
+    {
+      "id": "old-testament-01",
+      "category": "old-testament",
+      "difficulty": "easy",
+      "question": "How long did the rain fall during Noah's flood?",
+      "options": ["40 days and 40 nights", "7 days", "100 days", "One full year"],
+      "correctIndex": 0,
+      "explanation": "The rain fell for forty days and forty nights.",
+      "reference": "Genesis 7:12"
+    },
+    {
+      "id": "old-testament-02",
+      "category": "old-testament",
+      "difficulty": "easy",
+      "question": "Who led Israel across the Jordan River into the Promised Land?",
+      "options": ["Moses", "Joshua", "Caleb", "Aaron"],
+      "correctIndex": 1,
+      "explanation": "Moses died before Israel entered the land, and Joshua took over as leader.",
+      "reference": "Joshua 1:1-2"
+    },
+    {
+      "id": "old-testament-03",
+      "category": "old-testament",
+      "difficulty": "easy",
+      "question": "What did God give Moses on Mount Sinai?",
+      "options": [
+        "The ark of the covenant",
+        "The book of Proverbs",
+        "The Ten Commandments",
+        "A golden calf"
+      ],
+      "correctIndex": 2,
+      "explanation": "God gave Moses the two tablets of the law.",
+      "reference": "Exodus 31:18"
+    },
+    {
+      "id": "old-testament-04",
+      "category": "old-testament",
+      "difficulty": "easy",
+      "question": "Which giant did young David defeat with a sling and a stone?",
+      "options": ["Og", "Sisera", "Nimrod", "Goliath"],
+      "correctIndex": 3,
+      "explanation": "David trusted God and defeated Goliath of Gath.",
+      "reference": "1 Samuel 17"
+    },
+    {
+      "id": "old-testament-05",
+      "category": "old-testament",
+      "difficulty": "easy",
+      "question": "Who was thrown into the lions' den for praying to God?",
+      "options": ["Daniel", "Jeremiah", "Elijah", "Samuel"],
+      "correctIndex": 0,
+      "explanation": "Daniel kept praying and God shut the mouths of the lions.",
+      "reference": "Daniel 6"
+    },
+    {
+      "id": "old-testament-06",
+      "category": "old-testament",
+      "difficulty": "easy",
+      "question": "Which prophet was swallowed by a great fish?",
+      "options": ["Amos", "Jonah", "Micah", "Hosea"],
+      "correctIndex": 1,
+      "explanation": "Jonah ran from God's command and was swallowed by a great fish.",
+      "reference": "Jonah 1:17"
+    },
+    {
+      "id": "old-testament-07",
+      "category": "old-testament",
+      "difficulty": "medium",
+      "question": "What was the first of the ten plagues on Egypt?",
+      "options": ["Frogs", "Locusts", "Water turned to blood", "Darkness"],
+      "correctIndex": 2,
+      "explanation": "The Nile turned to blood as the first plague.",
+      "reference": "Exodus 7:14-25"
+    },
+    {
+      "id": "old-testament-08",
+      "category": "old-testament",
+      "difficulty": "medium",
+      "question": "Who was sold into slavery by his brothers and later became a ruler in Egypt?",
+      "options": ["Benjamin", "Reuben", "Judah", "Joseph"],
+      "correctIndex": 3,
+      "explanation": "God used Joseph's story to save his family from famine.",
+      "reference": "Genesis 37-45"
+    },
+    {
+      "id": "old-testament-09",
+      "category": "old-testament",
+      "difficulty": "medium",
+      "question": "Which queen risked her life to save the Jewish people from Haman's plot?",
+      "options": ["Esther", "Ruth", "Deborah", "Jezebel"],
+      "correctIndex": 0,
+      "explanation": "Esther approached the king uninvited to plead for her people.",
+      "reference": "Esther 4-8"
+    },
+    {
+      "id": "old-testament-10",
+      "category": "old-testament",
+      "difficulty": "easy",
+      "question": "How many books are in the Old Testament?",
+      "options": ["27", "39", "66", "50"],
+      "correctIndex": 1,
+      "explanation": "The Bible has 39 Old Testament books and 27 New Testament books.",
+      "reference": "Overview"
+    },
+    {
+      "id": "new-testament-01",
+      "category": "new-testament",
+      "difficulty": "easy",
+      "question": "In which town was Jesus born?",
+      "options": ["Nazareth", "Jerusalem", "Bethlehem", "Capernaum"],
+      "correctIndex": 2,
+      "explanation": "Jesus was born in Bethlehem, as the prophet Micah foretold.",
+      "reference": "Luke 2:4-7"
+    },
+    {
+      "id": "new-testament-02",
+      "category": "new-testament",
+      "difficulty": "easy",
+      "question": "Who baptized Jesus in the Jordan River?",
+      "options": ["Peter", "Andrew", "Philip", "John the Baptist"],
+      "correctIndex": 3,
+      "explanation": "John baptized Jesus, and the Spirit descended like a dove.",
+      "reference": "Matthew 3:13-17"
+    },
+    {
+      "id": "new-testament-03",
+      "category": "new-testament",
+      "difficulty": "easy",
+      "question": "How many disciples did Jesus choose to be closest to Him?",
+      "options": ["12", "7", "10", "70"],
+      "correctIndex": 0,
+      "explanation": "Jesus called twelve disciples to follow Him.",
+      "reference": "Luke 6:12-16"
+    },
+    {
+      "id": "new-testament-04",
+      "category": "new-testament",
+      "difficulty": "easy",
+      "question": "Which disciple betrayed Jesus?",
+      "options": ["Thomas", "Judas Iscariot", "Peter", "Matthew"],
+      "correctIndex": 1,
+      "explanation": "Judas betrayed Jesus to the authorities for thirty pieces of silver.",
+      "reference": "Matthew 26:14-16"
+    },
+    {
+      "id": "new-testament-05",
+      "category": "new-testament",
+      "difficulty": "easy",
+      "question": "On which day after His death did Jesus rise from the grave?",
+      "options": ["The first day", "The seventh day", "The third day", "The fortieth day"],
+      "correctIndex": 2,
+      "explanation": "Jesus rose on the third day, as He had promised.",
+      "reference": "Luke 24:6-7"
+    },
+    {
+      "id": "new-testament-06",
+      "category": "new-testament",
+      "difficulty": "medium",
+      "question": "What is the name of the event when the Holy Spirit filled the believers in Jerusalem?",
+      "options": ["Passover", "The Transfiguration", "Tabernacles", "Pentecost"],
+      "correctIndex": 3,
+      "explanation": "At Pentecost the Spirit came and the church was empowered.",
+      "reference": "Acts 2"
+    },
+    {
+      "id": "new-testament-07",
+      "category": "new-testament",
+      "difficulty": "medium",
+      "question": "Who was the first Christian martyr?",
+      "options": ["Stephen", "James", "Barnabas", "Philip"],
+      "correctIndex": 0,
+      "explanation": "Stephen was killed for his faith while praying for those who stoned him.",
+      "reference": "Acts 7"
+    },
+    {
+      "id": "new-testament-08",
+      "category": "new-testament",
+      "difficulty": "easy",
+      "question": "Who wrote about half of the New Testament, including Romans and Philippians?",
+      "options": ["Peter", "Paul", "John", "Luke"],
+      "correctIndex": 1,
+      "explanation": "Paul wrote thirteen New Testament letters.",
+      "reference": "Romans 1:1"
+    },
+    {
+      "id": "new-testament-09",
+      "category": "new-testament",
+      "difficulty": "easy",
+      "question": "What is the last book of the Bible?",
+      "options": ["Jude", "Hebrews", "Revelation", "Acts"],
+      "correctIndex": 2,
+      "explanation": "Revelation ends the Bible with a vision of the new heaven and new earth.",
+      "reference": "Revelation 22"
+    },
+    {
+      "id": "new-testament-10",
+      "category": "new-testament",
+      "difficulty": "medium",
+      "question": "Who was struck by a bright light on the road to Damascus and became an apostle?",
+      "options": ["Barnabas", "Silas", "Timothy", "Saul, later called Paul"],
+      "correctIndex": 3,
+      "explanation": "Jesus appeared to Saul, who became Paul, the great missionary.",
+      "reference": "Acts 9:1-19"
+    },
+    {
+      "id": "people-01",
+      "category": "people",
+      "difficulty": "easy",
+      "question": "Who built the ark?",
+      "options": ["Noah", "Abraham", "Moses", "Enoch"],
+      "correctIndex": 0,
+      "explanation": "God told Noah to build an ark to save his family and the animals.",
+      "reference": "Genesis 6:13-22"
+    },
+    {
+      "id": "people-02",
+      "category": "people",
+      "difficulty": "medium",
+      "question": "Who is often called the father of faith, called by God to leave his homeland?",
+      "options": ["Isaac", "Abraham", "Jacob", "Lot"],
+      "correctIndex": 1,
+      "explanation": "Abraham trusted God's promise and left for a land God would show him.",
+      "reference": "Genesis 12:1-4"
+    },
+    {
+      "id": "people-03",
+      "category": "people",
+      "difficulty": "medium",
+      "question": "Who was Moses' brother who helped speak for him?",
+      "options": ["Joshua", "Caleb", "Aaron", "Eli"],
+      "correctIndex": 2,
+      "explanation": "God sent Aaron to help Moses before Pharaoh.",
+      "reference": "Exodus 4:14-16"
+    },
+    {
+      "id": "people-04",
+      "category": "people",
+      "difficulty": "medium",
+      "question": "Which king asked God for wisdom instead of riches?",
+      "options": ["David", "Hezekiah", "Josiah", "Solomon"],
+      "correctIndex": 3,
+      "explanation": "God was pleased with Solomon's request and gave him wisdom and more.",
+      "reference": "1 Kings 3:5-12"
+    },
+    {
+      "id": "people-05",
+      "category": "people",
+      "difficulty": "medium",
+      "question": "Who was Ruth's mother-in-law?",
+      "options": ["Naomi", "Orpah", "Hannah", "Rebekah"],
+      "correctIndex": 0,
+      "explanation": "Ruth stayed loyal to Naomi and followed her to Bethlehem.",
+      "reference": "Ruth 1"
+    },
+    {
+      "id": "people-06",
+      "category": "people",
+      "difficulty": "easy",
+      "question": "Which disciple denied Jesus three times?",
+      "options": ["John", "Peter", "Thomas", "Andrew"],
+      "correctIndex": 1,
+      "explanation": "Peter denied knowing Jesus, wept, and was later restored.",
+      "reference": "John 18:15-27; 21:15-19"
+    },
+    {
+      "id": "people-07",
+      "category": "people",
+      "difficulty": "easy",
+      "question": "Which short tax collector climbed a sycamore tree to see Jesus?",
+      "options": ["Matthew", "Nicodemus", "Zacchaeus", "Bartimaeus"],
+      "correctIndex": 2,
+      "explanation": "Jesus visited Zacchaeus' house, and his life changed.",
+      "reference": "Luke 19:1-10"
+    },
+    {
+      "id": "people-08",
+      "category": "people",
+      "difficulty": "medium",
+      "question": "Who was Paul's young friend and student to whom he wrote two letters?",
+      "options": ["Titus", "Silas", "Mark", "Timothy"],
+      "correctIndex": 3,
+      "explanation": "Paul wrote 1 and 2 Timothy to encourage him in ministry.",
+      "reference": "1 Timothy 1:2"
+    },
+    {
+      "id": "people-09",
+      "category": "people",
+      "difficulty": "easy",
+      "question": "Who was the mother of Jesus?",
+      "options": ["Mary", "Elizabeth", "Martha", "Anna"],
+      "correctIndex": 0,
+      "explanation": "An angel told Mary she would bear the Son of God.",
+      "reference": "Luke 1:26-38"
+    },
+    {
+      "id": "people-10",
+      "category": "people",
+      "difficulty": "medium",
+      "question": "Which prophet was taken up to heaven in a whirlwind with a chariot of fire?",
+      "options": ["Elisha", "Elijah", "Isaiah", "Ezekiel"],
+      "correctIndex": 1,
+      "explanation": "Elijah did not die; God took him up to heaven.",
+      "reference": "2 Kings 2:11"
+    },
+    {
+      "id": "books-01",
+      "category": "books",
+      "difficulty": "easy",
+      "question": "What is the first book of the Bible?",
+      "options": ["Exodus", "Psalms", "Genesis", "Matthew"],
+      "correctIndex": 2,
+      "explanation": "Genesis means beginnings.",
+      "reference": "Genesis 1:1"
+    },
+    {
+      "id": "books-02",
+      "category": "books",
+      "difficulty": "easy",
+      "question": "Which book is a collection of songs and prayers?",
+      "options": ["Proverbs", "Job", "Lamentations", "Psalms"],
+      "correctIndex": 3,
+      "explanation": "The Psalms have 150 songs and prayers.",
+      "reference": "Psalms"
+    },
+    {
+      "id": "books-03",
+      "category": "books",
+      "difficulty": "easy",
+      "question": "Which book tells how God rescued Israel from slavery in Egypt?",
+      "options": ["Exodus", "Leviticus", "Numbers", "Joshua"],
+      "correctIndex": 0,
+      "explanation": "Exodus means exit or departure.",
+      "reference": "Exodus 14"
+    },
+    {
+      "id": "books-04",
+      "category": "books",
+      "difficulty": "medium",
+      "question": "Which Gospel was written by Luke, a doctor and Paul's companion?",
+      "options": ["Mark", "Luke", "John", "Matthew"],
+      "correctIndex": 1,
+      "explanation": "Luke also wrote the book of Acts.",
+      "reference": "Colossians 4:14"
+    },
+    {
+      "id": "books-05",
+      "category": "books",
+      "difficulty": "medium",
+      "question": "Which king is credited with writing much of the book of Proverbs?",
+      "options": ["David", "Hezekiah", "Solomon", "Josiah"],
+      "correctIndex": 2,
+      "explanation": "Solomon wrote many of the proverbs, and others were added by wise men.",
+      "reference": "Proverbs 1:1"
+    },
+    {
+      "id": "books-06",
+      "category": "books",
+      "difficulty": "easy",
+      "question": "Which book comes right after the four Gospels?",
+      "options": ["Romans", "Hebrews", "James", "Acts"],
+      "correctIndex": 3,
+      "explanation": "Acts tells the story of the early church.",
+      "reference": "Acts 1"
+    },
+    {
+      "id": "books-07",
+      "category": "books",
+      "difficulty": "easy",
+      "question": "How many books are in the New Testament?",
+      "options": ["27", "39", "12", "66"],
+      "correctIndex": 0,
+      "explanation": "There are 27 New Testament books and 39 Old Testament books.",
+      "reference": "Overview"
+    },
+    {
+      "id": "books-08",
+      "category": "books",
+      "difficulty": "medium",
+      "question": "Which Old Testament book follows a man who lost everything but stayed faithful to God?",
+      "options": ["Ecclesiastes", "Job", "Esther", "Ruth"],
+      "correctIndex": 1,
+      "explanation": "Job suffers deeply yet keeps trusting God.",
+      "reference": "Job 1-2"
+    },
+    {
+      "id": "books-09",
+      "category": "books",
+      "difficulty": "medium",
+      "question": "Which chapter in 1 Corinthians is known as the love chapter?",
+      "options": ["Chapter 1", "Chapter 7", "Chapter 13", "Chapter 15"],
+      "correctIndex": 2,
+      "explanation": "It describes what real love looks like.",
+      "reference": "1 Corinthians 13"
+    },
+    {
+      "id": "books-10",
+      "category": "books",
+      "difficulty": "easy",
+      "question": "Which Gospel begins with the line 'In the beginning was the Word'?",
+      "options": ["Matthew", "Mark", "Luke", "John"],
+      "correctIndex": 3,
+      "explanation": "John begins by showing that Jesus is God and was with God from the start.",
+      "reference": "John 1:1"
+    },
+    {
+      "id": "jesus-01",
+      "category": "jesus",
+      "difficulty": "easy",
+      "question": "What was Jesus' first recorded miracle?",
+      "options": [
+        "Turning water into wine",
+        "Healing a blind man",
+        "Feeding 5,000",
+        "Walking on water"
+      ],
+      "correctIndex": 0,
+      "explanation": "Jesus performed this sign at a wedding in Cana.",
+      "reference": "John 2:1-11"
+    },
+    {
+      "id": "jesus-02",
+      "category": "jesus",
+      "difficulty": "easy",
+      "question": "How many loaves and fish did Jesus use to feed the 5,000?",
+      "options": [
+        "7 loaves and 3 fish",
+        "5 loaves and 2 fish",
+        "12 loaves and 1 fish",
+        "3 loaves and 5 fish"
+      ],
+      "correctIndex": 1,
+      "explanation": "A boy's small lunch fed thousands.",
+      "reference": "John 6:9-13"
+    },
+    {
+      "id": "jesus-03",
+      "category": "jesus",
+      "difficulty": "medium",
+      "question": "Who did Jesus raise from the dead after four days in the tomb?",
+      "options": ["Jairus' daughter", "The widow's son", "Lazarus", "Tabitha"],
+      "correctIndex": 2,
+      "explanation": "Jesus called Lazarus out of the tomb.",
+      "reference": "John 11:38-44"
+    },
+    {
+      "id": "jesus-04",
+      "category": "jesus",
+      "difficulty": "easy",
+      "question": "What famous prayer did Jesus teach His disciples?",
+      "options": [
+        "The Prayer of Jabez",
+        "The Serenity Prayer",
+        "The Aaronic Blessing",
+        "The Lord's Prayer"
+      ],
+      "correctIndex": 3,
+      "explanation": "It begins 'Our Father in heaven.'",
+      "reference": "Matthew 6:9-13"
+    },
+    {
+      "id": "jesus-05",
+      "category": "jesus",
+      "difficulty": "easy",
+      "question": "What is Jesus' famous teaching that begins 'Blessed are the poor in spirit' called?",
+      "options": [
+        "The Sermon on the Mount",
+        "The Great Commission",
+        "The Last Supper",
+        "The Transfiguration"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Beatitudes open the Sermon on the Mount.",
+      "reference": "Matthew 5:1-12"
+    },
+    {
+      "id": "jesus-06",
+      "category": "jesus",
+      "difficulty": "medium",
+      "question": "What did Jesus call the greatest commandment?",
+      "options": [
+        "Keep the Sabbath",
+        "Love the Lord your God with all your heart, soul, and mind",
+        "Offer sacrifices daily",
+        "Honor your parents"
+      ],
+      "correctIndex": 1,
+      "explanation": "He added that the second is to love your neighbor as yourself.",
+      "reference": "Matthew 22:37-39"
+    },
+    {
+      "id": "jesus-07",
+      "category": "jesus",
+      "difficulty": "easy",
+      "question": "What animal did Jesus ride into Jerusalem on Palm Sunday?",
+      "options": ["A horse", "A camel", "A donkey", "An ox"],
+      "correctIndex": 2,
+      "explanation": "People laid palm branches and cloaks on the road.",
+      "reference": "Matthew 21:1-9"
+    },
+    {
+      "id": "jesus-08",
+      "category": "jesus",
+      "difficulty": "medium",
+      "question": "How many days did Jesus fast in the wilderness before being tempted?",
+      "options": ["7", "12", "3", "40"],
+      "correctIndex": 3,
+      "explanation": "Jesus fasted forty days and nights, and answered every temptation with Scripture.",
+      "reference": "Matthew 4:1-11"
+    },
+    {
+      "id": "jesus-09",
+      "category": "jesus",
+      "difficulty": "medium",
+      "question": "Which woman is recorded as seeing the risen Jesus at the tomb?",
+      "options": ["Mary Magdalene", "Martha", "Salome", "Joanna"],
+      "correctIndex": 0,
+      "explanation": "Jesus appeared to Mary and sent her to tell the disciples.",
+      "reference": "John 20:11-18"
+    },
+    {
+      "id": "jesus-10",
+      "category": "jesus",
+      "difficulty": "easy",
+      "question": "Which parable tells of a son who left home, wasted everything, and was welcomed back by his father?",
+      "options": ["The Good Samaritan", "The Prodigal Son", "The Lost Sheep", "The Sower"],
+      "correctIndex": 1,
+      "explanation": "It shows the Father's forgiving love.",
+      "reference": "Luke 15:11-32"
+    },
+    {
+      "id": "verses-01",
+      "category": "verses",
+      "difficulty": "easy",
+      "question": "Complete John 3:16: 'For God so loved the world, that he gave his only begotten ____'",
+      "options": ["Servant", "Prophet", "Son", "Child"],
+      "correctIndex": 2,
+      "explanation": "Jesus is the gift of God's love.",
+      "reference": "John 3:16"
+    },
+    {
+      "id": "verses-02",
+      "category": "verses",
+      "difficulty": "easy",
+      "question": "Complete Psalm 23:1: 'The LORD is my shepherd; I shall not ____'",
+      "options": ["fall", "fear", "wander", "want"],
+      "correctIndex": 3,
+      "explanation": "God provides everything we need.",
+      "reference": "Psalm 23:1"
+    },
+    {
+      "id": "verses-03",
+      "category": "verses",
+      "difficulty": "easy",
+      "question": "Complete Philippians 4:13: 'I can do all things through ____ which strengtheneth me.'",
+      "options": ["Christ", "faith", "prayer", "hope"],
+      "correctIndex": 0,
+      "explanation": "Our strength comes from Christ.",
+      "reference": "Philippians 4:13"
+    },
+    {
+      "id": "verses-04",
+      "category": "verses",
+      "difficulty": "medium",
+      "question": "Complete Romans 8:28: 'all things work together for ____ to them that love God.'",
+      "options": ["peace", "good", "growth", "joy"],
+      "correctIndex": 1,
+      "explanation": "God works through everything for the good of those who love Him.",
+      "reference": "Romans 8:28"
+    },
+    {
+      "id": "verses-05",
+      "category": "verses",
+      "difficulty": "easy",
+      "question": "Complete Proverbs 3:5: 'Trust in the LORD with all thine ____'",
+      "options": ["mind", "strength", "heart", "soul"],
+      "correctIndex": 2,
+      "explanation": "Trusting God starts with the heart.",
+      "reference": "Proverbs 3:5"
+    },
+    {
+      "id": "verses-06",
+      "category": "verses",
+      "difficulty": "medium",
+      "question": "Complete Matthew 6:33: 'Seek ye first the kingdom of God, and his ____'",
+      "options": ["blessings", "mercy", "glory", "righteousness"],
+      "correctIndex": 3,
+      "explanation": "Putting God first lets other things fall into place.",
+      "reference": "Matthew 6:33"
+    },
+    {
+      "id": "verses-07",
+      "category": "verses",
+      "difficulty": "easy",
+      "question": "Complete Psalm 46:10: 'Be still, and know that I am ____'",
+      "options": ["God", "near", "faithful", "here"],
+      "correctIndex": 0,
+      "explanation": "Stillness helps us remember who God is.",
+      "reference": "Psalm 46:10"
+    },
+    {
+      "id": "verses-08",
+      "category": "verses",
+      "difficulty": "medium",
+      "question": "Complete Isaiah 40:31: 'they that wait upon the LORD shall renew their ____'",
+      "options": ["faith", "strength", "joy", "hope"],
+      "correctIndex": 1,
+      "explanation": "Waiting on God brings new strength.",
+      "reference": "Isaiah 40:31"
+    },
+    {
+      "id": "verses-09",
+      "category": "verses",
+      "difficulty": "medium",
+      "question": "Complete Ephesians 2:8: 'For by grace are ye saved through ____'",
+      "options": ["works", "prayer", "faith", "baptism"],
+      "correctIndex": 2,
+      "explanation": "Salvation is God's gift received by faith.",
+      "reference": "Ephesians 2:8"
+    },
+    {
+      "id": "verses-10",
+      "category": "verses",
+      "difficulty": "medium",
+      "question": "Which of these is NOT listed as a fruit of the Spirit?",
+      "options": ["Joy", "Peace", "Gentleness", "Pride"],
+      "correctIndex": 3,
+      "explanation": "The fruit of the Spirit includes love, joy, peace, gentleness, and more. Pride is not on the list.",
+      "reference": "Galatians 5:22-23"
+    }
+  ]
+}

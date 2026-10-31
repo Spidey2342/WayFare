@@ -1,0 +1,245 @@
+{
+  "id": "identity",
+  "name": "Identity",
+  "tagline": "Know who you are.",
+  "series": "Foundation Series",
+  "description": "Explore the depth of who God says you are. This deck is designed to break down insecurities and build a firm foundation on biblical truth through honest sharing and fun challenges.",
+  "coverColor": "#A29BFE",
+  "icon": null,
+  "difficulty": "fingerprint",
+  "estMinutes": "beginner",
+  "locked": 25,
+  "isPro": false,
+  "translation": "KJV",
+  "cards": [
+    {
+      "id": "identity-w01",
+      "deckId": "identity",
+      "type": "word",
+      "title": "Fearfully & Wonderfully Made",
+      "prompt": "Explain this verse to the group using only 5 words.",
+      "reference": "Psalm 139:14",
+      "body": "I will praise thee; for I am fearfully and wonderfully made: marvellous are thy works; and that my soul knoweth right well.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-w02",
+      "deckId": "identity",
+      "type": "word",
+      "title": "God's Masterpiece",
+      "prompt": "Name one good thing you think God prepared you to do. The group adds one more for you.",
+      "reference": "Ephesians 2:10",
+      "body": "For we are his workmanship, created in Christ Jesus unto good works, which God hath before ordained that we should walk in them.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-w03",
+      "deckId": "identity",
+      "type": "word",
+      "title": "Chosen",
+      "prompt": "Finish the sentence: 'Being chosen by God means...'",
+      "reference": "1 Peter 2:9",
+      "body": "But ye are a chosen generation, a royal priesthood, an holy nation, a peculiar people; that ye should shew forth the praises of him who hath called you out of darkness into his marvellous light:",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-w04",
+      "deckId": "identity",
+      "type": "word",
+      "title": "Brand New",
+      "prompt": "Share one 'old thing' you're glad God is helping you leave behind. Keep it as light or as deep as you like.",
+      "reference": "2 Corinthians 5:17",
+      "body": "Therefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are become new.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-w05",
+      "deckId": "identity",
+      "type": "word",
+      "title": "Set an Example",
+      "prompt": "Pick one area from this verse and say how a young person can lead there today.",
+      "reference": "1 Timothy 4:12",
+      "body": "Let no man despise thy youth; but be thou an example of the believers, in word, in conversation, in charity, in spirit, in faith, in purity.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-q01",
+      "deckId": "identity",
+      "type": "question",
+      "prompt": "What's a compliment you received that you still remember?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "identity-q02",
+      "deckId": "identity",
+      "type": "question",
+      "prompt": "What is something you're naturally good at that people often don't notice?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "identity-q03",
+      "deckId": "identity",
+      "type": "question",
+      "prompt": "Which voice is loudest in your life right now: friends, social media, family, or God? Why?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-q04",
+      "deckId": "identity",
+      "type": "question",
+      "prompt": "When do you feel most like yourself?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-q05",
+      "deckId": "identity",
+      "type": "question",
+      "prompt": "What's one lie about yourself you've believed, and what truth answers it?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "identity-q06",
+      "deckId": "identity",
+      "type": "question",
+      "prompt": "If God described you in one sentence, what do you hope it would be?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "identity-d01",
+      "deckId": "identity",
+      "type": "dare",
+      "title": "Say It Out Loud",
+      "prompt": "Look at the person on your right and tell them one real strength you see in them.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "identity-d02",
+      "deckId": "identity",
+      "type": "dare",
+      "title": "Mirror Truth",
+      "prompt": "Say one true thing about yourself out loud that starts with 'God made me...'",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "identity-d03",
+      "deckId": "identity",
+      "type": "dare",
+      "title": "Name Chain",
+      "prompt": "Say the name of every person in the group and one thing you admire about each, in 60 seconds.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "identity-d04",
+      "deckId": "identity",
+      "type": "dare",
+      "title": "Text a Blessing",
+      "prompt": "Send a short message to someone telling them why they matter.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "identity-d05",
+      "deckId": "identity",
+      "type": "dare",
+      "title": "Pick Your Verse",
+      "prompt": "Choose a verse from this deck that speaks to you today and read it aloud with confidence.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "identity-c01",
+      "deckId": "identity",
+      "type": "challenge",
+      "title": "Strength Spotting",
+      "prompt": "Teams race to write down one strength for every person in the group.",
+      "instruction": "Each team writes one strength per player. The team with the most completed wins.",
+      "timerSeconds": 90,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-c02",
+      "deckId": "identity",
+      "type": "challenge",
+      "title": "Verse Relay",
+      "prompt": "Teams race to find Psalm 139:14, Ephesians 2:10 and 2 Corinthians 5:17 in a real Bible and read each aloud.",
+      "instruction": "Phones away, Bibles out. First team to read all three correctly wins.",
+      "timerSeconds": 120,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-c03",
+      "deckId": "identity",
+      "type": "challenge",
+      "title": "Identity Charades",
+      "prompt": "Act out words about who God says you are: loved, chosen, new, forgiven, made on purpose.",
+      "instruction": "No talking. One team member acts while the team guesses. Most correct wins.",
+      "timerSeconds": 90,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-c04",
+      "deckId": "identity",
+      "type": "challenge",
+      "title": "Two Truths and a Testimony",
+      "prompt": "Share two random facts and one real story of God at work in your life. The group guesses which is the testimony.",
+      "instruction": "The group gets one guess each. Everyone scores if the testimony is guessed correctly.",
+      "timerSeconds": 90,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-t01",
+      "deckId": "identity",
+      "type": "testimony",
+      "prompt": "Share a time you felt God's love in an unexpected way.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-t02",
+      "deckId": "identity",
+      "type": "testimony",
+      "prompt": "Tell about a moment when God reminded you who you are.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-t03",
+      "deckId": "identity",
+      "type": "testimony",
+      "prompt": "Share how someone encouraged you when you felt small.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "identity-t04",
+      "deckId": "identity",
+      "type": "testimony",
+      "prompt": "Tell about something you used to feel ashamed of and how God helped. Share only what feels comfortable.",
+      "points": 1,
+      "difficulty": "medium"
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "id": "courage",
+  "name": "Courage",
+  "tagline": "Face the giants.",
+  "series": "Strength Series",
+  "description": "Fear is real, but so is the God who walks with you. Laugh through fear charades, learn from Bible heroes, and practice small acts of boldness together.",
+  "coverColor": "#FF6B6B",
+  "icon": null,
+  "difficulty": "shield",
+  "estMinutes": "beginner",
+  "locked": 25,
+  "isPro": false,
+  "translation": "KJV",
+  "cards": [
+    {
+      "id": "courage-w01",
+      "deckId": "courage",
+      "type": "word",
+      "title": "Be Strong",
+      "prompt": "Read it like a sports commentator, then say what 'be strong' means to you.",
+      "reference": "Joshua 1:9",
+      "body": "Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-w02",
+      "deckId": "courage",
+      "type": "word",
+      "title": "I Am With You",
+      "prompt": "Name one fear that fits under this verse. The group answers together: 'God is with you.'",
+      "reference": "Isaiah 41:10",
+      "body": "Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-w03",
+      "deckId": "courage",
+      "type": "word",
+      "title": "Whom Shall I Fear?",
+      "prompt": "Rewrite this verse as a one-line text to a friend who is scared.",
+      "reference": "Psalm 27:1",
+      "body": "The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-w04",
+      "deckId": "courage",
+      "type": "word",
+      "title": "Power, Love, Sound Mind",
+      "prompt": "Share one situation this week where you need power, love, or a sound mind.",
+      "reference": "2 Timothy 1:7",
+      "body": "For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-w05",
+      "deckId": "courage",
+      "type": "word",
+      "title": "I Will Trust",
+      "prompt": "Explain this verse to the group using only 5 words.",
+      "reference": "Psalm 56:3",
+      "body": "What time I am afraid, I will trust in thee.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-q01",
+      "deckId": "courage",
+      "type": "question",
+      "prompt": "What's the silliest thing you were afraid of as a kid?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "courage-q02",
+      "deckId": "courage",
+      "type": "question",
+      "prompt": "What's the bravest thing you've ever done?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "courage-q03",
+      "deckId": "courage",
+      "type": "question",
+      "prompt": "Where is it hardest to stand for your faith: school, work, friends, or online? Why?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-q04",
+      "deckId": "courage",
+      "type": "question",
+      "prompt": "What do you do when you feel afraid? Does it help?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-q05",
+      "deckId": "courage",
+      "type": "question",
+      "prompt": "What would you do for God if you knew you couldn't fail?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "courage-q06",
+      "deckId": "courage",
+      "type": "question",
+      "prompt": "What does 'even if He doesn't' (Daniel 3:18) look like in your life?",
+      "points": 1,
+      "difficulty": "deep"
+    },
+    {
+      "id": "courage-d01",
+      "deckId": "courage",
+      "type": "dare",
+      "title": "Boldest Prayer",
+      "prompt": "Pray out loud for the person on your left, even if it's just one sentence.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "courage-d02",
+      "deckId": "courage",
+      "type": "dare",
+      "title": "New Face",
+      "prompt": "Greet someone you haven't met yet today, in person or by message, and ask how you can pray for them.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "courage-d03",
+      "deckId": "courage",
+      "type": "dare",
+      "title": "Speak Up",
+      "prompt": "Share one thing you're proud of about your faith in under 30 seconds.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "courage-d04",
+      "deckId": "courage",
+      "type": "dare",
+      "title": "Fear Out Loud",
+      "prompt": "Say one fear out loud and let the group pray one sentence over it.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "courage-d05",
+      "deckId": "courage",
+      "type": "dare",
+      "title": "Stand Tall",
+      "prompt": "Stand up, take a deep breath, and read Joshua 1:9 aloud with confidence.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "courage-c01",
+      "deckId": "courage",
+      "type": "challenge",
+      "title": "Fear Charades",
+      "prompt": "Act out common fears such as exams, public speaking, bugs, and the dark, without speaking.",
+      "instruction": "One person acts while the team guesses. Most correct in the time wins.",
+      "timerSeconds": 90,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-c02",
+      "deckId": "courage",
+      "type": "challenge",
+      "title": "Trust Walk",
+      "prompt": "One player closes their eyes and is guided around a course by a teammate's voice alone. Then swap.",
+      "instruction": "Clear the path first and keep it safe. Walk slowly. No running.",
+      "timerSeconds": 120,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-c03",
+      "deckId": "courage",
+      "type": "challenge",
+      "title": "Fearless Facts",
+      "prompt": "List as many Bible heroes who faced fear as you can: David, Esther, Daniel, Gideon, Moses...",
+      "instruction": "Teams write names. Most correct names wins.",
+      "timerSeconds": 60,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-c04",
+      "deckId": "courage",
+      "type": "challenge",
+      "title": "Even If Relay",
+      "prompt": "Each player finishes the sentence: 'Even if ..., I will trust God.'",
+      "instruction": "The first team to have every player finish a sentence wins.",
+      "timerSeconds": 60,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-t01",
+      "deckId": "courage",
+      "type": "testimony",
+      "prompt": "Share a time you were afraid and God showed up.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-t02",
+      "deckId": "courage",
+      "type": "testimony",
+      "prompt": "Tell about a time you stood for what's right when it was hard.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-t03",
+      "deckId": "courage",
+      "type": "testimony",
+      "prompt": "Share an answered prayer that took courage to ask.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "courage-t04",
+      "deckId": "courage",
+      "type": "testimony",
+      "prompt": "Tell about someone whose courage inspired your faith.",
+      "points": 1,
+      "difficulty": "medium"
+    }
+  ]
+}

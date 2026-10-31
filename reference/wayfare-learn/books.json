@@ -1,0 +1,596 @@
+[
+  {
+    "id": "genesis",
+    "order": 1,
+    "name": "Genesis",
+    "testament": "old",
+    "group": "Law",
+    "chapters": 50,
+    "summary": "Creation, the fall, Noah, and the beginnings of God's family through Abraham, Isaac, Jacob, and Joseph."
+  },
+  {
+    "id": "exodus",
+    "order": 2,
+    "name": "Exodus",
+    "testament": "old",
+    "group": "Law",
+    "chapters": 40,
+    "summary": "God rescues Israel from slavery in Egypt, gives the Ten Commandments, and builds the tabernacle."
+  },
+  {
+    "id": "leviticus",
+    "order": 3,
+    "name": "Leviticus",
+    "testament": "old",
+    "group": "Law",
+    "chapters": 27,
+    "summary": "Instructions for worship, holiness, and living as God's people."
+  },
+  {
+    "id": "numbers",
+    "order": 4,
+    "name": "Numbers",
+    "testament": "old",
+    "group": "Law",
+    "chapters": 36,
+    "summary": "Israel's years of wandering in the wilderness on the way to the Promised Land."
+  },
+  {
+    "id": "deuteronomy",
+    "order": 5,
+    "name": "Deuteronomy",
+    "testament": "old",
+    "group": "Law",
+    "chapters": 34,
+    "summary": "Moses' final sermons, calling Israel to love and obey God before entering the land."
+  },
+  {
+    "id": "joshua",
+    "order": 6,
+    "name": "Joshua",
+    "testament": "old",
+    "group": "History",
+    "chapters": 24,
+    "summary": "Israel crosses the Jordan, conquers Jericho, and settles the Promised Land."
+  },
+  {
+    "id": "judges",
+    "order": 7,
+    "name": "Judges",
+    "testament": "old",
+    "group": "History",
+    "chapters": 21,
+    "summary": "A cycle of sin, rescue, and return, led by judges like Deborah, Gideon, and Samson."
+  },
+  {
+    "id": "ruth",
+    "order": 8,
+    "name": "Ruth",
+    "testament": "old",
+    "group": "History",
+    "chapters": 4,
+    "summary": "A story of loyalty and redemption as Ruth stays with Naomi and finds a new family."
+  },
+  {
+    "id": "1-samuel",
+    "order": 9,
+    "name": "1 Samuel",
+    "testament": "old",
+    "group": "History",
+    "chapters": 31,
+    "summary": "Samuel, Israel's first king Saul, and the rise of David, who defeats Goliath."
+  },
+  {
+    "id": "2-samuel",
+    "order": 10,
+    "name": "2 Samuel",
+    "testament": "old",
+    "group": "History",
+    "chapters": 24,
+    "summary": "David becomes king, with his greatest victories and his serious failures."
+  },
+  {
+    "id": "1-kings",
+    "order": 11,
+    "name": "1 Kings",
+    "testament": "old",
+    "group": "History",
+    "chapters": 22,
+    "summary": "Solomon builds the temple, then the kingdom splits and Elijah confronts idol worship."
+  },
+  {
+    "id": "2-kings",
+    "order": 12,
+    "name": "2 Kings",
+    "testament": "old",
+    "group": "History",
+    "chapters": 25,
+    "summary": "The decline of both kingdoms, ending in exile for Israel and Judah."
+  },
+  {
+    "id": "1-chronicles",
+    "order": 13,
+    "name": "1 Chronicles",
+    "testament": "old",
+    "group": "History",
+    "chapters": 29,
+    "summary": "A retelling of Israel's story from Adam through David, focused on worship and the temple."
+  },
+  {
+    "id": "2-chronicles",
+    "order": 14,
+    "name": "2 Chronicles",
+    "testament": "old",
+    "group": "History",
+    "chapters": 36,
+    "summary": "The history of Solomon and the kings of Judah, ending with the exile and a promise of return."
+  },
+  {
+    "id": "ezra",
+    "order": 15,
+    "name": "Ezra",
+    "testament": "old",
+    "group": "History",
+    "chapters": 10,
+    "summary": "God's people return from exile and rebuild the temple."
+  },
+  {
+    "id": "nehemiah",
+    "order": 16,
+    "name": "Nehemiah",
+    "testament": "old",
+    "group": "History",
+    "chapters": 13,
+    "summary": "Nehemiah leads the rebuilding of Jerusalem's walls and the renewal of the people."
+  },
+  {
+    "id": "esther",
+    "order": 17,
+    "name": "Esther",
+    "testament": "old",
+    "group": "History",
+    "chapters": 10,
+    "summary": "A young queen risks her life to save her people from destruction."
+  },
+  {
+    "id": "job",
+    "order": 18,
+    "name": "Job",
+    "testament": "old",
+    "group": "Wisdom",
+    "chapters": 42,
+    "summary": "A man loses everything yet wrestles honestly with God about suffering."
+  },
+  {
+    "id": "psalms",
+    "order": 19,
+    "name": "Psalms",
+    "testament": "old",
+    "group": "Wisdom",
+    "chapters": 150,
+    "summary": "150 songs and prayers of praise, lament, trust, and thanksgiving."
+  },
+  {
+    "id": "proverbs",
+    "order": 20,
+    "name": "Proverbs",
+    "testament": "old",
+    "group": "Wisdom",
+    "chapters": 31,
+    "summary": "Short sayings of wisdom for daily life."
+  },
+  {
+    "id": "ecclesiastes",
+    "order": 21,
+    "name": "Ecclesiastes",
+    "testament": "old",
+    "group": "Wisdom",
+    "chapters": 12,
+    "summary": "A reflection on life's meaning, concluding that we should fear God and keep His commands."
+  },
+  {
+    "id": "song-of-solomon",
+    "order": 22,
+    "name": "Song of Solomon",
+    "testament": "old",
+    "group": "Wisdom",
+    "chapters": 8,
+    "summary": "A poetic celebration of love and marriage."
+  },
+  {
+    "id": "isaiah",
+    "order": 23,
+    "name": "Isaiah",
+    "testament": "old",
+    "group": "Major Prophets",
+    "chapters": 66,
+    "summary": "Warnings of judgment and wonderful promises of a coming Servant and Savior."
+  },
+  {
+    "id": "jeremiah",
+    "order": 24,
+    "name": "Jeremiah",
+    "testament": "old",
+    "group": "Major Prophets",
+    "chapters": 52,
+    "summary": "The weeping prophet warns Judah before the exile and promises a new covenant."
+  },
+  {
+    "id": "lamentations",
+    "order": 25,
+    "name": "Lamentations",
+    "testament": "old",
+    "group": "Major Prophets",
+    "chapters": 5,
+    "summary": "Sorrowful poems mourning Jerusalem's fall while holding onto God's faithfulness."
+  },
+  {
+    "id": "ezekiel",
+    "order": 26,
+    "name": "Ezekiel",
+    "testament": "old",
+    "group": "Major Prophets",
+    "chapters": 48,
+    "summary": "Visions of judgment and restoration given to the exiles in Babylon."
+  },
+  {
+    "id": "daniel",
+    "order": 27,
+    "name": "Daniel",
+    "testament": "old",
+    "group": "Major Prophets",
+    "chapters": 12,
+    "summary": "Faithful men in Babylon, including the lions' den, and visions of God's coming kingdom."
+  },
+  {
+    "id": "hosea",
+    "order": 28,
+    "name": "Hosea",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 14,
+    "summary": "God's faithful love for an unfaithful people, pictured through Hosea's marriage."
+  },
+  {
+    "id": "joel",
+    "order": 29,
+    "name": "Joel",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 3,
+    "summary": "A call to repentance after a locust plague and a promise that God's Spirit will be poured out."
+  },
+  {
+    "id": "amos",
+    "order": 30,
+    "name": "Amos",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 9,
+    "summary": "A shepherd calls Israel to justice and genuine worship."
+  },
+  {
+    "id": "obadiah",
+    "order": 31,
+    "name": "Obadiah",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 1,
+    "summary": "A short warning that Edom's pride will fall."
+  },
+  {
+    "id": "jonah",
+    "order": 32,
+    "name": "Jonah",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 4,
+    "summary": "A reluctant prophet runs from God, and God's mercy reaches Nineveh."
+  },
+  {
+    "id": "micah",
+    "order": 33,
+    "name": "Micah",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 7,
+    "summary": "Judgment on injustice, hope in a ruler to be born in Bethlehem, and a call to do justly and love mercy."
+  },
+  {
+    "id": "nahum",
+    "order": 34,
+    "name": "Nahum",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 3,
+    "summary": "The fall of Nineveh shows God's justice."
+  },
+  {
+    "id": "habakkuk",
+    "order": 35,
+    "name": "Habakkuk",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 3,
+    "summary": "A prophet questions God and learns to live by faith."
+  },
+  {
+    "id": "zephaniah",
+    "order": 36,
+    "name": "Zephaniah",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 3,
+    "summary": "A warning of coming judgment and a promise of restoration and joy."
+  },
+  {
+    "id": "haggai",
+    "order": 37,
+    "name": "Haggai",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 2,
+    "summary": "A call to finish rebuilding the temple."
+  },
+  {
+    "id": "zechariah",
+    "order": 38,
+    "name": "Zechariah",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 14,
+    "summary": "Visions of encouragement and prophecies of a coming humble king."
+  },
+  {
+    "id": "malachi",
+    "order": 39,
+    "name": "Malachi",
+    "testament": "old",
+    "group": "Minor Prophets",
+    "chapters": 4,
+    "summary": "The last Old Testament prophet calls God's people back to faithful devotion."
+  },
+  {
+    "id": "matthew",
+    "order": 40,
+    "name": "Matthew",
+    "testament": "new",
+    "group": "Gospels",
+    "chapters": 28,
+    "summary": "Jesus as the promised King, with the Sermon on the Mount and the Great Commission."
+  },
+  {
+    "id": "mark",
+    "order": 41,
+    "name": "Mark",
+    "testament": "new",
+    "group": "Gospels",
+    "chapters": 16,
+    "summary": "A fast-moving account of Jesus as the suffering servant and Son of God."
+  },
+  {
+    "id": "luke",
+    "order": 42,
+    "name": "Luke",
+    "testament": "new",
+    "group": "Gospels",
+    "chapters": 24,
+    "summary": "A detailed, compassionate account of Jesus' life, with many parables."
+  },
+  {
+    "id": "john",
+    "order": 43,
+    "name": "John",
+    "testament": "new",
+    "group": "Gospels",
+    "chapters": 21,
+    "summary": "Jesus as the Word made flesh, with seven signs and the 'I am' statements."
+  },
+  {
+    "id": "acts",
+    "order": 44,
+    "name": "Acts",
+    "testament": "new",
+    "group": "History",
+    "chapters": 28,
+    "summary": "The Holy Spirit comes and the church spreads from Jerusalem to the world."
+  },
+  {
+    "id": "romans",
+    "order": 45,
+    "name": "Romans",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 16,
+    "summary": "Paul explains the gospel: salvation by grace through faith."
+  },
+  {
+    "id": "1-corinthians",
+    "order": 46,
+    "name": "1 Corinthians",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 16,
+    "summary": "Guidance for a divided church, including the chapter on love."
+  },
+  {
+    "id": "2-corinthians",
+    "order": 47,
+    "name": "2 Corinthians",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 13,
+    "summary": "Paul defends his ministry and teaches about strength in weakness."
+  },
+  {
+    "id": "galatians",
+    "order": 48,
+    "name": "Galatians",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 6,
+    "summary": "Freedom in Christ, not by following the law."
+  },
+  {
+    "id": "ephesians",
+    "order": 49,
+    "name": "Ephesians",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 6,
+    "summary": "Our identity in Christ and how to live as one church."
+  },
+  {
+    "id": "philippians",
+    "order": 50,
+    "name": "Philippians",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 4,
+    "summary": "A letter of joy written from prison."
+  },
+  {
+    "id": "colossians",
+    "order": 51,
+    "name": "Colossians",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 4,
+    "summary": "Christ is supreme over everything."
+  },
+  {
+    "id": "1-thessalonians",
+    "order": 52,
+    "name": "1 Thessalonians",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 5,
+    "summary": "Encouragement to stay faithful while waiting for Jesus' return."
+  },
+  {
+    "id": "2-thessalonians",
+    "order": 53,
+    "name": "2 Thessalonians",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 3,
+    "summary": "Clarity and steadiness about the return of Christ."
+  },
+  {
+    "id": "1-timothy",
+    "order": 54,
+    "name": "1 Timothy",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 6,
+    "summary": "Paul advises young Timothy on leading the church."
+  },
+  {
+    "id": "2-timothy",
+    "order": 55,
+    "name": "2 Timothy",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 4,
+    "summary": "Paul's final letter, urging Timothy to stay faithful."
+  },
+  {
+    "id": "titus",
+    "order": 56,
+    "name": "Titus",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 3,
+    "summary": "Instructions for leadership and good works in the church on Crete."
+  },
+  {
+    "id": "philemon",
+    "order": 57,
+    "name": "Philemon",
+    "testament": "new",
+    "group": "Paul's Letters",
+    "chapters": 1,
+    "summary": "A personal appeal to forgive and welcome a runaway slave as a brother."
+  },
+  {
+    "id": "hebrews",
+    "order": 58,
+    "name": "Hebrews",
+    "testament": "new",
+    "group": "General Letters",
+    "chapters": 13,
+    "summary": "Jesus is greater than angels, Moses, and the old covenant."
+  },
+  {
+    "id": "james",
+    "order": 59,
+    "name": "James",
+    "testament": "new",
+    "group": "General Letters",
+    "chapters": 5,
+    "summary": "Faith must show up in action."
+  },
+  {
+    "id": "1-peter",
+    "order": 60,
+    "name": "1 Peter",
+    "testament": "new",
+    "group": "General Letters",
+    "chapters": 5,
+    "summary": "Hope and holy living for believers facing suffering."
+  },
+  {
+    "id": "2-peter",
+    "order": 61,
+    "name": "2 Peter",
+    "testament": "new",
+    "group": "General Letters",
+    "chapters": 3,
+    "summary": "A warning against false teachers and a call to grow in grace."
+  },
+  {
+    "id": "1-john",
+    "order": 62,
+    "name": "1 John",
+    "testament": "new",
+    "group": "General Letters",
+    "chapters": 5,
+    "summary": "Walking in light, loving one another, and knowing we have eternal life."
+  },
+  {
+    "id": "2-john",
+    "order": 63,
+    "name": "2 John",
+    "testament": "new",
+    "group": "General Letters",
+    "chapters": 1,
+    "summary": "A short call to walk in truth and love."
+  },
+  {
+    "id": "3-john",
+    "order": 64,
+    "name": "3 John",
+    "testament": "new",
+    "group": "General Letters",
+    "chapters": 1,
+    "summary": "A thank-you for hospitality and a warning about a self-centered leader."
+  },
+  {
+    "id": "jude",
+    "order": 65,
+    "name": "Jude",
+    "testament": "new",
+    "group": "General Letters",
+    "chapters": 1,
+    "summary": "A call to contend for the faith against false teachers."
+  },
+  {
+    "id": "revelation",
+    "order": 66,
+    "name": "Revelation",
+    "testament": "new",
+    "group": "Prophecy",
+    "chapters": 22,
+    "summary": "Visions of Jesus' victory and the new heaven and new earth."
+  }
+]

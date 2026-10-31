@@ -1,0 +1,133 @@
+{
+  "id": "church-culture",
+  "name": "Church Culture",
+  "tagline": "Hilarious moments and traditions from the pews to the pulpit.",
+  "series": "Community Series",
+  "description": "Laugh together about the traditions, songs, and Sunday moments we all love, then see how God works through them. Warm, funny, and always respectful.",
+  "coverColor": "#1A1C2E",
+  "icon": ["#1A1C2E", "#2B2E4A"],
+  "difficulty": "church",
+  "estMinutes": "beginner",
+  "locked": 20,
+  "isPro": false,
+  "translation": "KJV",
+  "coverGradient": "Popular in Ghana",
+  "cards": [
+    {
+      "id": "church-culture-w01",
+      "deckId": "church-culture",
+      "type": "word",
+      "title": "Dwelling Together",
+      "prompt": "Share your favorite thing about being with your church family.",
+      "reference": "Psalm 133:1",
+      "body": "Behold, how good and how pleasant it is for brethren to dwell together in unity!",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "church-culture-w02",
+      "deckId": "church-culture",
+      "type": "word",
+      "title": "Don't Skip Church",
+      "prompt": "Give one reason showing up together matters, in 10 seconds.",
+      "reference": "Hebrews 10:25",
+      "body": "Not forsaking the assembling of ourselves together, as the manner of some is; but exhorting one another: and so much the more, as ye see the day approaching.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "church-culture-w03",
+      "deckId": "church-culture",
+      "type": "word",
+      "title": "Joyful Noise",
+      "prompt": "Hum or tap the beat of a favorite worship song and say why it matters to you.",
+      "reference": "Psalm 100:1-2",
+      "body": "Make a joyful noise unto the LORD, all ye lands. Serve the LORD with gladness: come before his presence with singing.",
+      "timerSeconds": 45,
+      "points": 2,
+      "difficulty": "medium"
+    },
+    {
+      "id": "church-culture-q01",
+      "deckId": "church-culture",
+      "type": "question",
+      "prompt": "What's the funniest (and respectful!) thing you've seen happen at a church service?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "church-culture-q02",
+      "deckId": "church-culture",
+      "type": "question",
+      "prompt": "What's your favorite part of Sunday: the music, the food, the people, or the Sunday best outfits?",
+      "points": 1,
+      "difficulty": "light"
+    },
+    {
+      "id": "church-culture-q03",
+      "deckId": "church-culture",
+      "type": "question",
+      "prompt": "Which church tradition do you love most, and what does it teach you about God?",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "church-culture-d01",
+      "deckId": "church-culture",
+      "type": "dare",
+      "title": "Praise Break",
+      "prompt": "Lead the group in a 20-second praise moment: clap, sing, or say 'Hallelujah' your favorite way.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "church-culture-d02",
+      "deckId": "church-culture",
+      "type": "dare",
+      "title": "Choir Director",
+      "prompt": "Pick a worship song and lead the group in the first line. Everyone joins in.",
+      "points": 2,
+      "difficulty": "light"
+    },
+    {
+      "id": "church-culture-c01",
+      "deckId": "church-culture",
+      "type": "challenge",
+      "title": "Name That Tune",
+      "prompt": "One person hums a worship song while their team guesses the title.",
+      "instruction": "No words allowed. Most correct songs wins.",
+      "timerSeconds": 90,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "church-culture-c02",
+      "deckId": "church-culture",
+      "type": "challenge",
+      "title": "Sermon in 30 Seconds",
+      "prompt": "Each team gets a verse and delivers a funny, respectful 30-second mini-sermon with one clear lesson.",
+      "instruction": "The group votes on the best sermon.",
+      "timerSeconds": 120,
+      "points": 3,
+      "difficulty": "medium"
+    },
+    {
+      "id": "church-culture-t01",
+      "deckId": "church-culture",
+      "type": "testimony",
+      "prompt": "Share a church memory that made you laugh and also helped your faith.",
+      "points": 1,
+      "difficulty": "medium"
+    },
+    {
+      "id": "church-culture-t02",
+      "deckId": "church-culture",
+      "type": "testimony",
+      "prompt": "Share a time your church family showed up for you.",
+      "points": 1,
+      "difficulty": "medium"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { getDeck, toEngineCards } from '@/features/decks/repository';
 import { storage } from '@/services/storage';
-import { previewCards } from '@/data/previewCards';
 
 import {
   completeCard,
@@ -19,7 +19,9 @@ import type { CompleteInput, DiceFace, GameMode, Session } from './types';
 interface SessionState {
   session: Session | null;
   lastDice: DiceFace | null;
+  deckId: string | null;
   start: (input: {
+    deckId: string;
     mode: GameMode;
     minutes: number;
     players: { id: string; name: string; teamId?: string }[];
@@ -42,8 +44,13 @@ export const useSessionStore = create<SessionState>()(
     (set, get) => ({
       session: null,
       lastDice: null,
+      deckId: null,
       lastError: null,
       start: (input) => {
+        const deck = getDeck(input.deckId);
+        if (!deck) throw new Error('This deck is not available.');
+        if (deck.locked) throw new Error('This deck is locked.');
+        const cards = toEngineCards(deck);
         const id = `s_${Date.now().toString(36)}`;
         const session = createSession(
           {
@@ -51,13 +58,13 @@ export const useSessionStore = create<SessionState>()(
             mode: input.mode,
             players: input.players,
             teams: input.teams,
-            cards: previewCards,
+            cards,
             roundLengthMinutes: input.minutes,
             now: new Date().toISOString(),
           },
           mulberry32(Date.now() % 100000),
         );
-        set({ session, lastDice: null, lastError: null });
+        set({ session, deckId: input.deckId, lastDice: null, lastError: null });
         return id;
       },
       draw: () => {
@@ -114,13 +121,17 @@ export const useSessionStore = create<SessionState>()(
         return face;
       },
       clearDice: () => set({ lastDice: null }),
-      clear: () => set({ session: null, lastDice: null, lastError: null }),
+      clear: () => set({ session: null, lastDice: null, deckId: null, lastError: null }),
     }),
     {
       name: 'wayfare.session',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => storage),
-      partialize: (state) => ({ session: state.session, lastDice: state.lastDice }),
+      partialize: (state) => ({
+        session: state.session,
+        lastDice: state.lastDice,
+        deckId: state.deckId,
+      }),
     },
   ),
 );

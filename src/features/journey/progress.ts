@@ -35,6 +35,9 @@ export interface GameProgress {
   weeklyCompleted: boolean;
   weeklyWeekKey: string;
   lastAppliedSessionId: string | null;
+  completedLessons: string[];
+  booksRead: string[];
+  quizzesCompleted: number;
 }
 
 export interface SessionAward {
@@ -68,6 +71,9 @@ export function defaultProgress(now = new Date()): GameProgress {
     weeklyCompleted: false,
     weeklyWeekKey: weekKey(now),
     lastAppliedSessionId: null,
+    completedLessons: [],
+    booksRead: [],
+    quizzesCompleted: 0,
   };
 }
 
@@ -97,6 +103,9 @@ function ruleMet(rule: string, progress: GameProgress, award: SessionAward | nul
   if (kind === 'service') return progress.actsOfService >= amount;
   if (kind === 'xp') return progress.xp >= amount;
   if (kind === 'weekly') return progress.weeklyCompleted;
+  if (kind === 'lessons') return progress.completedLessons.length >= amount;
+  if (kind === 'books') return progress.booksRead.length >= amount;
+  if (kind === 'quiz') return progress.quizzesCompleted >= amount;
   if (kind === 'card') {
     const totals: Record<string, number> = {
       word: progress.wordCards,
@@ -149,6 +158,41 @@ export function applySession(progress: GameProgress, award: SessionAward, now: D
     lastAppliedSessionId: award.id,
   };
   return withBadges(next, award);
+}
+
+export function applyLessonComplete(
+  progress: GameProgress,
+  lessonId: string,
+  now: Date,
+): GameProgress {
+  if (progress.completedLessons.includes(lessonId)) return progress;
+  const next: GameProgress = {
+    ...progress,
+    completedLessons: [...progress.completedLessons, lessonId],
+    xp: progress.xp + 15,
+    streakDays: nextStreak(progress.lastPlayedDate, progress.streakDays, now),
+    lastPlayedDate: localDateKey(now),
+  };
+  return withBadges(next, null);
+}
+
+export function toggleBookRead(progress: GameProgress, bookId: string): GameProgress {
+  const read = new Set(progress.booksRead);
+  if (read.has(bookId)) read.delete(bookId);
+  else read.add(bookId);
+  const next = { ...progress, booksRead: [...read] };
+  return withBadges(next, null);
+}
+
+export function applyQuizComplete(progress: GameProgress, now: Date): GameProgress {
+  const next: GameProgress = {
+    ...progress,
+    quizzesCompleted: progress.quizzesCompleted + 1,
+    xp: progress.xp + 10,
+    streakDays: nextStreak(progress.lastPlayedDate, progress.streakDays, now),
+    lastPlayedDate: localDateKey(now),
+  };
+  return withBadges(next, null);
 }
 
 export function completeWeekly(progress: GameProgress, now: Date): GameProgress {

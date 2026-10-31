@@ -1,26 +1,170 @@
 [
-  { "id": "first-step", "name": "First Step", "description": "Finish your first session.", "icon": "👣", "rule": "sessions:1" },
-  { "id": "scripture-seeker", "name": "Scripture Seeker", "description": "Sit with a Word card.", "icon": "📖", "rule": "card:word:1" },
-  { "id": "hot-start", "name": "Hot Start", "description": "Finish three cards in one session.", "icon": "🔥", "rule": "sessionCards:3" },
-  { "id": "team-player", "name": "Team Player", "description": "Play a pass-the-phone session.", "icon": "📱", "rule": "mode:pass" },
-  { "id": "team-titan", "name": "Team Titan", "description": "Finish a team-mode session.", "icon": "🤝", "rule": "mode:team" },
-  { "id": "peacemaker", "name": "Peacemaker", "description": "Finish a session with full unity.", "icon": "🕊️", "rule": "unity:100" },
-  { "id": "kingdom-builder", "name": "Kingdom Builder", "description": "Finish five sessions.", "icon": "🏛️", "rule": "sessions:5" },
-  { "id": "steady-heart", "name": "Steady Heart", "description": "Keep a 3-day streak.", "icon": "💛", "rule": "streak:3" },
-  { "id": "week-keeper", "name": "Week Keeper", "description": "Keep a 7-day streak.", "icon": "📅", "rule": "streak:7" },
-  { "id": "faithful-path", "name": "Faithful Path", "description": "Keep a 12-day streak.", "icon": "🛤️", "rule": "streak:12" },
-  { "id": "question-asker", "name": "Question Asker", "description": "Answer five question cards.", "icon": "💬", "rule": "card:question:5" },
-  { "id": "gentle-dare", "name": "Gentle Dare", "description": "Complete three kind dares.", "icon": "🌟", "rule": "card:dare:3" },
-  { "id": "clash-ready", "name": "Clash Ready", "description": "Take on a challenge card.", "icon": "⚔️", "rule": "card:challenge:1" },
-  { "id": "testimony-bearer", "name": "Testimony Bearer", "description": "Share or hear a testimony card.", "icon": "✨", "rule": "card:testimony:1" },
-  { "id": "servant-hands", "name": "Servant Hands", "description": "Record an act of service.", "icon": "🙌", "rule": "service:1" },
-  { "id": "open-hands", "name": "Open Hands", "description": "Record five acts of service.", "icon": "🤍", "rule": "service:5" },
-  { "id": "card-collector", "name": "Card Collector", "description": "Play ten cards.", "icon": "🃏", "rule": "cards:10" },
-  { "id": "seasoned", "name": "Seasoned", "description": "Play twenty-five cards.", "icon": "🌿", "rule": "cards:25" },
-  { "id": "disciple-mark", "name": "Disciple Mark", "description": "Reach Disciple.", "icon": "✝️", "rule": "xp:180" },
-  { "id": "encourager", "name": "The Encourager", "description": "Complete the weekly challenge.", "icon": "🌻", "rule": "weekly" },
-  { "id": "circle-keeper", "name": "Circle Keeper", "description": "Finish a session at 80% unity or more.", "icon": "⭕", "rule": "unity:80" },
-  { "id": "word-dweller", "name": "Word Dweller", "description": "Sit with five Word cards.", "icon": "📜", "rule": "card:word:5" },
-  { "id": "journey-starter", "name": "Journey Starter", "description": "Finish a journey-mode session.", "icon": "🧭", "rule": "mode:journey" },
-  { "id": "leaders-light", "name": "Leader's Light", "description": "Reach Leader.", "icon": "🌅", "rule": "xp:400" }
+  {
+    "id": "first-step",
+    "name": "First Step",
+    "description": "Finish your first session.",
+    "icon": "footprints",
+    "rule": "sessions:1"
+  },
+  {
+    "id": "scripture-seeker",
+    "name": "Scripture Seeker",
+    "description": "Complete your first lesson.",
+    "icon": "book-open",
+    "rule": "lessons:1"
+  },
+  {
+    "id": "hot-start",
+    "name": "Hot Start",
+    "description": "Finish three cards in one session.",
+    "icon": "flame",
+    "rule": "sessionCards:3"
+  },
+  {
+    "id": "team-player",
+    "name": "Team Player",
+    "description": "Play a pass-the-phone session.",
+    "icon": "smartphone",
+    "rule": "mode:pass"
+  },
+  {
+    "id": "team-titan",
+    "name": "Team Titan",
+    "description": "Finish a team-mode session.",
+    "icon": "users",
+    "rule": "mode:team"
+  },
+  {
+    "id": "peacemaker",
+    "name": "Peacemaker",
+    "description": "Finish a session with full unity.",
+    "icon": "heart",
+    "rule": "unity:100"
+  },
+  {
+    "id": "kingdom-builder",
+    "name": "Kingdom Builder",
+    "description": "Finish five sessions.",
+    "icon": "landmark",
+    "rule": "sessions:5"
+  },
+  {
+    "id": "steady-heart",
+    "name": "Steady Heart",
+    "description": "Keep a 3-day streak.",
+    "icon": "heart",
+    "rule": "streak:3"
+  },
+  {
+    "id": "week-keeper",
+    "name": "Week Keeper",
+    "description": "Keep a 7-day streak.",
+    "icon": "calendar",
+    "rule": "streak:7"
+  },
+  {
+    "id": "faithful-path",
+    "name": "Faithful Path",
+    "description": "Keep a 12-day streak.",
+    "icon": "map-pin",
+    "rule": "streak:12"
+  },
+  {
+    "id": "question-asker",
+    "name": "Question Asker",
+    "description": "Answer five question cards.",
+    "icon": "message-circle",
+    "rule": "card:question:5"
+  },
+  {
+    "id": "gentle-dare",
+    "name": "Gentle Dare",
+    "description": "Complete three kind dares.",
+    "icon": "star",
+    "rule": "card:dare:3"
+  },
+  {
+    "id": "clash-ready",
+    "name": "Clash Ready",
+    "description": "Take on a challenge card.",
+    "icon": "swords",
+    "rule": "card:challenge:1"
+  },
+  {
+    "id": "testimony-bearer",
+    "name": "Testimony Bearer",
+    "description": "Share or hear a testimony card.",
+    "icon": "sparkles",
+    "rule": "card:testimony:1"
+  },
+  {
+    "id": "servant-hands",
+    "name": "Servant Hands",
+    "description": "Record an act of service.",
+    "icon": "hand-heart",
+    "rule": "service:1"
+  },
+  {
+    "id": "open-hands",
+    "name": "Open Hands",
+    "description": "Record five acts of service.",
+    "icon": "hand-heart",
+    "rule": "service:5"
+  },
+  {
+    "id": "quiz-whiz",
+    "name": "Quiz Whiz",
+    "description": "Finish a Bible quiz.",
+    "icon": "star",
+    "rule": "quiz:1"
+  },
+  {
+    "id": "seasoned",
+    "name": "Seasoned",
+    "description": "Play twenty-five cards.",
+    "icon": "leaf",
+    "rule": "cards:25"
+  },
+  {
+    "id": "disciple-mark",
+    "name": "Disciple Mark",
+    "description": "Reach Disciple.",
+    "icon": "cross",
+    "rule": "xp:180"
+  },
+  {
+    "id": "encourager",
+    "name": "The Encourager",
+    "description": "Complete the weekly challenge.",
+    "icon": "sun",
+    "rule": "weekly"
+  },
+  {
+    "id": "circle-keeper",
+    "name": "Circle Keeper",
+    "description": "Finish a session at 80% unity or more.",
+    "icon": "circle",
+    "rule": "unity:80"
+  },
+  {
+    "id": "word-dweller",
+    "name": "Word Dweller",
+    "description": "Sit with five Word cards.",
+    "icon": "book-open",
+    "rule": "card:word:5"
+  },
+  {
+    "id": "path-finisher",
+    "name": "Path Finisher",
+    "description": "Complete every lesson path.",
+    "icon": "compass",
+    "rule": "lessons:12"
+  },
+  {
+    "id": "book-explorer",
+    "name": "Book Explorer",
+    "description": "Mark ten Bible books as read.",
+    "icon": "layers-3",
+    "rule": "books:10"
+  }
 ]
