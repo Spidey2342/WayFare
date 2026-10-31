@@ -33,7 +33,7 @@ export default function DecksScreen() {
   };
 
   return (
-    <Screen>
+    <Screen background={palette.offWhite} gutter={palette.offWhite}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Explore Decks</Text>
         <SegmentedTabs<DeckSegment>

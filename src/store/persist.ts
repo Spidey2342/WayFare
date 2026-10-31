@@ -1,4 +1,5 @@
 import { defaultProgress, type GameProgress } from '@/features/journey/progress';
+import { sanitizeBadgesEarned } from '@/features/journey/badgeMigration';
 import type { ThemePreference } from '@/theme';
 
 export interface Profile {
@@ -19,7 +20,7 @@ export interface PersistedApp {
   progress: GameProgress;
 }
 
-export const STORE_VERSION = 3;
+export const STORE_VERSION = 4;
 
 export function defaultPersisted(): PersistedApp {
   return {
@@ -67,11 +68,15 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
   const record = persisted as Record<string, unknown>;
   if (fromVersion > STORE_VERSION) return base;
 
+  const themePreference = isPreference(record.themePreference)
+    ? record.themePreference
+    : base.themePreference;
+
+  const progress = readProgress(record.progress, base.progress, fromVersion);
+
   return {
     ...base,
-    themePreference: isPreference(record.themePreference)
-      ? record.themePreference
-      : base.themePreference,
+    themePreference,
     onboarded: record.onboarded === true,
     preferredMode:
       record.preferredMode === 'pass' || record.preferredMode === 'team'
@@ -83,7 +88,7 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
     foundingMember: record.foundingMember === true,
     notifyInterest: record.notifyInterest === true,
     favoriteDeckIds: readStringList(record.favoriteDeckIds),
-    progress: readProgress(record.progress, base.progress),
+    progress,
   };
 }
 
@@ -92,9 +97,11 @@ function readCount(record: Record<string, unknown>, key: string): number {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : 0;
 }
 
-function readProgress(value: unknown, fallback: GameProgress): GameProgress {
+function readProgress(value: unknown, fallback: GameProgress, _fromVersion: number): GameProgress {
   if (!value || typeof value !== 'object') return fallback;
   const record = value as Record<string, unknown>;
+  const badgesEarned = sanitizeBadgesEarned(readStringList(record.badgesEarned));
+
   return {
     xp: readCount(record, 'xp'),
     streakDays: readCount(record, 'streakDays'),
@@ -103,7 +110,7 @@ function readProgress(value: unknown, fallback: GameProgress): GameProgress {
     actsOfService: readCount(record, 'actsOfService'),
     sessionsCompleted: readCount(record, 'sessionsCompleted'),
     completedWeeks: readStringList(record.completedWeeks),
-    badgesEarned: readStringList(record.badgesEarned),
+    badgesEarned,
     wordCards: readCount(record, 'wordCards'),
     questionCards: readCount(record, 'questionCards'),
     dareCards: readCount(record, 'dareCards'),

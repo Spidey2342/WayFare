@@ -27,7 +27,7 @@ export default function HomeScreen() {
     progress.completedLessons.length === 0 ? 0 : Math.min(1, progress.completedLessons.length / 12);
 
   return (
-    <Screen>
+    <Screen background={palette.offWhite} gutter={palette.offWhite}>
       <ScrollView contentContainerStyle={styles.content}>
         {!online ? (
           <Text style={styles.offline}>You are offline. Saved decks and Learn still work.</Text>
@@ -35,7 +35,7 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View>
             <Text style={[styles.hello, { color: colors.textSecondary }]}>{greeting()}</Text>
-            <Text style={[styles.name, { color: colors.textPrimary }]}>Hello, {name}!</Text>
+            <Text style={[styles.name, { color: colors.textPrimary }]}>Hello, {name}! 👋</Text>
           </View>
           <Avatar name={name} color={color} size={48} />
         </View>
@@ -152,12 +152,14 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 120 },
   offline: {
-    backgroundColor: palette.midnight,
-    color: palette.white,
+    backgroundColor: palette.tealSoft,
+    color: palette.ink,
     fontFamily: fontFamily.bodyMedium,
     padding: spacing.sm,
     borderRadius: radii.md,
     textAlign: 'center',
+    borderWidth: 1,
+    borderColor: palette.teal,
   },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   hello: { ...typeScale.bodyS },

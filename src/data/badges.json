@@ -4,6 +4,7 @@
     "name": "First Step",
     "description": "Finish your first session.",
     "icon": "footprints",
+    "color": "gold",
     "rule": "sessions:1"
   },
   {
@@ -11,6 +12,7 @@
     "name": "Scripture Seeker",
     "description": "Complete your first lesson.",
     "icon": "book-open",
+    "color": "teal",
     "rule": "lessons:1"
   },
   {
@@ -18,6 +20,7 @@
     "name": "Hot Start",
     "description": "Finish three cards in one session.",
     "icon": "flame",
+    "color": "coral",
     "rule": "sessionCards:3"
   },
   {
@@ -25,20 +28,23 @@
     "name": "Team Player",
     "description": "Play a pass-the-phone session.",
     "icon": "smartphone",
+    "color": "blue",
     "rule": "mode:pass"
   },
   {
     "id": "team-titan",
     "name": "Team Titan",
     "description": "Finish a team-mode session.",
-    "icon": "users",
+    "icon": "shield",
+    "color": "purple",
     "rule": "mode:team"
   },
   {
     "id": "peacemaker",
     "name": "Peacemaker",
     "description": "Finish a session with full unity.",
-    "icon": "heart",
+    "icon": "dove",
+    "color": "teal",
     "rule": "unity:100"
   },
   {
@@ -46,6 +52,7 @@
     "name": "Kingdom Builder",
     "description": "Finish five sessions.",
     "icon": "landmark",
+    "color": "gold",
     "rule": "sessions:5"
   },
   {
@@ -53,34 +60,39 @@
     "name": "Steady Heart",
     "description": "Keep a 3-day streak.",
     "icon": "heart",
+    "color": "coral",
     "rule": "streak:3"
   },
   {
     "id": "week-keeper",
     "name": "Week Keeper",
     "description": "Keep a 7-day streak.",
-    "icon": "calendar",
+    "icon": "calendar-check",
+    "color": "blue",
     "rule": "streak:7"
   },
   {
     "id": "faithful-path",
     "name": "Faithful Path",
     "description": "Keep a 12-day streak.",
-    "icon": "map-pin",
+    "icon": "route",
+    "color": "purple",
     "rule": "streak:12"
   },
   {
     "id": "question-asker",
     "name": "Question Asker",
     "description": "Answer five question cards.",
-    "icon": "message-circle",
+    "icon": "message-circle-question",
+    "color": "teal",
     "rule": "card:question:5"
   },
   {
     "id": "gentle-dare",
     "name": "Gentle Dare",
     "description": "Complete three kind dares.",
-    "icon": "star",
+    "icon": "feather",
+    "color": "coral",
     "rule": "card:dare:3"
   },
   {
@@ -88,6 +100,7 @@
     "name": "Clash Ready",
     "description": "Take on a challenge card.",
     "icon": "swords",
+    "color": "blue",
     "rule": "card:challenge:1"
   },
   {
@@ -95,6 +108,7 @@
     "name": "Testimony Bearer",
     "description": "Share or hear a testimony card.",
     "icon": "sparkles",
+    "color": "purple",
     "rule": "card:testimony:1"
   },
   {
@@ -102,6 +116,7 @@
     "name": "Servant Hands",
     "description": "Record an act of service.",
     "icon": "hand-heart",
+    "color": "gold",
     "rule": "service:1"
   },
   {
@@ -109,6 +124,7 @@
     "name": "Open Hands",
     "description": "Record five acts of service.",
     "icon": "hand-heart",
+    "color": "teal",
     "rule": "service:5"
   },
   {
@@ -116,6 +132,7 @@
     "name": "Quiz Whiz",
     "description": "Finish a Bible quiz.",
     "icon": "star",
+    "color": "blue",
     "rule": "quiz:1"
   },
   {
@@ -123,6 +140,7 @@
     "name": "Seasoned",
     "description": "Play twenty-five cards.",
     "icon": "leaf",
+    "color": "purple",
     "rule": "cards:25"
   },
   {
@@ -130,6 +148,7 @@
     "name": "Disciple Mark",
     "description": "Reach Disciple.",
     "icon": "cross",
+    "color": "gold",
     "rule": "xp:180"
   },
   {
@@ -137,6 +156,7 @@
     "name": "The Encourager",
     "description": "Complete the weekly challenge.",
     "icon": "sun",
+    "color": "coral",
     "rule": "weekly"
   },
   {
@@ -144,6 +164,7 @@
     "name": "Circle Keeper",
     "description": "Finish a session at 80% unity or more.",
     "icon": "circle",
+    "color": "teal",
     "rule": "unity:80"
   },
   {
@@ -151,6 +172,7 @@
     "name": "Word Dweller",
     "description": "Sit with five Word cards.",
     "icon": "book-open",
+    "color": "blue",
     "rule": "card:word:5"
   },
   {
@@ -158,6 +180,7 @@
     "name": "Path Finisher",
     "description": "Complete every lesson path.",
     "icon": "compass",
+    "color": "purple",
     "rule": "lessons:12"
   },
   {
@@ -165,6 +188,7 @@
     "name": "Book Explorer",
     "description": "Mark ten Bible books as read.",
     "icon": "layers-3",
+    "color": "gold",
     "rule": "books:10"
   }
 ]

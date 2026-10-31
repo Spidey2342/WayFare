@@ -1,13 +1,34 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { fontFamily, radii, spacing, useTheme } from '@/theme';
+import { fontFamily, palette, radii, shadows, spacing, useTheme } from '@/theme';
 
-export function StatTile({ value, label }: { value: string; label: string }) {
+export function StatTile({
+  value,
+  label,
+  surface = 'theme',
+}: {
+  value: string;
+  label: string;
+  surface?: 'theme' | 'light';
+}) {
   const { colors } = useTheme();
+  const light = surface === 'light';
+
   return (
-    <View style={[styles.tile, { backgroundColor: colors.surface }]}>
-      <Text style={[styles.value, { color: colors.textPrimary }]}>{value}</Text>
-      <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
+    <View
+      style={[
+        styles.tile,
+        light
+          ? { backgroundColor: palette.white, ...shadows.soft }
+          : { backgroundColor: colors.surface },
+      ]}
+    >
+      <Text style={[styles.value, { color: light ? palette.ink : colors.textPrimary }]}>
+        {value}
+      </Text>
+      <Text style={[styles.label, { color: light ? palette.warmGray : colors.textSecondary }]}>
+        {label}
+      </Text>
     </View>
   );
 }

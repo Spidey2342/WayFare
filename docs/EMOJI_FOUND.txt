@@ -1,0 +1,120 @@
+# Emoji scan
+
+Files scanned: 158
+Total emoji hits: 56
+Violations (outside allowlist): 0
+
+## All matches
+
+app/(tabs)/home.tsx:38:86 "👋"
+  <Text style={[styles.name, { color: colors.textPrimary }]}>Hello, {name}! 👋</Text>
+app/share.tsx:14:79 "🙌"
+  const [caption, setCaption] = useState('God met us around the table tonight. 🙌');
+scripts/emoji-allowlist.json:2:18 "👋"
+  "characters": ["👋", "🙌"],
+scripts/emoji-allowlist.json:2:24 "🙌"
+  "characters": ["👋", "🙌"],
+scripts/emoji-allowlist.json:8:13 "👋"
+  "Hello,.*👋",
+scripts/emoji-allowlist.json:9:17 "🙌"
+  "God met us.*🙌"
+src/data/legacy-emoji-map.json:3:5 "👣"
+  "👣": "footprints",
+src/data/legacy-emoji-map.json:4:5 "📖"
+  "📖": "book-open",
+src/data/legacy-emoji-map.json:5:5 "🔥"
+  "🔥": "flame",
+src/data/legacy-emoji-map.json:6:5 "📱"
+  "📱": "smartphone",
+src/data/legacy-emoji-map.json:7:5 "🤝"
+  "🤝": "users",
+src/data/legacy-emoji-map.json:8:5 "🛡"
+  "🛡": "shield",
+src/data/legacy-emoji-map.json:9:5 "🛡"
+  "🛡️": "shield",
+src/data/legacy-emoji-map.json:9:7 "️"
+  "🛡️": "shield",
+src/data/legacy-emoji-map.json:10:5 "🕊"
+  "🕊": "dove",
+src/data/legacy-emoji-map.json:11:5 "🕊"
+  "🕊️": "dove",
+src/data/legacy-emoji-map.json:11:7 "️"
+  "🕊️": "dove",
+src/data/legacy-emoji-map.json:12:5 "🏛"
+  "🏛": "landmark",
+src/data/legacy-emoji-map.json:13:5 "🏛"
+  "🏛️": "landmark",
+src/data/legacy-emoji-map.json:13:7 "️"
+  "🏛️": "landmark",
+src/data/legacy-emoji-map.json:14:5 "❤"
+  "❤": "heart",
+src/data/legacy-emoji-map.json:15:5 "❤"
+  "❤️": "heart",
+src/data/legacy-emoji-map.json:15:6 "️"
+  "❤️": "heart",
+src/data/legacy-emoji-map.json:16:5 "📅"
+  "📅": "calendar-check",
+src/data/legacy-emoji-map.json:17:5 "🗺"
+  "🗺": "route",
+src/data/legacy-emoji-map.json:18:5 "🗺"
+  "🗺️": "route",
+src/data/legacy-emoji-map.json:18:7 "️"
+  "🗺️": "route",
+src/data/legacy-emoji-map.json:19:5 "💬"
+  "💬": "message-circle-question",
+src/data/legacy-emoji-map.json:20:5 "✨"
+  "✨": "sparkles",
+src/data/legacy-emoji-map.json:21:5 "⭐"
+  "⭐": "star",
+src/data/legacy-emoji-map.json:22:5 "📚"
+  "📚": "layers-3",
+src/data/legacy-emoji-map.json:23:5 "🏆"
+  "🏆": "award"
+src/data/legacy-emoji-map.json:26:5 "👣"
+  "👣": "first-step",
+src/data/legacy-emoji-map.json:27:5 "📖"
+  "📖": "scripture-seeker",
+src/data/legacy-emoji-map.json:28:5 "🔥"
+  "🔥": "hot-start",
+src/data/legacy-emoji-map.json:29:5 "📱"
+  "📱": "team-player",
+src/data/legacy-emoji-map.json:30:5 "🤝"
+  "🤝": "team-titan",
+src/data/legacy-emoji-map.json:31:5 "🛡"
+  "🛡": "team-titan",
+src/data/legacy-emoji-map.json:32:5 "🛡"
+  "🛡️": "team-titan",
+src/data/legacy-emoji-map.json:32:7 "️"
+  "🛡️": "team-titan",
+src/data/legacy-emoji-map.json:33:5 "🕊"
+  "🕊": "peacemaker",
+src/data/legacy-emoji-map.json:34:5 "🕊"
+  "🕊️": "peacemaker",
+src/data/legacy-emoji-map.json:34:7 "️"
+  "🕊️": "peacemaker",
+src/data/legacy-emoji-map.json:35:5 "🏛"
+  "🏛": "kingdom-builder",
+src/data/legacy-emoji-map.json:36:5 "🏛"
+  "🏛️": "kingdom-builder",
+src/data/legacy-emoji-map.json:36:7 "️"
+  "🏛️": "kingdom-builder",
+src/data/legacy-emoji-map.json:37:5 "❤"
+  "❤": "steady-heart",
+src/data/legacy-emoji-map.json:38:5 "❤"
+  "❤️": "steady-heart",
+src/data/legacy-emoji-map.json:38:6 "️"
+  "❤️": "steady-heart",
+src/data/legacy-emoji-map.json:39:5 "📅"
+  "📅": "week-keeper",
+src/data/legacy-emoji-map.json:40:5 "🗺"
+  "🗺": "faithful-path",
+src/data/legacy-emoji-map.json:41:5 "🗺"
+  "🗺️": "faithful-path",
+src/data/legacy-emoji-map.json:41:7 "️"
+  "🗺️": "faithful-path",
+src/data/legacy-emoji-map.json:42:5 "💬"
+  "💬": "question-asker",
+src/data/legacy-emoji-map.json:43:5 "✨"
+  "✨": "testimony-bearer",
+src/data/legacy-emoji-map.json:44:5 "⭐"
+  "⭐": "quiz-whiz"

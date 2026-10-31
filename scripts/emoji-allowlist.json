@@ -1,0 +1,11 @@
+{
+  "characters": ["👋", "🙌"],
+  "files": [
+    "app/(tabs)/home.tsx",
+    "app/share.tsx"
+  ],
+  "patterns": [
+    "Hello,.*👋",
+    "God met us.*🙌"
+  ]
+}

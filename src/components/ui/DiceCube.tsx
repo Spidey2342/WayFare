@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Sparkles } from 'lucide-react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -10,7 +11,7 @@ import Animated, {
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { fontFamily, palette, radii } from '@/theme';
 
-const faces = ['·', '··', '···', '····', '·····', '✶'] as const;
+const dotFaces = ['·', '··', '···', '····', '·····'] as const;
 
 export function DiceCube({
   face,
@@ -36,13 +37,21 @@ export function DiceCube({
     transform: [{ rotate: `${spin.value}deg` }, { scale: rolling && !reduced ? 0.96 : 1 }],
   }));
 
-  const index = Math.min(faces.length - 1, Math.max(0, face - 1));
-  const glyph = faces[index] ?? '·';
+  const bless = face >= 6;
 
   return (
     <Pressable accessibilityRole="button" accessibilityLabel="Roll the dice" onPress={onPress}>
       <Animated.View style={[styles.cube, style]}>
-        <Text style={styles.pips}>{glyph}</Text>
+        {bless ? (
+          <View style={styles.bless}>
+            <Sparkles color={palette.gold} size={40} strokeWidth={2.2} />
+            <Text style={styles.blessLabel}>Bless</Text>
+          </View>
+        ) : (
+          <Text style={styles.pips}>
+            {dotFaces[Math.min(dotFaces.length - 1, Math.max(0, face - 1))]}
+          </Text>
+        )}
       </Animated.View>
     </Pressable>
   );
@@ -63,5 +72,13 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.heading,
     fontSize: 36,
     letterSpacing: 4,
+  },
+  bless: { alignItems: 'center', gap: 4 },
+  blessLabel: {
+    color: palette.gold,
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 14,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
 });

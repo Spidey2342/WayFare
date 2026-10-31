@@ -17,6 +17,7 @@ export { StatTile } from './StatTile';
 export { QuoteCard } from './QuoteCard';
 export { JourneyNode } from './JourneyNode';
 export { BadgeTile } from './BadgeTile';
+export { BadgeIcon, badgeTintColor, type BadgeColorToken } from './BadgeIcon';
 export { SettingsRow } from './SettingsRow';
 export { PlayerRow } from './PlayerRow';
 export { BottomSheet } from './BottomSheet';

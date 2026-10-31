@@ -145,8 +145,8 @@ export default function DevKitScreen() {
           <JourneyNode label="W5" state="locked" caption="Level 5" />
         </View>
         <View style={styles.row}>
-          <BadgeTile name="Scripture Seeker" earned icon="📖" />
-          <BadgeTile name="Team Titan" earned={false} icon="🤝" />
+          <BadgeTile name="Scripture Seeker" earned icon="book-open" color="teal" />
+          <BadgeTile name="Team Titan" earned={false} icon="shield" color="purple" />
         </View>
         <PlayerRow name="Kofi" color={color} onColorChange={setColor} />
         <RoundSlider value={minutes} onChange={setMinutes} />

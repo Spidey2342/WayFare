@@ -14,7 +14,7 @@ Legend: **Mismatch** = differs from design. **OK** = aligned or intentionally da
 | Status bar                    | Light content on light screens                                   | `StatusBar style="auto"` follows system                                                                                                                                         | **Mismatch** on light screens in dark OS |
 | Typography loading            | Poppins + Inter                                                  | Fonts load via `expo-font`; audit captures show consistent sans (no obvious fallback)                                                                                           | **OK** (verify weight scale in Step 4)   |
 | Bottom nav                    | Midnight pill, gold active, gold PLAY                            | Matches structure in light captures (`explore-decks.png`)                                                                                                                       | **OK** (spacing polish in Step 4)        |
-| Emoji in UI                   | Vector icons only (except Home 👋 and Share sample caption)      | Profile badges render emoji from `badges.json`; `BadgeTile` uses emoji strings; `DiceCube` uses `✶`; dev kit uses emoji                                                         | **Mismatch**                             |
+| Emoji in UI                   | Vector icons only (except Home wave and Share sample caption)    | Fixed in emoji pass: Lucide badges, Dice bless face, dev kit samples                                                                                                            | **Resolved (2026-10-31)**                |
 | Avatars                       | Photo rings in designs                                           | Initial letter on solid color (`Avatar.tsx`)                                                                                                                                    | **Mismatch**                             |
 | Sparkles / generic decoration | Line icons per kit                                               | `Sparkles` on testimony cards, wisdom deck, `CardFace`                                                                                                                          | **Mismatch** (not in Card Library art)   |
 
@@ -75,7 +75,7 @@ Screenshots: [`home.png`](audit/home.png) (system dark), [`home-system-dark-emul
 | Area             | Design                                                    | App                                                                  | Status       |
 | ---------------- | --------------------------------------------------------- | -------------------------------------------------------------------- | ------------ |
 | Page background  | Off-white                                                 | **Dark** when theme follows system dark                              | **Mismatch** |
-| Greeting         | Time + “Hello, Kofi! 👋”                                  | “Good morning” + “Hello, Kofi!” **no wave**                          | **Mismatch** |
+| Greeting         | Time + “Hello, Kofi!” with wave                           | Wave restored on Home greeting                                       | **Resolved** |
 | Avatar           | Photo + gold ring + status dot                            | Letter “K” on gold fill                                              | **Mismatch** |
 | Continue Journey | Midnight card, streak chip, icon path, **RESUME PLAYING** | Midnight card OK; chip “Start here”; numeric path; **Start playing** | **Mismatch** |
 | Quick Decks      | Purple / coral / teal tiles + SEE ALL                     | Two decks; Heart for Courage (design: shield); no SEE ALL            | **Mismatch** |
@@ -199,7 +199,7 @@ Screenshot: [`profile.png`](audit/profile.png)
 | Header block | Dark rounded bottom, photo, rank     | Dark hero, letter avatar        | **Partial**  |
 | Body         | White badges + settings on off-white | Light body                      | **OK**       |
 | Stats        | XP / decks / streak labels           | Cards played / streak / service | **Partial**  |
-| Badges       | Icon grid                            | **24 emoji** tiles              | **Mismatch** |
+| Badges       | White tile grid with Lucide icons    | Matches design pass             | **Resolved** |
 | Settings     | Notifications toggle row             | Text rows                       | **Partial**  |
 
 ## Community (`/community`)
@@ -221,16 +221,15 @@ Screenshot: [`community.png`](audit/community.png)
 
 ## Emoji inventory (UI-facing)
 
-| Location                          | Finding                                                       |
-| --------------------------------- | ------------------------------------------------------------- |
-| `src/data/badges.json`            | All 24 badge `icon` fields are emoji (data drives Profile UI) |
-| `src/components/ui/BadgeTile.tsx` | Renders `icon` as `Text` emoji                                |
-| `app/(tabs)/profile.tsx`          | Maps badges → emoji tiles                                     |
-| `app/dev/kit.tsx`                 | Sample emoji badges                                           |
-| `src/components/ui/DiceCube.tsx`  | `✶` on face                                                   |
-| `src/components/ui/CardFace.tsx`  | Sparkles icon (Lucide), not emoji but off-kit                 |
+| Location                          | Finding                                  |
+| --------------------------------- | ---------------------------------------- |
+| `src/data/badges.json`            | Lucide icon keys + palette color tokens  |
+| `src/components/ui/BadgeIcon.tsx` | Vector badge renderer with migration map |
+| `app/(tabs)/profile.tsx`          | Light badge grid on off-white canvas     |
+| `app/dev/kit.tsx`                 | Lucide badge samples                     |
+| `src/components/ui/DiceCube.tsx`  | Sparkles bless face (vector)             |
 
-Allowed later (design): Home greeting 👋; Share sample caption with 🙌 (when photo mock added).
+Allowed exceptions (see `scripts/emoji-allowlist.json`): Home greeting wave; Share default caption hands.
 
 ## Step 1 exit criteria
 

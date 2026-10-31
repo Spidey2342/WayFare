@@ -1,9 +1,10 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ReactionIcon, type ReactionGlyphName } from '@/components/icons/ReactionIcon';
 import { fontFamily, minTapTarget, palette, radii, spacing } from '@/theme';
 
-const reactions = ['Praying', 'Praise', 'Encouraged', 'Amen'] as const;
-export type ReactionName = (typeof reactions)[number];
+const reactions: ReactionGlyphName[] = ['Praying', 'Praise', 'Encouraged', 'Amen'];
+export type ReactionName = ReactionGlyphName;
 
 export function ReactionBar({
   counts,
@@ -22,6 +23,7 @@ export function ReactionBar({
           onPress={() => onReact?.(name)}
           style={styles.chip}
         >
+          <ReactionIcon name={name} size={16} />
           <Text style={styles.label}>
             {name} {counts[name] ?? 0}
           </Text>
@@ -40,6 +42,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F4F8',
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 6,
   },
   label: { fontFamily: fontFamily.bodyMedium, color: palette.midnight, fontSize: 13 },
 });

@@ -11,7 +11,7 @@ export default function ShareScreen() {
   const router = useRouter();
   const toast = useToast();
   const [photo, setPhoto] = useState<string | null>(null);
-  const [caption, setCaption] = useState('God met us around the table tonight.');
+  const [caption, setCaption] = useState('God met us around the table tonight. 🙌');
 
   return (
     <Screen background={palette.midnight} gutter={palette.midnight}>

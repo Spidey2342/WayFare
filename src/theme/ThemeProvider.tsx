@@ -13,13 +13,20 @@ const ThemeContext = createContext<ThemeValue | null>(null);
 
 export function ThemeProvider({
   children,
-  preference = 'system',
+  preference = 'light',
 }: {
   children: ReactNode;
   preference?: ThemePreference;
 }) {
   const system = useColorScheme();
-  const mode = preference === 'system' ? (system === 'dark' ? 'dark' : 'light') : preference;
+  const mode =
+    preference === 'dark'
+      ? 'dark'
+      : preference === 'system'
+        ? system === 'dark'
+          ? 'dark'
+          : 'light'
+        : 'light';
 
   const value = useMemo<ThemeValue>(
     () => ({

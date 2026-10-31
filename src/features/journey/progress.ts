@@ -15,6 +15,7 @@ export interface BadgeDef {
   name: string;
   description: string;
   icon: string;
+  color: 'gold' | 'coral' | 'teal' | 'blue' | 'purple';
   rule: string;
 }
 
