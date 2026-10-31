@@ -3,11 +3,16 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Button, Confetti, Screen, StatTile } from '@/components/ui';
+import { unityPercent } from '@/features/game/engine';
+import { useSessionStore } from '@/features/game/sessionStore';
 import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
 
 export default function CompleteScreen() {
   const router = useRouter();
+  const session = useSessionStore((state) => state.session);
   const [marked, setMarked] = useState(false);
+  const cardsPlayed = session?.cardsPlayed.length ?? 0;
+  const unity = session ? unityPercent(session) : 100;
   return (
     <Screen>
       <Confetti active />
@@ -15,8 +20,8 @@ export default function CompleteScreen() {
         <Text style={styles.kicker}>Session complete</Text>
         <Text style={styles.title}>Amazing session!</Text>
         <View style={styles.stats}>
-          <StatTile value="3" label="Cards played" />
-          <StatTile value="100%" label="Team unity" />
+          <StatTile value={String(cardsPlayed)} label="Cards played" />
+          <StatTile value={`${unity}%`} label="Team unity" />
         </View>
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Closing prayer</Text>

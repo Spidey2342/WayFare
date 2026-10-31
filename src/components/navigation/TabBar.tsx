@@ -3,6 +3,7 @@ import { usePathname, useRouter } from 'expo-router';
 import { Compass, Home, Layers, User } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useSessionStore } from '@/features/game/sessionStore';
 import { tapHaptic } from '@/services/haptics';
 import { fontFamily, minTapTarget, palette } from '@/theme';
 
@@ -17,10 +18,20 @@ export function TabBar() {
   const pathname = usePathname();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const session = useSessionStore((state) => state.session);
 
   const go = (href: '/home' | '/decks' | '/journey' | '/profile' | '/setup') => {
     void tapHaptic();
     router.push(href);
+  };
+
+  const play = () => {
+    void tapHaptic();
+    if (session && session.status === 'active') {
+      router.push({ pathname: '/game/[sessionId]', params: { sessionId: session.id } });
+      return;
+    }
+    router.push('/setup');
   };
 
   return (
@@ -40,7 +51,7 @@ export function TabBar() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Play"
-          onPress={() => go('/setup')}
+          onPress={play}
           style={styles.play}
         >
           <Text style={styles.playLabel}>PLAY</Text>

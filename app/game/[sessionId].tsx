@@ -2,63 +2,67 @@ import { useEffect, useState } from 'react';
 import { AppState, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { Button, CardFace, FlipCard, Screen, TimerRing } from '@/components/ui';
+import { Button, CardFace, EmptyState, FlipCard, Screen, TimerRing } from '@/components/ui';
+import { canSkip, currentCard, currentPlayer } from '@/features/game/engine';
+import { useSessionStore } from '@/features/game/sessionStore';
 import { palette, spacing, typeScale } from '@/theme';
-
-const cards = [
-  {
-    type: 'word' as const,
-    title: 'Fearfully & Wonderfully Made',
-    body: 'I will praise thee; for I am fearfully and wonderfully made: marvellous are thy works; and that my soul knoweth right well.',
-    prompt: 'Explain the verse in your own words. The other team may say if it was clear.',
-    reference: 'Psalm 139:14',
-  },
-  {
-    type: 'question' as const,
-    title: 'Known',
-    prompt: 'When do you feel most sure that God knows you? One sentence is enough. You can skip.',
-    reference: 'Psalm 139:1',
-  },
-  {
-    type: 'dare' as const,
-    title: 'A kind word',
-    prompt: 'Give a sincere compliment to the person on your right.',
-  },
-];
 
 export default function GameScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ sessionId: string }>();
-  const [index, setIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const [seconds, setSeconds] = useState(45);
+  const session = useSessionStore((state) => state.session);
+  const lastDice = useSessionStore((state) => state.lastDice);
+  const lastError = useSessionStore((state) => state.lastError);
+  const draw = useSessionStore((state) => state.draw);
+  const skip = useSessionStore((state) => state.skip);
+  const finish = useSessionStore((state) => state.finish);
+  const bless = useSessionStore((state) => state.bless);
+  const [hydrated, setHydrated] = useState(() => useSessionStore.persist.hasHydrated());
   const [paused, setPaused] = useState(false);
-  const [skipped, setSkipped] = useState(false);
-  const card = cards[index] ?? cards[0];
+
+  useEffect(() => {
+    return useSessionStore.persist.onFinishHydration(() => setHydrated(true));
+  }, []);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => setPaused(state !== 'active'));
     return () => sub.remove();
   }, []);
 
+  const cardId = session?.currentCardId ?? null;
+
   useEffect(() => {
-    if (paused || !flipped || seconds <= 0) return;
-    const timer = setInterval(() => setSeconds((value) => Math.max(0, value - 1)), 1000);
-    return () => clearInterval(timer);
-  }, [flipped, paused, seconds]);
+    if (session?.status === 'complete') router.replace('/game/leaderboard');
+  }, [router, session?.status]);
 
-  if (!card) return null;
+  if (!hydrated) {
+    return (
+      <Screen background={palette.midnight} gutter={palette.midnight}>
+        <Text style={styles.kicker}>Resuming your game</Text>
+      </Screen>
+    );
+  }
 
-  const finishCard = () => {
-    if (index >= cards.length - 1) {
-      router.push('/game/leaderboard');
-      return;
-    }
-    setIndex((value) => value + 1);
-    setFlipped(false);
-    setSeconds(45);
-    setSkipped(false);
-  };
+  if (!session || session.id !== params.sessionId || session.status !== 'active') {
+    return (
+      <Screen>
+        <EmptyState
+          title="No game in progress"
+          body="Start a round from setup. A game on this device resumes after a refresh."
+          actionLabel="Setup game"
+          onAction={() => router.replace('/setup')}
+        />
+      </Screen>
+    );
+  }
+
+  const player = currentPlayer(session);
+  const card = currentCard(session);
+  const score =
+    session.mode === 'team'
+      ? (session.scores[player.teamId ?? ''] ?? 0)
+      : Object.values(session.participation).reduce((sum, count) => sum + count, 0);
+  const waitingBless = lastDice === 'bless' && !card;
 
   return (
     <Screen background={palette.midnight} gutter={palette.midnight}>
@@ -66,55 +70,112 @@ export default function GameScreen() {
         <View style={styles.header}>
           <View>
             <Text style={styles.kicker}>Current turn</Text>
-            <Text style={styles.player}>Kofi</Text>
+            <Text style={styles.player}>{player.name}</Text>
           </View>
           <View>
-            <Text style={styles.kicker}>Score</Text>
-            <Text style={styles.player}>{params.sessionId === 'preview' ? '—' : '2'}</Text>
+            <Text style={styles.kicker}>{session.mode === 'team' ? 'Score' : 'Together'}</Text>
+            <Text style={styles.player}>{score}</Text>
           </View>
-          <TimerRing secondsLeft={seconds} />
+          <TurnTimer key={cardId ?? 'idle'} cardId={cardId} paused={paused} />
         </View>
-        <FlipCard
-          flipped={flipped}
-          front={
-            <CardFace
-              type="word"
-              title="Wayfare"
-              prompt="Tap the card to draw. Take your time. Skip is always allowed."
-            />
-          }
-          back={
-            <CardFace
-              type={card.type}
-              title={card.title}
-              body={'body' in card ? card.body : undefined}
-              prompt={card.prompt}
-              reference={'reference' in card ? card.reference : undefined}
-            />
-          }
-        />
-        {!flipped ? (
-          <Button label="Draw card" variant="gold" onPress={() => setFlipped(true)} />
+        <Text style={styles.round}>
+          Round {session.currentRound} of {session.roundsTotal}
+        </Text>
+        {waitingBless ? (
+          <CardFace
+            type="testimony"
+            title="Bless"
+            prompt="Encourage someone in the circle with a sincere word or a short prayer. This counts as an act of service."
+          />
+        ) : (
+          <FlipCard
+            flipped={Boolean(card)}
+            front={
+              <CardFace
+                type="word"
+                title="Wayfare"
+                prompt="Tap draw. Take your time. Skip is always allowed, once each round."
+              />
+            }
+            back={
+              card ? (
+                <CardFace
+                  type={card.type}
+                  title={card.title}
+                  body={card.body}
+                  prompt={card.prompt}
+                  reference={card.reference}
+                />
+              ) : (
+                <CardFace type="word" title="Wayfare" prompt="Drawing the next card." />
+              )
+            }
+          />
+        )}
+        {lastError ? <Text style={styles.error}>{lastError}</Text> : null}
+        {waitingBless ? (
+          <Button label="I encouraged someone" variant="gold" onPress={bless} />
         ) : null}
-        {flipped ? (
+        {!card && !waitingBless ? <Button label="Draw card" variant="gold" onPress={draw} /> : null}
+        {card ? (
           <View style={styles.actions}>
             <Button
-              label={skipped ? 'Skip used' : 'Skip once'}
+              label={canSkip(session, player.id) ? 'Skip once' : 'Skip used'}
               variant="secondary"
-              disabled={skipped}
-              onPress={() => setSkipped(true)}
+              disabled={!canSkip(session, player.id)}
+              onPress={skip}
             />
-            <Button label="Done" variant="gold" onPress={finishCard} />
+            {session.mode === 'team' && card.type === 'word' ? (
+              <>
+                <Button
+                  label="They understood"
+                  variant="gold"
+                  onPress={() => finish({ kind: 'word', accepted: true })}
+                />
+                <Button
+                  label="Not yet"
+                  variant="secondary"
+                  onPress={() => finish({ kind: 'word', accepted: false })}
+                />
+              </>
+            ) : null}
+            {session.mode === 'team' && card.type === 'challenge'
+              ? session.teams.map((team) => (
+                  <Button
+                    key={team.id}
+                    label={`${team.name} wins`}
+                    variant="gold"
+                    onPress={() => finish({ kind: 'challenge', winnerTeamId: team.id })}
+                  />
+                ))
+              : null}
+            {session.mode !== 'team' || (card.type !== 'word' && card.type !== 'challenge') ? (
+              <Button label="Done" variant="gold" onPress={() => finish({ kind: 'standard' })} />
+            ) : null}
           </View>
         ) : null}
-        <Button
-          label="Roll the dice"
-          variant="secondary"
-          onPress={() => router.push('/game/dice')}
-        />
+        {!card ? (
+          <Button
+            label="Roll the dice"
+            variant="secondary"
+            onPress={() => router.push('/game/dice')}
+          />
+        ) : null}
       </View>
     </Screen>
   );
+}
+
+function TurnTimer({ cardId, paused }: { cardId: string | null; paused: boolean }) {
+  const [seconds, setSeconds] = useState(45);
+
+  useEffect(() => {
+    if (paused || !cardId || seconds <= 0) return;
+    const timer = setInterval(() => setSeconds((value) => Math.max(0, value - 1)), 1000);
+    return () => clearInterval(timer);
+  }, [cardId, paused, seconds]);
+
+  return <TimerRing secondsLeft={cardId ? seconds : 45} />;
 }
 
 const styles = StyleSheet.create({
@@ -122,5 +183,7 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   kicker: { ...typeScale.caption, color: '#C9CDD6' },
   player: { fontFamily: typeScale.h3.fontFamily, color: palette.white, fontSize: 18 },
-  actions: { flexDirection: 'row', gap: spacing.sm },
+  round: { ...typeScale.caption, color: palette.gold },
+  actions: { gap: spacing.sm },
+  error: { color: palette.coral, fontSize: 14 },
 });

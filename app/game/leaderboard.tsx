@@ -1,32 +1,62 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { Button, Screen } from '@/components/ui';
+import { Button, EmptyState, Screen } from '@/components/ui';
+import { useSessionStore } from '@/features/game/sessionStore';
 import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
-
-const rows = [
-  { name: "Kofi's team", points: 'Moments shared', hot: true },
-  { name: "Ama's team", points: 'Still in the circle', hot: false },
-];
 
 export default function LeaderboardScreen() {
   const router = useRouter();
+  const session = useSessionStore((state) => state.session);
+
+  if (!session) {
+    return (
+      <Screen>
+        <EmptyState
+          title="No round to show"
+          body="Finish a game on this device and the circle will appear here."
+          actionLabel="Setup game"
+          onAction={() => router.replace('/setup')}
+        />
+      </Screen>
+    );
+  }
+
+  const competitive = session.mode === 'team';
+  const rows = competitive
+    ? [...session.teams]
+        .map((team) => ({ id: team.id, name: team.name, points: session.scores[team.id] ?? 0 }))
+        .sort((left, right) => right.points - left.points)
+    : session.players.map((player) => ({
+        id: player.id,
+        name: player.name,
+        points: session.participation[player.id] ?? 0,
+      }));
+
   return (
     <Screen>
       <View style={styles.body}>
-        <Text style={styles.kicker}>Round 1 of 2</Text>
-        <Text style={styles.title}>Leaderboard</Text>
+        <Text style={styles.kicker}>
+          Round {session.currentRound} of {session.roundsTotal}
+        </Text>
+        <Text style={styles.title}>{competitive ? 'Leaderboard' : 'The circle'}</Text>
         <Text style={styles.note}>
-          Pass-the-phone keeps this friendly. Team mode will show points after the engine lands.
+          {competitive
+            ? 'Points stay with the team. A hot start means someone already scored.'
+            : 'Pass-the-phone keeps this friendly. The numbers are moments shared, not a contest.'}
         </Text>
         {rows.map((row, index) => (
-          <View key={row.name} style={[styles.row, index === 0 && styles.first]}>
+          <View key={row.id} style={[styles.row, index === 0 && styles.first]}>
             <Text style={styles.rank}>{index + 1}</Text>
             <View style={{ flex: 1 }}>
               <Text style={[styles.name, index === 0 && styles.nameOn]}>{row.name}</Text>
-              <Text style={styles.meta}>{row.hot ? 'Hot start' : 'Climbing'}</Text>
+              <Text style={styles.meta}>
+                {index === 0 && row.points > 0 ? 'Hot start' : 'In the circle'}
+              </Text>
             </View>
-            <Text style={[styles.points, index === 0 && styles.nameOn]}>{row.points}</Text>
+            <Text style={[styles.points, index === 0 && styles.nameOn]}>
+              {competitive ? row.points : `${row.points} shared`}
+            </Text>
           </View>
         ))}
         <Button

@@ -19,3 +19,11 @@ Card and verse text uses the King James Version, which is public domain. The UI 
 ## Dev kit
 
 `/dev/kit` stays available in production builds. It only renders design tokens and components. It is not linked from the main navigation.
+
+## Rounds
+
+Round count is `max(1, round(minutes / 5))`. Ten minutes is two rounds. A round ends when every player has taken one turn. The session ends when those rounds are finished. The minute choice is the planned length; the turn count is what actually closes the session.
+
+## Playable cards before the full library
+
+Gameplay uses a small Identity card bank in `src/data/previewCards.ts` so the engine, scoring, dice, and resume-after-refresh can be verified. Deck screens still show the planned catalog counts. Stage 6 replaces this bank with validated JSON and real counts.

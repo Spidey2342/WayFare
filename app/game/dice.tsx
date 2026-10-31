@@ -3,25 +3,50 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Button, Chip, DiceCube, Screen } from '@/components/ui';
+import { useSessionStore } from '@/features/game/sessionStore';
+import type { DiceFace } from '@/features/game/types';
 import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
-const results = ['TRUTH', 'DARE', 'WILD', 'BLESS'] as const;
+const labels: Record<DiceFace, string> = {
+  truth: 'TRUTH',
+  dare: 'DARE',
+  wild: 'WILD',
+  bless: 'BLESS',
+};
+
+const cubeFace: Record<DiceFace, number> = {
+  truth: 1,
+  dare: 3,
+  wild: 5,
+  bless: 6,
+};
 
 export default function DiceScreen() {
   const router = useRouter();
+  const session = useSessionStore((state) => state.session);
+  const lastDice = useSessionStore((state) => state.lastDice);
+  const rollStore = useSessionStore((state) => state.roll);
+  const draw = useSessionStore((state) => state.draw);
   const [rolling, setRolling] = useState(false);
   const [face, setFace] = useState(1);
-  const [result, setResult] = useState<(typeof results)[number] | null>(null);
 
   const roll = () => {
+    if (!session || session.status !== 'active' || session.currentCardId) return;
     setRolling(true);
-    setResult(null);
-    const next = 1 + Math.floor(Math.random() * 6);
+    const next = rollStore();
     setTimeout(() => {
-      setFace(next);
+      setFace(cubeFace[next]);
       setRolling(false);
-      setResult(results[(next - 1) % results.length] ?? 'DARE');
     }, 700);
+  };
+
+  const continuePlay = () => {
+    if (!session) {
+      router.replace('/setup');
+      return;
+    }
+    if (lastDice !== 'bless') draw();
+    router.replace({ pathname: '/game/[sessionId]', params: { sessionId: session.id } });
   };
 
   return (
@@ -30,9 +55,9 @@ export default function DiceScreen() {
         <Text style={styles.title}>Roll for your destiny</Text>
         <Text style={styles.sub}>Tap the cube. Truth, dare, wild, or a blessing.</Text>
         <DiceCube face={face} rolling={rolling} onPress={roll} />
-        {result ? <Chip label="Result" tone="gold" /> : null}
-        <Text style={styles.result}>{result ?? ' '}</Text>
-        <Button label="Continue" disabled={!result} onPress={() => router.push('/game/preview')} />
+        {lastDice && !rolling ? <Chip label="Result" tone="gold" /> : null}
+        <Text style={styles.result}>{lastDice && !rolling ? labels[lastDice] : ' '}</Text>
+        <Button label="Continue" disabled={!lastDice || rolling} onPress={continuePlay} />
       </View>
     </Screen>
   );

@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { Button, PlayerRow, RoundSlider, Screen, type RoundMinutes } from '@/components/ui';
 import { findDeck } from '@/data/catalog';
+import { useSessionStore } from '@/features/game/sessionStore';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/theme';
 
@@ -50,7 +51,36 @@ export default function SetupScreen() {
       setError('Add at least two players.');
       return;
     }
-    router.push({ pathname: '/game/preview', params: { deckId, mode, minutes: String(minutes) } });
+    const teams =
+      mode === 'team'
+        ? [
+            {
+              id: 'a',
+              name: `${players[0]?.name ?? 'Gold'}'s team`,
+              playerIds: players.filter((_, index) => index % 2 === 0).map((player) => player.id),
+            },
+            {
+              id: 'b',
+              name: `${players[1]?.name ?? 'Teal'}'s team`,
+              playerIds: players.filter((_, index) => index % 2 === 1).map((player) => player.id),
+            },
+          ]
+        : [];
+    try {
+      const id = useSessionStore.getState().start({
+        mode,
+        minutes,
+        players: players.map((player, index) => ({
+          id: player.id,
+          name: player.name.trim(),
+          teamId: mode === 'team' ? (index % 2 === 0 ? 'a' : 'b') : undefined,
+        })),
+        teams,
+      });
+      router.push({ pathname: '/game/[sessionId]', params: { sessionId: id } });
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not start the game.');
+    }
   };
 
   return (
