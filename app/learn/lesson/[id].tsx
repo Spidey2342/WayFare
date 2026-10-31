@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { Button, Confetti, QuoteCard, Screen, ScreenScroll } from '@/components/ui';
+import { BackButton, Button, Confetti, QuoteCard, Screen, ScreenScroll } from '@/components/ui';
 import { buildQuiz } from '@/features/learn/quizEngine';
 import { getLesson, pathForLesson, questionsForCategory } from '@/features/learn/repository';
 import { useAppStore } from '@/store';
@@ -58,6 +58,7 @@ export default function LessonScreen() {
     <Screen>
       {showConfetti ? <Confetti active /> : null}
       <ScreenScroll contentContainerStyle={styles.content}>
+        <BackButton label="Back" fallback="/learn" />
         <Text style={[typeScale.caption, { color: palette.goldDeep }]}>
           {path?.name ?? 'Lesson'}
         </Text>
@@ -129,7 +130,6 @@ export default function LessonScreen() {
           disabled={done || quizAnswers.some((answer) => answer === null)}
           onPress={finish}
         />
-        <Button label="Back" variant="ghost" onPress={() => router.back()} />
       </ScreenScroll>
     </Screen>
   );

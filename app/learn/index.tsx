@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { BookOpen, Brain, Library } from 'lucide-react-native';
 
-import { Button, ProgressBar, Screen, ScreenScroll } from '@/components/ui';
+import { BackButton, Button, ProgressBar, Screen, ScreenScroll } from '@/components/ui';
 import { lessonsForPath, learnPaths } from '@/features/learn/repository';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/theme';
@@ -10,11 +10,15 @@ import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/them
 export default function LearnHubScreen() {
   const router = useRouter();
   const { colors } = useTheme();
+  const params = useLocalSearchParams<{ from?: string }>();
   const completed = useAppStore((state) => state.progress.completedLessons);
+  const backFallback = params.from === 'decks' ? '/decks' : '/home';
+  const backLabel = params.from === 'decks' ? 'Back to decks' : 'Back';
 
   return (
     <Screen>
       <ScreenScroll contentContainerStyle={styles.content}>
+        <BackButton label={backLabel} fallback={backFallback} />
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Learn</Text>
         <Text style={[typeScale.bodyM, { color: colors.textSecondary }]}>
           Study paths, Bible books, and quick quizzes. Everything works offline on this device.

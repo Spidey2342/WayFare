@@ -1,3 +1,4 @@
+export { BackButton } from './BackButton';
 export { Button } from './Button';
 export type { ButtonVariant } from './Button';
 export { Chip } from './Chip';

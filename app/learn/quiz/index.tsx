@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { Button, Screen, ScreenScroll, SegmentedTabs } from '@/components/ui';
+import { BackButton, Button, Screen, ScreenScroll, SegmentedTabs } from '@/components/ui';
 import { quizCategories } from '@/features/learn/repository';
 import { spacing, typeScale, useTheme } from '@/theme';
 
@@ -20,7 +20,7 @@ export default function QuizPickerScreen() {
   return (
     <Screen>
       <ScreenScroll contentContainerStyle={styles.content}>
-        <Button label="Back" variant="ghost" onPress={() => router.back()} />
+        <BackButton label="Back to Learn" fallback="/learn" />
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Bible Quiz</Text>
         <Text style={[typeScale.bodyM, { color: colors.textSecondary }]}>
           Pick a category and play solo or with teams. Explanations include KJV references.

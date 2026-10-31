@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { Button, Screen, ScreenScroll, TimerRing } from '@/components/ui';
+import { BackButton, Button, Screen, ScreenScroll, TimerRing } from '@/components/ui';
 import { buildQuiz, scoreQuiz, type ShuffledQuestion } from '@/features/learn/quizEngine';
 import { questionsForCategory } from '@/features/learn/repository';
 import { palette, spacing, typeScale } from '@/theme';
@@ -28,7 +28,7 @@ export default function QuizPlayScreen() {
       <Screen>
         <ScreenScroll contentContainerStyle={styles.body}>
           <Text style={typeScale.h2}>No questions in this category.</Text>
-          <Button label="Back" onPress={() => router.back()} />
+          <BackButton label="Back to quiz" fallback="/learn/quiz" />
         </ScreenScroll>
       </Screen>
     );
@@ -67,6 +67,7 @@ export default function QuizPlayScreen() {
   return (
     <Screen>
       <ScreenScroll contentContainerStyle={styles.body}>
+        <BackButton label="Back to quiz" fallback="/learn/quiz" />
         <Text style={styles.kicker}>
           Question {index + 1} of {quiz.length}
         </Text>

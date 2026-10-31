@@ -47,7 +47,7 @@ export default function DecksScreen() {
           value={tab}
           onChange={(value) => {
             if (value === 'learn') {
-              router.push('/learn');
+              router.push({ pathname: '/learn', params: { from: 'decks' } });
               return;
             }
             setTab(value);

@@ -1,14 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useRouter } from 'expo-router';
-
-import { BottomSheet, Button, Chip, Screen, ScreenScroll } from '@/components/ui';
+import { BackButton, BottomSheet, Button, Chip, Screen, ScreenScroll } from '@/components/ui';
 import { bookById, learnBooks } from '@/features/learn/repository';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/theme';
 
 export default function BooksScreen() {
-  const router = useRouter();
   const { colors } = useTheme();
   const read = useAppStore((state) => state.progress.booksRead);
   const toggleBook = useAppStore((state) => state.toggleBook);
@@ -39,7 +36,7 @@ export default function BooksScreen() {
   return (
     <Screen>
       <ScreenScroll contentContainerStyle={styles.content}>
-        <Button label="Back" variant="ghost" onPress={() => router.back()} />
+        <BackButton label="Back to Learn" fallback="/learn" />
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Books of the Bible</Text>
         <Text style={{ color: colors.textSecondary, fontFamily: fontFamily.body }}>
           {read.length} of {learnBooks.length} marked read ({Math.round(progress * 100)}%)

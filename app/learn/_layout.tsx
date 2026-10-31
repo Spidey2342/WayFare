@@ -2,6 +2,12 @@ import { Stack } from 'expo-router';
 
 export default function LearnLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false, animation: 'fade', contentStyle: { flex: 1 } }} />
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        animation: 'slide_from_right',
+        contentStyle: { flex: 1 },
+      }}
+    />
   );
 }

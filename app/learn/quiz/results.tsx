@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { Button, Confetti, Screen } from '@/components/ui';
+import { BackButton, Button, Confetti, Screen } from '@/components/ui';
 import { useAppStore } from '@/store';
 import { palette, spacing, typeScale } from '@/theme';
 
@@ -29,7 +29,7 @@ export default function QuizResultsScreen() {
           Review missed questions with your group and look up each reference in the KJV.
         </Text>
         <Button label="Play again" variant="gold" onPress={() => router.replace('/learn/quiz')} />
-        <Button label="Back to Learn" variant="ghost" onPress={() => router.replace('/learn')} />
+        <BackButton label="Back to Learn" fallback="/learn" />
       </View>
     </Screen>
   );
