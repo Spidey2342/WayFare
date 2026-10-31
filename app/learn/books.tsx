@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { BottomSheet, Button, Chip, Screen } from '@/components/ui';
+import { BottomSheet, Button, Chip, Screen, ScreenScroll } from '@/components/ui';
 import { bookById, learnBooks } from '@/features/learn/repository';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/theme';
@@ -38,7 +38,7 @@ export default function BooksScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <Button label="Back" variant="ghost" onPress={() => router.back()} />
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Books of the Bible</Text>
         <Text style={{ color: colors.textSecondary, fontFamily: fontFamily.body }}>
@@ -103,7 +103,7 @@ export default function BooksScreen() {
             </Text>
           </Pressable>
         ))}
-      </ScrollView>
+      </ScreenScroll>
       <BottomSheet visible={Boolean(detail)} onClose={() => setSelected(null)}>
         {detail ? (
           <View style={{ gap: spacing.sm }}>

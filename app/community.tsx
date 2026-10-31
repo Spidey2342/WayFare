@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { BottomSheet, Button, EmptyState, PostCard, Screen, SegmentedTabs } from '@/components/ui';
+import {
+  BottomSheet,
+  Button,
+  EmptyState,
+  PostCard,
+  Screen,
+  ScreenScroll,
+  SegmentedTabs,
+} from '@/components/ui';
 import { useAppStore } from '@/store';
 import { palette, radii, spacing, typeScale, useTheme } from '@/theme';
 
@@ -38,7 +46,7 @@ export default function CommunityScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Community</Text>
         <View style={styles.banner}>
           <Text style={styles.bannerTitle}>Coming soon</Text>
@@ -81,7 +89,7 @@ export default function CommunityScreen() {
           You are all caught up. Go enjoy your day.
         </Text>
         <Button label="Back home" variant="ghost" onPress={() => router.back()} />
-      </ScrollView>
+      </ScreenScroll>
       <BottomSheet visible={!seen} onClose={() => setGuidelinesSeen(true)}>
         <Text style={styles.sheetTitle}>Community guidelines</Text>
         <Text style={styles.sheetBody}>

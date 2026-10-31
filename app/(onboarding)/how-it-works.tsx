@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BookOpen, HeartHandshake, Users } from 'lucide-react-native';
 
-import { Button, Screen } from '@/components/ui';
+import { Button, Screen, ScreenScroll } from '@/components/ui';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
@@ -35,52 +35,55 @@ export default function HowItWorksScreen() {
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
   return (
     <Screen>
-      <View style={styles.top}>
-        <View style={styles.dots}>
-          <View style={styles.dot} />
-          <View style={[styles.dot, styles.dotOn]} />
-          <View style={styles.dot} />
+      <ScreenScroll contentContainerStyle={styles.scroll}>
+        <View style={styles.top}>
+          <View style={styles.dots}>
+            <View style={styles.dot} />
+            <View style={[styles.dot, styles.dotOn]} />
+            <View style={styles.dot} />
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Skip onboarding"
+            onPress={() => {
+              completeOnboarding('pass');
+              router.replace('/home');
+            }}
+            style={styles.skip}
+          >
+            <Text style={styles.skipText}>SKIP</Text>
+          </Pressable>
         </View>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Skip onboarding"
-          onPress={() => {
-            completeOnboarding('pass');
-            router.replace('/home');
-          }}
-          style={styles.skip}
-        >
-          <Text style={styles.skipText}>SKIP</Text>
-        </Pressable>
-      </View>
-      <View style={styles.body}>
-        <Text style={styles.title}>Grow as you go.</Text>
-        {steps.map((step) => {
-          const Icon = step.icon;
-          return (
-            <View key={step.n} style={styles.step}>
-              <View style={[styles.icon, { backgroundColor: step.bg }]}>
-                <Icon color={palette.midnight} size={20} />
+        <View style={styles.body}>
+          <Text style={styles.title}>Grow as you go.</Text>
+          {steps.map((step) => {
+            const Icon = step.icon;
+            return (
+              <View key={step.n} style={styles.step}>
+                <View style={[styles.icon, { backgroundColor: step.bg }]}>
+                  <Icon color={palette.midnight} size={20} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.stepTitle}>
+                    {step.n}. {step.title}
+                  </Text>
+                  <Text style={styles.stepBody}>{step.body}</Text>
+                </View>
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.stepTitle}>
-                  {step.n}. {step.title}
-                </Text>
-                <Text style={styles.stepBody}>{step.body}</Text>
-              </View>
-            </View>
-          );
-        })}
-        <View style={styles.art}>
-          <Users color={palette.gold} size={42} />
+            );
+          })}
+          <View style={styles.art}>
+            <Users color={palette.gold} size={42} />
+          </View>
+          <Button label="Next" onPress={() => router.push('/choose-mode')} />
         </View>
-        <Button label="Next" onPress={() => router.push('/choose-mode')} />
-      </View>
+      </ScreenScroll>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
+  scroll: { paddingBottom: 48 },
   top: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
   dotOn: { width: 18, backgroundColor: palette.midnight },
   skip: { minHeight: 44, justifyContent: 'center' },
   skipText: { fontFamily: fontFamily.bodySemi, letterSpacing: 1, color: palette.warmGray },
-  body: { flex: 1, paddingHorizontal: spacing.xl, gap: spacing.md },
+  body: { paddingHorizontal: spacing.xl, gap: spacing.md, paddingBottom: spacing.lg },
   title: { ...typeScale.h1, color: palette.midnight },
   step: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' },
   icon: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },

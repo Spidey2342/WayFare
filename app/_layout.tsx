@@ -3,6 +3,7 @@ import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -33,12 +34,20 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView
+      style={Platform.OS === 'web' ? { flex: 1, minHeight: 0, height: '100%' } : { flex: 1 }}
+    >
       <SafeAreaProvider>
         <ThemeProvider preference={preference}>
           <ToastProvider>
             <StatusBar style={preference === 'dark' ? 'light' : 'auto'} />
-            <Stack screenOptions={{ headerShown: false, animation: 'fade' }} />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                animation: 'fade',
+                contentStyle: { flex: 1 },
+              }}
+            />
           </ToastProvider>
         </ThemeProvider>
       </SafeAreaProvider>

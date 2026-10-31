@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { Button, Screen } from '@/components/ui';
+import { Button, Screen, ScreenScroll } from '@/components/ui';
 import { pickPhoto } from '@/services/photo';
 import { useToast } from '@/components/ui/Toast';
 import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
@@ -15,7 +15,7 @@ export default function ShareScreen() {
 
   return (
     <Screen background={palette.midnight} gutter={palette.midnight}>
-      <View style={styles.body}>
+      <ScreenScroll contentContainerStyle={styles.body}>
         <Text style={styles.title}>Share the moment</Text>
         <View style={styles.frame}>
           {photo ? (
@@ -52,13 +52,13 @@ export default function ShareScreen() {
             router.replace('/home');
           }}
         />
-      </View>
+      </ScreenScroll>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  body: { flex: 1, padding: spacing.lg, gap: spacing.md },
+  body: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
   title: { ...typeScale.h2, color: palette.white },
   frame: {
     height: 280,

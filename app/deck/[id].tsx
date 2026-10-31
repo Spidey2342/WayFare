@@ -1,7 +1,7 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { Button, Chip, DeckCover, Screen } from '@/components/ui';
+import { Button, Chip, DeckCover, Screen, ScreenScroll } from '@/components/ui';
 import { findDeck } from '@/data/catalog';
 import { DeckIconView } from '@/features/decks/deckIcons';
 import { useAppStore } from '@/store';
@@ -39,7 +39,7 @@ export default function DeckDetailScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <DeckCover
           tall
           title={deck.name}
@@ -82,7 +82,7 @@ export default function DeckDetailScreen() {
           onPress={() => router.push({ pathname: '/setup', params: { deckId: deck.id } })}
         />
         <Text style={styles.footer}>Scripture on the cards is from the {deck.translation}.</Text>
-      </ScrollView>
+      </ScreenScroll>
     </Screen>
   );
 }

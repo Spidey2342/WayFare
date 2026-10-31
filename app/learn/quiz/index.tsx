@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { Button, Screen, SegmentedTabs } from '@/components/ui';
+import { Button, Screen, ScreenScroll, SegmentedTabs } from '@/components/ui';
 import { quizCategories } from '@/features/learn/repository';
 import { spacing, typeScale, useTheme } from '@/theme';
 
@@ -19,7 +19,7 @@ export default function QuizPickerScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <Button label="Back" variant="ghost" onPress={() => router.back()} />
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Bible Quiz</Text>
         <Text style={[typeScale.bodyM, { color: colors.textSecondary }]}>
@@ -44,7 +44,7 @@ export default function QuizPickerScreen() {
             })
           }
         />
-      </ScrollView>
+      </ScreenScroll>
     </Screen>
   );
 }

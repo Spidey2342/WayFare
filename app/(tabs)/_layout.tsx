@@ -4,7 +4,7 @@ import { TabBar } from '@/components/navigation/TabBar';
 
 export default function TabsLayout() {
   return (
-    <Tabs tabBar={() => <TabBar />} screenOptions={{ headerShown: false }}>
+    <Tabs tabBar={() => <TabBar />} screenOptions={{ headerShown: false, sceneStyle: { flex: 1 } }}>
       <Tabs.Screen name="home" />
       <Tabs.Screen name="decks" />
       <Tabs.Screen name="play" options={{ href: null }} />

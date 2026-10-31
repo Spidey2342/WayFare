@@ -7,6 +7,17 @@ html, body, #root {
   min-height: 100dvh;
   background: #F4F5F8;
 }
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+#root > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
 body {
   margin: 0;
   overscroll-behavior: none;

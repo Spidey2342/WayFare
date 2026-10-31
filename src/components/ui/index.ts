@@ -6,7 +6,7 @@ export { SegmentedTabs } from './SegmentedTabs';
 export { ProgressBar } from './ProgressBar';
 export { TimerRing } from './TimerRing';
 export { Avatar, AvatarStack } from './Avatar';
-export { Screen } from './Screen';
+export { Screen, ScreenScroll } from './Screen';
 export { Logo } from './Logo';
 export { CardFace } from './CardFace';
 export { FlipCard } from './FlipCard';

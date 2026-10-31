@@ -1,8 +1,15 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { Button, PlayerRow, RoundSlider, Screen, type RoundMinutes } from '@/components/ui';
+import {
+  Button,
+  PlayerRow,
+  RoundSlider,
+  Screen,
+  ScreenScroll,
+  type RoundMinutes,
+} from '@/components/ui';
 import { findDeck } from '@/data/catalog';
 import { useSessionStore } from '@/features/game/sessionStore';
 import { useAppStore } from '@/store';
@@ -86,7 +93,7 @@ export default function SetupScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Back"
@@ -144,13 +151,13 @@ export default function SetupScreen() {
         <Text style={styles.label}>Round length</Text>
         <RoundSlider value={minutes} onChange={setMinutes} />
         <Button label="Start game" variant="gold" onPress={start} />
-      </ScrollView>
+      </ScreenScroll>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
+  content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 120 },
   back: {
     fontFamily: fontFamily.bodySemi,
     letterSpacing: 1,

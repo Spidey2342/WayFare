@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Bell, LogOut, Shield, User } from 'lucide-react-native';
 
@@ -10,6 +10,7 @@ import {
   BottomSheet,
   Button,
   Screen,
+  ScreenScroll,
   SettingsRow,
   StatTile,
 } from '@/components/ui';
@@ -33,7 +34,7 @@ export default function ProfileScreen() {
 
   return (
     <Screen background={palette.offWhite} gutter={palette.offWhite}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScreenScroll contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
           <Avatar name={profile.name} color={profile.avatarColor} size={84} ring />
           <Text style={styles.heroName}>{profile.name}</Text>
@@ -118,7 +119,7 @@ export default function ProfileScreen() {
             ))}
           </View>
         </View>
-      </ScrollView>
+      </ScreenScroll>
 
       <BottomSheet visible={sheet !== null} onClose={() => setSheet(null)}>
         {sheet === 'profile' ? (

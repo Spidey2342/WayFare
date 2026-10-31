@@ -38,14 +38,14 @@
 
 ## Step 7: Verification
 
-| Check | Result |
-| ----- | ------ |
-| `npm test` | 41 passed + emoji scan OK |
-| `npm run lint` | 0 warnings |
-| `npm run typecheck` | OK |
-| `npm run build:web` | OK |
-| `npm run test:e2e:emoji` | 0 violations on all routes (+ gameplay via setup) |
-| Screenshots | `docs/audit/after/home.png`, `profile.png`, `journey.png` |
+| Check                    | Result                                                    |
+| ------------------------ | --------------------------------------------------------- |
+| `npm test`               | 41 passed + emoji scan OK                                 |
+| `npm run lint`           | 0 warnings                                                |
+| `npm run typecheck`      | OK                                                        |
+| `npm run build:web`      | OK                                                        |
+| `npm run test:e2e:emoji` | 0 violations on all routes (+ gameplay via setup)         |
+| Screenshots              | `docs/audit/after/home.png`, `profile.png`, `journey.png` |
 
 ## Commands
 

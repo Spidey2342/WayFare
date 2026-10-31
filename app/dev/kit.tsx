@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { BookOpen, Heart, User } from 'lucide-react-native';
 
 import {
@@ -27,6 +27,7 @@ import {
   SkeletonLoader,
   StatTile,
   Screen,
+  ScreenScroll,
   SegmentedTabs,
   TimerRing,
   useToast,
@@ -47,7 +48,7 @@ export default function DevKitScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <Text style={[typeScale.caption, { color: palette.goldDeep }]}>WAYFARE · {mode}</Text>
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Design kit</Text>
 
@@ -194,7 +195,7 @@ export default function DevKitScreen() {
           onConfirm={() => setModal(false)}
           onClose={() => setModal(false)}
         />
-      </ScrollView>
+      </ScreenScroll>
     </Screen>
   );
 }

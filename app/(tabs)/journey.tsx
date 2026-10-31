@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { BadgeTile, JourneyNode, Screen } from '@/components/ui';
+import { BadgeTile, JourneyNode, Screen, ScreenScroll } from '@/components/ui';
 import type { BadgeColorToken } from '@/components/ui/BadgeIcon';
 import { badges, journeyNodes, levelForXp } from '@/features/journey/progress';
 import { useAppStore } from '@/store';
@@ -14,7 +14,7 @@ export default function JourneyScreen() {
 
   return (
     <Screen background={palette.offWhite} gutter={palette.offWhite}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <Text style={[typeScale.caption, { color: palette.goldDeep }]}>Your journey</Text>
         <Text style={[typeScale.h1, { color: palette.ink }]}>
           Level {level.level} · {level.displayTitle}
@@ -73,7 +73,7 @@ export default function JourneyScreen() {
             />
           ))}
         </View>
-      </ScrollView>
+      </ScreenScroll>
     </Screen>
   );
 }

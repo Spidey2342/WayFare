@@ -1,8 +1,15 @@
 import { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { DeckTile, EmptyState, ProDeckBanner, Screen, SegmentedTabs } from '@/components/ui';
+import {
+  DeckTile,
+  EmptyState,
+  ProDeckBanner,
+  Screen,
+  ScreenScroll,
+  SegmentedTabs,
+} from '@/components/ui';
 import { deckCatalog, type DeckSummary } from '@/data/catalog';
 import { DeckIconView } from '@/features/decks/deckIcons';
 import { useAppStore } from '@/store';
@@ -34,7 +41,7 @@ export default function DecksScreen() {
 
   return (
     <Screen background={palette.offWhite} gutter={palette.offWhite}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Explore Decks</Text>
         <SegmentedTabs<DeckSegment>
           value={tab}
@@ -75,7 +82,7 @@ export default function DecksScreen() {
           </View>
         )}
         <ProDeckBanner onPress={() => router.push('/outing')} />
-      </ScrollView>
+      </ScreenScroll>
     </Screen>
   );
 }

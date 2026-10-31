@@ -1,8 +1,8 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { BookOpen, Brain, Library } from 'lucide-react-native';
 
-import { Button, ProgressBar, Screen } from '@/components/ui';
+import { Button, ProgressBar, Screen, ScreenScroll } from '@/components/ui';
 import { lessonsForPath, learnPaths } from '@/features/learn/repository';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/theme';
@@ -14,7 +14,7 @@ export default function LearnHubScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Learn</Text>
         <Text style={[typeScale.bodyM, { color: colors.textSecondary }]}>
           Study paths, Bible books, and quick quizzes. Everything works offline on this device.
@@ -71,7 +71,7 @@ export default function LearnHubScreen() {
             Scripture shown in lessons and cards is King James Version (public domain).
           </Text>
         </View>
-      </ScrollView>
+      </ScreenScroll>
     </Screen>
   );
 }

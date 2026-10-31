@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Smartphone, Users } from 'lucide-react-native';
 
-import { AvatarStack, Button, Chip, Screen } from '@/components/ui';
+import { AvatarStack, Button, Chip, Screen, ScreenScroll } from '@/components/ui';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, shadows, spacing, typeScale } from '@/theme';
 
@@ -14,7 +14,7 @@ export default function ChooseModeScreen() {
 
   return (
     <Screen>
-      <View style={styles.body}>
+      <ScreenScroll contentContainerStyle={styles.body}>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Back"
@@ -71,13 +71,13 @@ export default function ChooseModeScreen() {
         <Text style={styles.verse}>
           Let your speech be always with grace, seasoned with salt. — Colossians 4:6
         </Text>
-      </View>
+      </ScreenScroll>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  body: { flex: 1, padding: spacing.xl, gap: spacing.md },
+  body: { padding: spacing.xl, gap: spacing.md, paddingBottom: 48 },
   back: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' },
   backText: { fontFamily: fontFamily.bodySemi, letterSpacing: 1, color: palette.warmGray },
   title: { ...typeScale.h1, color: palette.midnight },

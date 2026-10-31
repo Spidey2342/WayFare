@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { Button, EmptyState, Screen } from '@/components/ui';
+import { Button, EmptyState, Screen, ScreenScroll } from '@/components/ui';
 import { unityPercent } from '@/features/game/engine';
 import { useSessionStore } from '@/features/game/sessionStore';
 import type { SessionAward } from '@/features/journey/progress';
@@ -39,7 +39,7 @@ export default function LeaderboardScreen() {
 
   return (
     <Screen>
-      <View style={styles.body}>
+      <ScreenScroll contentContainerStyle={styles.body}>
         <Text style={styles.kicker}>
           Round {session.currentRound} of {session.roundsTotal}
         </Text>
@@ -83,13 +83,13 @@ export default function LeaderboardScreen() {
             router.push('/game/complete');
           }}
         />
-      </View>
+      </ScreenScroll>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  body: { flex: 1, padding: spacing.xl, gap: spacing.md },
+  body: { padding: spacing.xl, gap: spacing.md, paddingBottom: 48 },
   kicker: { ...typeScale.caption, color: palette.goldDeep },
   title: { ...typeScale.h1, color: palette.midnight },
   note: { ...typeScale.bodyS, color: palette.warmGray },

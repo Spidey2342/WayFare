@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Compass, Share2 } from 'lucide-react-native';
 
-import { Avatar, Button, Chip, DeckTile, QuoteCard, Screen } from '@/components/ui';
+import { Avatar, Button, Chip, DeckTile, QuoteCard, Screen, ScreenScroll } from '@/components/ui';
 import { deckCatalog, sampleVerse } from '@/data/catalog';
 import { DeckIconView } from '@/features/decks/deckIcons';
 import { journeyNodes, levelForXp } from '@/features/journey/progress';
@@ -28,7 +28,7 @@ export default function HomeScreen() {
 
   return (
     <Screen background={palette.offWhite} gutter={palette.offWhite}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScreenScroll contentContainerStyle={styles.content}>
         {!online ? (
           <Text style={styles.offline}>You are offline. Saved decks and Learn still work.</Text>
         ) : null}
@@ -144,7 +144,7 @@ export default function HomeScreen() {
           <Share2 color={palette.warmGray} size={16} />
           <Text style={styles.shareHint}>Share a moment after you play.</Text>
         </View>
-      </ScrollView>
+      </ScreenScroll>
     </Screen>
   );
 }
