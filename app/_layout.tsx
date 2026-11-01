@@ -7,7 +7,9 @@ import { Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { NavigationGuard } from '@/components/navigation/NavigationGuard';
 import { RouteError } from '@/components/RouteError';
+import { AuthProvider } from '@/features/auth/AuthContext';
 import { ToastProvider } from '@/components/ui/Toast';
 import { useAppStore } from '@/store';
 import { fontAssets, ThemeProvider } from '@/theme';
@@ -40,14 +42,18 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <ThemeProvider preference={preference}>
           <ToastProvider>
-            <StatusBar style={preference === 'dark' ? 'light' : 'auto'} />
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                animation: 'fade',
-                contentStyle: { flex: 1 },
-              }}
-            />
+            <AuthProvider>
+              <NavigationGuard>
+                <StatusBar style={preference === 'dark' ? 'light' : 'auto'} />
+                <Stack
+                  screenOptions={{
+                    headerShown: false,
+                    animation: 'fade',
+                    contentStyle: { flex: 1 },
+                  }}
+                />
+              </NavigationGuard>
+            </AuthProvider>
           </ToastProvider>
         </ThemeProvider>
       </SafeAreaProvider>
