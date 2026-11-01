@@ -1,0 +1,14 @@
+-- Manual RLS checks (run in SQL editor while signed in as different users via the app,
+-- or use the Supabase SQL editor with SET request.jwt.claim.sub for advanced testing).
+--
+-- CHECKLIST:
+-- [ ] User A cannot SELECT B's profile row when they share no group.
+-- [ ] User A CAN SELECT B's display_name when both are in the same group.
+-- [ ] INSERT into group_members as authenticated fails (no policy).
+-- [ ] join_group_by_code('WRONG1') raises invalid_code (generic).
+-- [ ] Member calling rotate_group_code raises forbidden.
+-- [ ] Leader calling rotate_group_code succeeds.
+
+-- Example: verify no direct insert policy (should error from client/API):
+-- insert into public.group_members (group_id, user_id, role)
+-- values ('00000000-0000-0000-0000-000000000000', auth.uid(), 'member');
