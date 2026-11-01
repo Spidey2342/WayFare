@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Bell, LogOut, Shield, User } from 'lucide-react-native';
+import { Bell, HelpCircle, LogOut, Shield, User, Users } from 'lucide-react-native';
 
 import {
   AppModal,
@@ -14,7 +14,9 @@ import {
   SettingsRow,
   StatTile,
 } from '@/components/ui';
+import { useAuth } from '@/features/auth/AuthContext';
 import { badges, levelForXp } from '@/features/journey/progress';
+import { isSupabaseConfigured, requireSupabase } from '@/services/supabase';
 import type { BadgeColorToken } from '@/components/ui/BadgeIcon';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
@@ -28,9 +30,11 @@ export default function ProfileScreen() {
   const setThemePreference = useAppStore((state) => state.setThemePreference);
   const setProfileName = useAppStore((state) => state.setProfileName);
   const resetGuest = useAppStore((state) => state.resetGuest);
+  const { session, signOut } = useAuth();
   const [name, setName] = useState(profile.name);
-  const [sheet, setSheet] = useState<'profile' | 'notes' | 'privacy' | null>(null);
+  const [sheet, setSheet] = useState<'profile' | 'notes' | 'privacy' | 'help' | null>(null);
   const [confirm, setConfirm] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
     <Screen background={palette.offWhite} gutter={palette.offWhite}>
@@ -83,10 +87,22 @@ export default function ProfileScreen() {
               onPress={() => setSheet('notes')}
             />
             <SettingsRow
+              icon={<Users color={palette.midnight} size={18} />}
+              title="Groups"
+              subtitle="Create or join with a code"
+              onPress={() => router.push('/groups')}
+            />
+            <SettingsRow
               icon={<Shield color={palette.midnight} size={18} />}
               title="Privacy & content"
-              subtitle="No account, no trackers"
+              subtitle="Your data and account"
               onPress={() => setSheet('privacy')}
+            />
+            <SettingsRow
+              icon={<HelpCircle color={palette.midnight} size={18} />}
+              title="Help"
+              subtitle="Replay the tour"
+              onPress={() => setSheet('help')}
             />
             <SettingsRow
               icon={<LogOut color={palette.coral} size={18} />}
@@ -150,24 +166,74 @@ export default function ProfileScreen() {
           </Text>
         ) : null}
         {sheet === 'privacy' ? (
-          <Text style={styles.sheetBody}>
-            Nothing you type leaves this device. There is no account, no analytics, and no personal
-            information collected. Log out clears the local guest profile.
-          </Text>
+          <>
+            <Text style={styles.sheetBody}>
+              With an account, your profile and groups sync through Supabase. Guest play stays on
+              this device only.
+            </Text>
+            {session ? (
+              <Button
+                label="Delete my account"
+                variant="secondary"
+                onPress={() => setConfirmDelete(true)}
+              />
+            ) : null}
+          </>
+        ) : null}
+        {sheet === 'help' ? (
+          <>
+            <Text style={styles.sheetBody}>
+              Walk through how cards, play modes, and lessons work.
+            </Text>
+            <Button
+              label="Replay the tour"
+              variant="gold"
+              onPress={() => {
+                setSheet(null);
+                router.push('/onboarding/how-wayfare');
+              }}
+            />
+          </>
         ) : null}
       </BottomSheet>
 
       <AppModal
         visible={confirm}
         title="Log out?"
-        body="This resets the guest profile stored on this device."
+        body={
+          session
+            ? 'You will sign out of your account on this device.'
+            : 'This resets the guest profile stored on this device.'
+        }
         confirmLabel="Log out"
         onConfirm={() => {
-          resetGuest();
-          setConfirm(false);
-          router.replace('/welcome');
+          void (async () => {
+            if (session) await signOut();
+            else resetGuest();
+            setConfirm(false);
+            router.replace('/auth/welcome');
+          })();
         }}
         onClose={() => setConfirm(false)}
+      />
+      <AppModal
+        visible={confirmDelete}
+        title="Delete account?"
+        body="This removes your profile, group memberships, and progress stored online. This cannot be undone."
+        confirmLabel="Delete account"
+        onConfirm={() => {
+          void (async () => {
+            if (isSupabaseConfigured) {
+              await requireSupabase().rpc('delete_my_account');
+              await signOut();
+            }
+            resetGuest();
+            setConfirmDelete(false);
+            setSheet(null);
+            router.replace('/auth/welcome');
+          })();
+        }}
+        onClose={() => setConfirmDelete(false)}
       />
     </Screen>
   );

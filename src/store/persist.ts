@@ -1,3 +1,4 @@
+import { defaultChecklistState, type ChecklistState } from '@/features/onboarding/checklist';
 import { defaultProgress, type GameProgress } from '@/features/journey/progress';
 import { sanitizeBadgesEarned } from '@/features/journey/badgeMigration';
 import type { ThemePreference } from '@/theme';
@@ -6,6 +7,12 @@ export interface Profile {
   name: string;
   avatarColor: string;
 }
+
+export type PlayModeHelpSeen = {
+  solo: boolean;
+  pass: boolean;
+  online: boolean;
+};
 
 export interface PersistedApp {
   themePreference: ThemePreference;
@@ -18,9 +25,13 @@ export interface PersistedApp {
   notifyInterest: boolean;
   favoriteDeckIds: string[];
   progress: GameProgress;
+  checklist: ChecklistState;
+  localTutorialStep: number;
+  localTutorialCompleted: boolean;
+  playModeHelpSeen: PlayModeHelpSeen;
 }
 
-export const STORE_VERSION = 4;
+export const STORE_VERSION = 5;
 
 export function defaultPersisted(): PersistedApp {
   return {
@@ -37,6 +48,32 @@ export function defaultPersisted(): PersistedApp {
     notifyInterest: false,
     favoriteDeckIds: [],
     progress: defaultProgress(),
+    checklist: defaultChecklistState(),
+    localTutorialStep: 0,
+    localTutorialCompleted: false,
+    playModeHelpSeen: { solo: false, pass: false, online: false },
+  };
+}
+
+function readChecklist(value: unknown, fallback: ChecklistState): ChecklistState {
+  if (!value || typeof value !== 'object') return fallback;
+  const record = value as Record<string, unknown>;
+  return {
+    profileDone: record.profileDone === true,
+    firstCardDone: record.firstCardDone === true,
+    friendsDone: record.friendsDone === true,
+    lessonDone: record.lessonDone === true,
+    dismissed: record.dismissed === true,
+  };
+}
+
+function readPlayModeHelp(value: unknown, fallback: PlayModeHelpSeen): PlayModeHelpSeen {
+  if (!value || typeof value !== 'object') return fallback;
+  const record = value as Record<string, unknown>;
+  return {
+    solo: record.solo === true,
+    pass: record.pass === true,
+    online: record.online === true,
   };
 }
 
@@ -89,6 +126,13 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
     notifyInterest: record.notifyInterest === true,
     favoriteDeckIds: readStringList(record.favoriteDeckIds),
     progress,
+    checklist: readChecklist(record.checklist, base.checklist),
+    localTutorialStep:
+      typeof record.localTutorialStep === 'number' && record.localTutorialStep >= 0
+        ? record.localTutorialStep
+        : base.localTutorialStep,
+    localTutorialCompleted: record.localTutorialCompleted === true,
+    playModeHelpSeen: readPlayModeHelp(record.playModeHelpSeen, base.playModeHelpSeen),
   };
 }
 

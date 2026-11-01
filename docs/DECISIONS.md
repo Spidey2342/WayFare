@@ -10,7 +10,19 @@ Expo SDK 58 can export `static` HTML per route or a `single` page app. Game sess
 
 ## Guest name
 
-A fresh profile is named Kofi so the home greeting matches the design. The name is editable. There is no account in v1. Log out resets this local guest.
+A fresh profile is named Kofi so the home greeting matches the design. The name is editable. Guests can use solo and same-phone play offline without Supabase. Online groups and multiplayer require sign-in.
+
+## Supabase and auth
+
+The anon key and URL live in `.env` only (`EXPO_PUBLIC_*`). Client code never uses `service_role`. Profiles are created by a trigger on `auth.users`. Group membership changes go through SECURITY DEFINER RPCs, not direct inserts. Delete account uses `delete_my_account` then sign-out.
+
+## Guided onboarding
+
+After profile setup (account holders) or guest entry, users see goal selection, a skippable 3-step tour, and a required offline practice round that awards the First Step badge. Progress resumes via `tutorial_step` on the profile and local store v5 fields. Home shows a Start here checklist until complete or dismissed.
+
+## Play modes
+
+The center Play button opens a sheet: Solo, Same phone, With friends online. Online requires auth. First visit to each mode can show a short how-to sheet; Profile Help can replay the tour.
 
 ## Scripture
 

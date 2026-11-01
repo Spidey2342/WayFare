@@ -1,17 +1,19 @@
 import { useEffect, type ReactNode } from 'react';
-import { Modal, Pressable, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { palette, radii, spacing, useTheme } from '@/theme';
+import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/theme';
 
 export function BottomSheet({
   visible,
   onClose,
+  title,
   children,
 }: {
   visible: boolean;
   onClose: () => void;
+  title?: string;
   children: ReactNode;
 }) {
   const reduced = useReducedMotion();
@@ -31,6 +33,7 @@ export function BottomSheet({
       <Pressable accessibilityLabel="Close sheet" onPress={onClose} style={styles.backdrop} />
       <Animated.View style={[styles.sheet, { backgroundColor: colors.surface }, sheetStyle]}>
         <View style={styles.handle} />
+        {title ? <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text> : null}
         {children}
       </Animated.View>
     </Modal>
@@ -68,4 +71,5 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#D5D8E0',
   },
+  title: { ...typeScale.h3, fontFamily: fontFamily.headingSemi },
 });

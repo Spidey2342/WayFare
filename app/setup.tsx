@@ -24,8 +24,9 @@ interface DraftPlayer {
 export default function SetupScreen() {
   const router = useRouter();
   const { colors } = useTheme();
-  const params = useLocalSearchParams<{ deckId?: string }>();
+  const params = useLocalSearchParams<{ deckId?: string; mode?: string }>();
   const deckId = typeof params.deckId === 'string' ? params.deckId : 'identity';
+  const soloMode = params.mode === 'solo';
   const deck = findDeck(deckId);
   const preferred = useAppStore((state) => state.preferredMode) ?? 'pass';
   const [mode, setMode] = useState<'pass' | 'team'>(preferred === 'team' ? 'team' : 'pass');
@@ -54,8 +55,12 @@ export default function SetupScreen() {
   };
 
   const start = () => {
-    if (players.length < 2) {
+    if (!soloMode && players.length < 2) {
       setError('Add at least two players.');
+      return;
+    }
+    if (soloMode && players.length < 1) {
+      setError('Add your name to start.');
       return;
     }
     const teams =

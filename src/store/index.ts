@@ -9,9 +9,16 @@ import {
   toggleBookRead,
   type SessionAward,
 } from '@/features/journey/progress';
+import type { ChecklistItemId } from '@/features/onboarding/checklist';
 import { storage } from '@/services/storage';
 
-import { defaultPersisted, migratePersisted, STORE_VERSION, type PersistedApp } from './persist';
+import {
+  defaultPersisted,
+  migratePersisted,
+  STORE_VERSION,
+  type PersistedApp,
+  type PlayModeHelpSeen,
+} from './persist';
 
 interface AppActions {
   hydrated: boolean;
@@ -30,6 +37,12 @@ interface AppActions {
   toggleBook: (bookId: string) => void;
   completeQuiz: () => void;
   resetGuest: () => void;
+  markChecklistItem: (id: ChecklistItemId) => void;
+  dismissChecklist: () => void;
+  setLocalTutorialStep: (step: number) => void;
+  completeLocalTutorial: () => void;
+  markPlayModeHelpSeen: (mode: keyof PlayModeHelpSeen) => void;
+  awardFirstStepFromTutorial: () => void;
 }
 
 export type AppStore = PersistedApp & AppActions;
@@ -67,12 +80,48 @@ export const useAppStore = create<AppStore>()(
       completeWeeklyChallenge: () =>
         set((state) => ({ progress: completeWeekly(state.progress, new Date()) })),
       completeLesson: (lessonId) =>
-        set((state) => ({ progress: applyLessonComplete(state.progress, lessonId, new Date()) })),
+        set((state) => ({
+          progress: applyLessonComplete(state.progress, lessonId, new Date()),
+          checklist: { ...state.checklist, lessonDone: true },
+        })),
       toggleBook: (bookId) =>
         set((state) => ({ progress: toggleBookRead(state.progress, bookId) })),
       completeQuiz: () =>
         set((state) => ({ progress: applyQuizComplete(state.progress, new Date()) })),
       resetGuest: () => set({ ...defaultPersisted(), onboarded: false, hydrated: true }),
+      markChecklistItem: (id) =>
+        set((state) => ({
+          checklist: {
+            ...state.checklist,
+            ...(id === 'profile' ? { profileDone: true } : {}),
+            ...(id === 'firstCard' ? { firstCardDone: true } : {}),
+            ...(id === 'friends' ? { friendsDone: true } : {}),
+            ...(id === 'lesson' ? { lessonDone: true } : {}),
+          },
+        })),
+      dismissChecklist: () =>
+        set((state) => ({ checklist: { ...state.checklist, dismissed: true } })),
+      setLocalTutorialStep: (localTutorialStep) => set({ localTutorialStep }),
+      completeLocalTutorial: () =>
+        set({ localTutorialCompleted: true, localTutorialStep: 3, onboarded: true }),
+      markPlayModeHelpSeen: (mode) =>
+        set((state) => ({
+          playModeHelpSeen: { ...state.playModeHelpSeen, [mode]: true },
+        })),
+      awardFirstStepFromTutorial: () =>
+        set((state) => {
+          const badges = state.progress.badgesEarned.includes('first-step')
+            ? state.progress.badgesEarned
+            : [...state.progress.badgesEarned, 'first-step'];
+          return {
+            progress: {
+              ...state.progress,
+              badgesEarned: badges,
+              sessionsCompleted: Math.max(1, state.progress.sessionsCompleted),
+            },
+            checklist: { ...state.checklist, firstCardDone: true },
+          };
+        }),
     }),
     {
       name: 'wayfare.store',
@@ -90,6 +139,10 @@ export const useAppStore = create<AppStore>()(
         notifyInterest: state.notifyInterest,
         favoriteDeckIds: state.favoriteDeckIds,
         progress: state.progress,
+        checklist: state.checklist,
+        localTutorialStep: state.localTutorialStep,
+        localTutorialCompleted: state.localTutorialCompleted,
+        playModeHelpSeen: state.playModeHelpSeen,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
