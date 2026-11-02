@@ -10,6 +10,8 @@ Paste the full file into the Supabase SQL editor (after 0001–0003):
 
 [`supabase/migrations/0004_prevent_duplicates.sql`](../supabase/migrations/0004_prevent_duplicates.sql)
 
+If you already hit **`23505` on `groups_owner_name_active_uidx`** (duplicates such as two `qavah` rows for one owner), run [`0005_merge_before_unique_index.sql`](../supabase/migrations/0005_merge_before_unique_index.sql) once, then run the **full** updated 0004 (safe to re-run; merges and `create or replace` are idempotent).
+
 ## pg_cron / schedules
 
 If **Database → Extensions → pg_cron** is enabled, uncomment and run the `cron.schedule` lines at the bottom of 0004.

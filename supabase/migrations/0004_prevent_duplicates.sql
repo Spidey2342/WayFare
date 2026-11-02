@@ -54,10 +54,6 @@ alter table public.groups
     description is null or char_length(trim(description)) <= 200
   );
 
-create unique index if not exists groups_owner_name_active_uidx
-  on public.groups (owner_id, name_normalized)
-  where archived_at is null;
-
 create or replace function public.groups_set_normalized()
 returns trigger
 language plpgsql
@@ -217,6 +213,10 @@ where g.archived_at is null
     select 1 from public.group_members gm
     where gm.group_id = g.id and gm.user_id = g.owner_id
   );
+
+create unique index if not exists groups_owner_name_active_uidx
+  on public.groups (owner_id, name_normalized)
+  where archived_at is null;
 
 -- ---------------------------------------------------------------------------
 -- Rate limit helper
