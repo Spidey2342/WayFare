@@ -9,6 +9,7 @@ import { GameHelpSheet } from '@/components/game/GameHelpSheet';
 import { PlayModeSheet } from '@/components/game/PlayModeSheet';
 import { requiresAccountForPlayMode, type PlayMode } from '@/features/auth/routing';
 import { useAuth } from '@/features/auth/AuthContext';
+import { DEBATE_HELP, PASS_GAME_HELP, SOLO_GAME_HELP } from '@/features/game/helpCopy';
 import { useSessionStore } from '@/features/game/sessionStore';
 import { tapHaptic } from '@/services/haptics';
 import { useAppStore } from '@/store';
@@ -20,12 +21,6 @@ const items = [
   { href: '/journey', label: 'Journey', icon: Compass, match: '/journey' },
   { href: '/profile', label: 'Profile', icon: User, match: '/profile' },
 ] as const;
-
-const PASS_HELP = [
-  'Read the card out loud.',
-  'Pass the phone when someone finishes their turn.',
-  'Tap Done when the group is ready for the next card.',
-];
 
 export function TabBar() {
   const pathname = usePathname();
@@ -130,7 +125,13 @@ export function TabBar() {
             setPendingMode(null);
           }
         }}
-        lines={PASS_HELP}
+        lines={
+          pendingMode === 'solo'
+            ? SOLO_GAME_HELP
+            : pendingMode === 'online'
+              ? DEBATE_HELP
+              : PASS_GAME_HELP
+        }
       />
     </>
   );

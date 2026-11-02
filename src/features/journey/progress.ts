@@ -43,7 +43,7 @@ export interface GameProgress {
 
 export interface SessionAward {
   id: string;
-  mode: 'pass' | 'team' | 'journey' | 'outing';
+  mode: 'pass' | 'team' | 'solo' | 'journey' | 'outing';
   cardsPlayed: number;
   cardTypes: ('word' | 'question' | 'dare' | 'challenge' | 'testimony')[];
   unity: number;

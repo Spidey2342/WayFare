@@ -4,6 +4,8 @@ export type PlayMode = 'solo' | 'pass' | 'online';
 
 export function requiresAuth(pathname: string): boolean {
   const path = pathname.split('?')[0] ?? pathname;
+  if (path === '/debate/solo') return false;
+  if (path.startsWith('/debate/')) return true;
   return AUTH_REQUIRED_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 

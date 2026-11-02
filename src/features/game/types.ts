@@ -1,5 +1,5 @@
 export type CardType = 'word' | 'question' | 'dare' | 'challenge' | 'testimony';
-export type GameMode = 'pass' | 'team' | 'journey' | 'outing';
+export type GameMode = 'pass' | 'team' | 'solo' | 'journey' | 'outing';
 export type DiceFace = 'truth' | 'dare' | 'wild' | 'bless';
 
 export interface EngineCard {

@@ -17,7 +17,12 @@ export function roundsForMinutes(minutes: number): number {
 }
 
 export function createSession(config: SessionConfig, rng: Rng): Session {
-  if (config.players.length < 2) throw new GameError('Add at least two players.');
+  const minPlayers = config.mode === 'solo' ? 1 : 2;
+  if (config.players.length < minPlayers) {
+    throw new GameError(
+      config.mode === 'solo' ? 'Add your name to start.' : 'Add at least two players.',
+    );
+  }
   if (config.cards.length === 0) throw new GameError('This deck has no cards.');
   const names = new Set<string>();
   for (const player of config.players) {

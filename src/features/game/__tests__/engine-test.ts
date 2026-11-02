@@ -118,6 +118,19 @@ describe('game engine', () => {
     expect(blessed.actsOfService).toBe(1);
   });
 
+  test('allows solo mode with one player', () => {
+    const solo = createSession(
+      config({
+        mode: 'solo',
+        players: [{ id: 'p1', name: 'Kofi' }],
+        teams: [],
+      }),
+      mulberry32(1),
+    );
+    expect(solo.players).toHaveLength(1);
+    expect(solo.mode).toBe('solo');
+  });
+
   test('rejects an empty deck, a short roster, and a lone team', () => {
     expect(() => createSession(config({ cards: [] }), mulberry32(1))).toThrow('no cards');
     expect(() => createSession(config({ players: [config().players[0]!] }), mulberry32(1))).toThrow(

@@ -10,6 +10,8 @@ describe('auth routing', () => {
     expect(requiresAuth('/groups')).toBe(true);
     expect(requiresAuth('/groups/join')).toBe(true);
     expect(requiresAuth('/home')).toBe(false);
+    expect(requiresAuth('/debate/solo')).toBe(false);
+    expect(requiresAuth('/debate/abc-123')).toBe(true);
   });
 
   it('redirects guests away from protected routes', () => {

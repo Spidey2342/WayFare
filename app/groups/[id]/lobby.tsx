@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Copy } from 'lucide-react-native';
 
 import { BackButton, BottomSheet, Button, Screen, ScreenScroll } from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthContext';
+import { rpcStartGroupDebate } from '@/features/debate/api';
+import { debateStatementsForDeck } from '@/features/debate/cards';
 import {
   fetchGroup,
   fetchGroupMembers,
@@ -18,6 +20,7 @@ import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
 type MemberView = { userId: string; name: string; role: string; ready: boolean };
 
 export default function GroupLobbyScreen() {
+  const router = useRouter();
   const { user } = useAuth();
   const params = useLocalSearchParams<{ id: string }>();
   const id = typeof params.id === 'string' ? params.id : '';
@@ -87,6 +90,24 @@ export default function GroupLobbyScreen() {
     }
   };
 
+  const startMatch = async () => {
+    try {
+      const statements = debateStatementsForDeck('church-culture', 6);
+      if (statements.length === 0) {
+        setMessage('No debate statements in this deck.');
+        return;
+      }
+      const sessionId = await rpcStartGroupDebate(
+        id,
+        'church-culture',
+        statements.map((item) => item.cardId),
+      );
+      router.push(`/debate/${sessionId}`);
+    } catch {
+      setMessage('Could not start debate. Run Supabase migration 0002.');
+    }
+  };
+
   const removeFirstMember = async () => {
     const target = members.find((member) => member.role !== 'leader');
     if (!target) return;
@@ -129,11 +150,7 @@ export default function GroupLobbyScreen() {
         />
         {isLeader ? (
           <>
-            <Button
-              label="Start match"
-              variant="gold"
-              onPress={() => setMessage('Game launch coming soon.')}
-            />
+            <Button label="Start debate" variant="gold" onPress={() => void startMatch()} />
             <Button label="Leader tools" variant="ghost" onPress={() => setToolsOpen(true)} />
           </>
         ) : null}
