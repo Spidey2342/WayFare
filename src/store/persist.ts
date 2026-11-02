@@ -30,9 +30,11 @@ export interface PersistedApp {
   localTutorialStep: number;
   localTutorialCompleted: boolean;
   playModeHelpSeen: PlayModeHelpSeen;
+  introSeen: boolean;
+  seenRules: Partial<Record<'debate' | 'card-game', boolean>>;
 }
 
-export const STORE_VERSION = 6;
+export const STORE_VERSION = 7;
 
 export function defaultPersisted(): PersistedApp {
   return {
@@ -53,6 +55,8 @@ export function defaultPersisted(): PersistedApp {
     localTutorialStep: 0,
     localTutorialCompleted: false,
     playModeHelpSeen: { solo: false, pass: false, online: false, debate: false },
+    introSeen: false,
+    seenRules: {},
   };
 }
 
@@ -135,6 +139,20 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
         : base.localTutorialStep,
     localTutorialCompleted: record.localTutorialCompleted === true,
     playModeHelpSeen: readPlayModeHelp(record.playModeHelpSeen, base.playModeHelpSeen),
+    introSeen:
+      record.introSeen === true ||
+      record.localTutorialCompleted === true ||
+      (fromVersion < 7 && record.onboarded === true),
+    seenRules: readSeenRules(record.seenRules),
+  };
+}
+
+function readSeenRules(value: unknown): Partial<Record<'debate' | 'card-game', boolean>> {
+  if (!value || typeof value !== 'object') return {};
+  const record = value as Record<string, unknown>;
+  return {
+    debate: record.debate === true,
+    'card-game': record['card-game'] === true,
   };
 }
 

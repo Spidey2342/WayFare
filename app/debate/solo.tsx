@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { BackButton, Button, Screen, ScreenScroll, TimerRing } from '@/components/ui';
-import { DebateHelpSheet } from '@/features/debate/components/DebateHelpSheet';
+import { Button, Screen, ScreenScroll, TimerRing } from '@/components/ui';
+import { DebatePrepPanel } from '@/features/debate/components/DebatePrepPanel';
+import { useDebateRulesChrome } from '@/features/debate/components/DebateRulesChrome';
 import { DebateStage } from '@/features/debate/components/DebateStage';
 import { newLocalDebateId } from '@/features/debate/ids';
 import {
@@ -25,11 +26,10 @@ export default function SoloDebateScreen() {
   const [topicId, setTopicId] = useState(topics[0]?.id ?? 'topic-01');
   const [sidePick, setSidePick] = useState<DebateSide | 'random'>('random');
   const [session, setSession] = useState<LocalDebateSession | null>(null);
-  const [helpOpen, setHelpOpen] = useState(() => !useAppStore.getState().playModeHelpSeen.debate);
   const [recording, setRecording] = useState(false);
   const applyDebate = useAppStore((state) => state.applyDebateAward);
-  const markHelp = useAppStore((state) => state.markPlayModeHelpSeen);
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const rules = useDebateRulesChrome({ fallback: '/debate', showRulesOnMount: true });
 
   useEffect(() => {
     const timer = setInterval(() => setNowMs(Date.now()), 1000);
@@ -73,178 +73,200 @@ export default function SoloDebateScreen() {
 
   if (!session) {
     return (
-      <Screen background={palette.offWhite} gutter={palette.offWhite}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          <BackButton label="Back" fallback="/debate" />
-          <Text style={typeScale.h1}>Solo debate</Text>
-          <Text style={styles.lead}>Practice both sides on your own time.</Text>
-          {topics.slice(0, 4).map((topic) => (
-            <Button
-              key={topic.id}
-              label={topic.text.slice(0, 56) + (topic.text.length > 56 ? '…' : '')}
-              variant={topicId === topic.id ? 'primary' : 'ghost'}
-              onPress={() => setTopicId(topic.id)}
-            />
-          ))}
-          <View style={styles.sideRow}>
-            {(['for', 'against', 'random'] as const).map((side) => (
+      <>
+        <Screen background={palette.offWhite} gutter={palette.offWhite}>
+          <ScreenScroll contentContainerStyle={styles.content}>
+            {rules.header}
+            <Text style={typeScale.h1}>Solo debate</Text>
+            <Text style={styles.lead}>Practice both sides on your own time.</Text>
+            <Pressable accessibilityRole="button" onPress={rules.openRulesLink}>
+              <Text style={styles.howLink}>How to play</Text>
+            </Pressable>
+            {topics.slice(0, 4).map((topic) => (
               <Button
-                key={side}
-                label={side === 'random' ? 'Random side' : side.toUpperCase()}
-                variant={sidePick === side ? 'gold' : 'secondary'}
-                onPress={() => setSidePick(side)}
+                key={topic.id}
+                label={topic.text.slice(0, 56) + (topic.text.length > 56 ? '…' : '')}
+                variant={topicId === topic.id ? 'primary' : 'ghost'}
+                onPress={() => setTopicId(topic.id)}
               />
             ))}
-          </View>
-          <Button label="Begin" variant="gold" onPress={start} />
-        </ScreenScroll>
-        <DebateHelpSheet
-          open={helpOpen}
-          onClose={() => {
-            setHelpOpen(false);
-            markHelp('debate');
-          }}
-        />
-      </Screen>
+            <View style={styles.sideRow}>
+              {(['for', 'against', 'random'] as const).map((side) => (
+                <Button
+                  key={side}
+                  label={side === 'random' ? 'Random side' : side.toUpperCase()}
+                  variant={sidePick === side ? 'gold' : 'secondary'}
+                  onPress={() => setSidePick(side)}
+                />
+              ))}
+            </View>
+            <Button label="Begin" variant="gold" onPress={start} />
+          </ScreenScroll>
+        </Screen>
+        {rules.sheet}
+      </>
     );
   }
 
   const solo = session.solo!;
+  const player = session.players[0]!;
+  const side = player.side ?? 'for';
   const secondsLeft = session.phaseEndsAt
     ? Math.max(0, Math.ceil((session.phaseEndsAt - nowMs) / 1000))
     : 0;
 
   if (solo.soloPhase === 'prep') {
     return (
-      <Screen background={palette.midnight} gutter={palette.midnight}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          <Header onHelp={() => setHelpOpen(true)} />
-          <Text style={styles.phase}>Prep · 30s</Text>
-          <TimerRing secondsLeft={secondsLeft} total={session.config.prepSeconds} />
-          <Text style={styles.topic}>{session.topic.text}</Text>
-          <TextInput
-            multiline
-            placeholder="Your 3 points…"
-            placeholderTextColor={palette.warmGray}
-            style={styles.notes}
-            value={solo.prepNotes}
-            onChangeText={(text) =>
-              setSession({
-                ...session,
-                solo: { ...solo, prepNotes: text },
-              })
-            }
-          />
-          <Button
-            label="Start arguing"
-            variant="gold"
-            onPress={() => setSession(soloAdvance(session))}
-          />
-        </ScreenScroll>
-      </Screen>
+      <>
+        <Screen background={palette.midnight} gutter={palette.midnight}>
+          <ScreenScroll contentContainerStyle={styles.content}>
+            {rules.header}
+            <DebatePrepPanel
+              topic={session.topic.text}
+              side={side}
+              secondsLeft={secondsLeft}
+              totalSeconds={session.config.prepSeconds}
+              notes={solo.prepNotes}
+              onNotesChange={(text) =>
+                setSession({
+                  ...session,
+                  solo: { ...solo, prepNotes: text },
+                })
+              }
+            />
+            <Button
+              label="Start arguing"
+              variant="gold"
+              onPress={() => setSession(soloAdvance(session))}
+            />
+          </ScreenScroll>
+        </Screen>
+        {rules.sheet}
+      </>
     );
   }
 
   if (solo.soloPhase === 'for' || solo.soloPhase === 'against') {
-    const forPlayers = session.players.filter((player) => player.side === 'for');
-    const againstPlayers = session.players.filter((player) => player.side === 'against');
+    const activeSide = solo.soloPhase;
+    const sideColor = activeSide === 'for' ? palette.coral : palette.teal;
+    const sideSoft = activeSide === 'for' ? palette.coralSoft : palette.tealSoft;
+    const forPlayers = session.players.filter((p) => p.side === 'for');
+    const againstPlayers = session.players.filter((p) => p.side === 'against');
     return (
-      <Screen background={palette.midnight} gutter={palette.midnight}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          <Header onHelp={() => setHelpOpen(true)} />
-          <DebateStage
-            topic={session.topic.text}
-            secondsLeft={secondsLeft}
-            totalSeconds={60}
-            forPlayers={forPlayers}
-            againstPlayers={againstPlayers}
-            readyCount={0}
-            playerCount={1}
-            showReadyButton={false}
-          />
-          {Platform.OS === 'web' && typeof MediaRecorder !== 'undefined' ? (
-            <Button
-              label={recording ? 'Stop voice note' : 'Optional voice note'}
-              variant="ghost"
-              onPress={async () => {
-                if (recording) {
-                  setRecording(false);
-                  return;
-                }
-                try {
-                  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                  const recorder = new MediaRecorder(stream);
-                  recorder.start();
-                  setRecording(true);
-                  recorder.onstop = () => stream.getTracks().forEach((track) => track.stop());
-                } catch {
-                  setRecording(false);
-                }
-              }}
+      <>
+        <Screen background={palette.midnight} gutter={palette.midnight}>
+          <ScreenScroll contentContainerStyle={styles.content}>
+            {rules.header}
+            <View style={[styles.sideChip, { backgroundColor: sideSoft, borderColor: sideColor }]}>
+              <Text style={styles.sideKicker}>YOUR SIDE</Text>
+              <Text style={[styles.sideValue, { color: sideColor }]}>
+                {activeSide.toUpperCase()}
+              </Text>
+            </View>
+            <View style={styles.timerCenter}>
+              <TimerRing secondsLeft={secondsLeft} total={60} size={120} />
+            </View>
+            <DebateStage
+              topic={session.topic.text}
+              secondsLeft={secondsLeft}
+              totalSeconds={60}
+              forPlayers={forPlayers}
+              againstPlayers={againstPlayers}
+              readyCount={0}
+              playerCount={1}
+              showReadyButton={false}
+              announceTimer={false}
             />
-          ) : null}
-          <Button
-            label="Next side"
-            variant="gold"
-            onPress={() => setSession(soloAdvance(session))}
-          />
-        </ScreenScroll>
-      </Screen>
+            {Platform.OS === 'web' && typeof MediaRecorder !== 'undefined' ? (
+              <Button
+                label={recording ? 'Stop voice note' : 'Optional voice note'}
+                variant="ghost"
+                onPress={async () => {
+                  if (recording) {
+                    setRecording(false);
+                    return;
+                  }
+                  try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    const recorder = new MediaRecorder(stream);
+                    recorder.start();
+                    setRecording(true);
+                    recorder.onstop = () => stream.getTracks().forEach((track) => track.stop());
+                  } catch {
+                    setRecording(false);
+                  }
+                }}
+              />
+            ) : null}
+            <Button
+              label="Next side"
+              variant="gold"
+              onPress={() => setSession(soloAdvance(session))}
+            />
+          </ScreenScroll>
+        </Screen>
+        {rules.sheet}
+      </>
     );
   }
 
   return (
-    <Screen background={palette.offWhite} gutter={palette.offWhite}>
-      <ScreenScroll contentContainerStyle={styles.content}>
-        <Text style={typeScale.h2}>Reflection</Text>
-        <Text style={styles.lead}>Which side was harder? What did you learn?</Text>
-        <TextInput
-          multiline
-          style={styles.notesLight}
-          value={solo.reflection}
-          onChangeText={(text) => setSession({ ...session, solo: { ...solo, reflection: text } })}
-        />
-        <View style={styles.sideRow}>
-          {[1, 2, 3, 4, 5].map((rating) => (
-            <Button
-              key={rating}
-              label={String(rating)}
-              variant={solo.rating === rating ? 'gold' : 'ghost'}
-              onPress={() => setSession({ ...session, solo: { ...solo, rating } })}
-            />
-          ))}
-        </View>
-        <Button label="Finish and earn XP" variant="primary" onPress={finish} />
-      </ScreenScroll>
-    </Screen>
-  );
-}
-
-function Header({ onHelp }: { onHelp: () => void }) {
-  return (
-    <View style={styles.headerRow}>
-      <BackButton label="Exit" fallback="/debate" />
-      <Button label="?" variant="ghost" onPress={onHelp} />
-    </View>
+    <>
+      <Screen background={palette.offWhite} gutter={palette.offWhite}>
+        <ScreenScroll contentContainerStyle={styles.content}>
+          <Text style={typeScale.h2}>Reflection</Text>
+          <Text style={styles.lead}>Which side was harder? What did you learn?</Text>
+          <TextInput
+            multiline
+            style={styles.notesLight}
+            value={solo.reflection}
+            onChangeText={(text) => setSession({ ...session, solo: { ...solo, reflection: text } })}
+          />
+          <View style={styles.sideRow}>
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <Button
+                key={rating}
+                label={String(rating)}
+                variant={solo.rating === rating ? 'gold' : 'ghost'}
+                onPress={() => setSession({ ...session, solo: { ...solo, rating } })}
+              />
+            ))}
+          </View>
+          <Button label="Finish and earn XP" variant="primary" onPress={finish} />
+        </ScreenScroll>
+      </Screen>
+      {rules.sheet}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
   lead: { ...typeScale.bodyM, color: palette.warmGray },
-  sideRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  phase: { color: palette.gold, fontFamily: fontFamily.bodySemi },
-  topic: { color: palette.white, fontFamily: fontFamily.headingSemi, fontSize: 20, lineHeight: 28 },
-  notes: {
-    minHeight: 100,
-    borderRadius: radii.card,
-    borderWidth: 1,
-    borderColor: palette.line,
-    padding: spacing.md,
-    color: palette.white,
-    backgroundColor: palette.midnightRaised,
+  howLink: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 15,
+    color: palette.teal,
+    textDecorationLine: 'underline',
   },
+  sideRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
+  sideChip: {
+    alignSelf: 'center',
+    borderRadius: radii.pill,
+    borderWidth: 2,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+    gap: 4,
+  },
+  sideKicker: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 11,
+    letterSpacing: 1.4,
+    color: palette.warmGray,
+  },
+  sideValue: { fontFamily: fontFamily.heading, fontSize: 28 },
+  timerCenter: { alignItems: 'center' },
   notesLight: {
     minHeight: 120,
     borderRadius: radii.card,

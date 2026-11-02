@@ -32,7 +32,7 @@ const steps = [
 
 export default function HowItWorksScreen() {
   const router = useRouter();
-  const completeOnboarding = useAppStore((state) => state.completeOnboarding);
+  const markIntroSeen = useAppStore((state) => state.markIntroSeen);
   return (
     <Screen>
       <ScreenScroll contentContainerStyle={styles.scroll}>
@@ -46,7 +46,7 @@ export default function HowItWorksScreen() {
             accessibilityRole="button"
             accessibilityLabel="Skip onboarding"
             onPress={() => {
-              completeOnboarding('pass');
+              markIntroSeen();
               router.replace('/home');
             }}
             style={styles.skip}

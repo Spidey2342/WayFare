@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
+import { Button, Screen, ScreenScroll } from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthContext';
 import {
   fetchDebateResults,
@@ -18,11 +18,13 @@ import {
   type OnlineDebateSessionRow,
   type OnlineSessionPlayerRow,
 } from '@/features/debate/api';
-import { DebateHelpSheet } from '@/features/debate/components/DebateHelpSheet';
+import { DebateResultsView } from '@/features/debate/components/DebateResultsView';
+import type { DebateResults, DebateSide } from '@/features/debate/types';
+import { useDebateRulesChrome } from '@/features/debate/components/DebateRulesChrome';
 import { DebateStage } from '@/features/debate/components/DebateStage';
+import { DebateVoteGrid } from '@/features/debate/components/DebateVoteGrid';
 import { useDebateClock } from '@/features/debate/hooks/useDebateClock';
 import { bundledDebateTopics } from '@/features/debate/localSession';
-import { useAppStore } from '@/store';
 import { isSupabaseConfigured, requireSupabase } from '@/services/supabase';
 import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
@@ -35,10 +37,9 @@ export default function OnlineDebateScreen() {
   const [players, setPlayers] = useState<OnlineSessionPlayerRow[]>([]);
   const [topic, setTopic] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [helpOpen, setHelpOpen] = useState(false);
   const [votePick, setVotePick] = useState<string | null>(null);
   const [reconnecting, setReconnecting] = useState(false);
-  const markHelp = useAppStore((state) => state.markPlayModeHelpSeen);
+  const rules = useDebateRulesChrome({ fallback: '/debate', showRulesOnMount: true });
   const { secondsLeft, syncing } = useDebateClock(session?.phase_ends_at);
 
   const reload = useCallback(async () => {
@@ -159,7 +160,7 @@ export default function OnlineDebateScreen() {
     return (
       <Screen background={palette.offWhite} gutter={palette.offWhite}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Header help={() => setHelpOpen(true)} leaveHref="/debate" />
+          {rules.header}
           <Text style={typeScale.h2}>Lobby</Text>
           <Text style={styles.code}>Code {session.room_code}</Text>
           <Text style={styles.topic}>{topic}</Text>
@@ -178,13 +179,7 @@ export default function OnlineDebateScreen() {
           ) : null}
           {error ? <Text style={styles.error}>{error}</Text> : null}
         </ScreenScroll>
-        <DebateHelpSheet
-          open={helpOpen}
-          onClose={() => {
-            setHelpOpen(false);
-            markHelp('debate');
-          }}
-        />
+        {rules.sheet}
       </Screen>
     );
   }
@@ -193,7 +188,7 @@ export default function OnlineDebateScreen() {
     return (
       <Screen background={palette.midnight} gutter={palette.midnight}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Header help={() => setHelpOpen(true)} leaveHref="/debate" />
+          {rules.header}
           {error ? <Text style={styles.errorDark}>{error}</Text> : null}
           <DebateStage
             topic={topic}
@@ -223,45 +218,45 @@ export default function OnlineDebateScreen() {
             </>
           ) : null}
         </ScreenScroll>
-        <DebateHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
+        {rules.sheet}
       </Screen>
     );
   }
 
   if (session.phase === 'voting') {
-    const candidates = players.filter((player) => player.user_id !== user?.id);
+    const candidates = players
+      .filter((player) => player.user_id !== user?.id)
+      .map((player) => ({
+        id: player.user_id,
+        displayName: player.display_name,
+        side: player.side,
+      }));
+    const votingSeconds = Number(session.config?.votingSeconds ?? 30);
     return (
       <Screen background={palette.midnight} gutter={palette.midnight}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Header help={() => setHelpOpen(true)} leaveHref="/debate" />
-          <Text style={styles.phase}>Voting · {secondsLeft}s</Text>
-          {candidates.map((player) => (
-            <Button
-              key={player.user_id}
-              label={player.display_name}
-              variant={votePick === player.user_id ? 'gold' : 'secondary'}
-              onPress={() => setVotePick(player.user_id)}
-            />
-          ))}
-          <Button
-            label="Submit vote"
-            variant="primary"
-            disabled={!votePick}
-            onPress={() => votePick && void rpcSubmitVote(sessionId, votePick).then(reload)}
+          {rules.header}
+          <DebateVoteGrid
+            secondsLeft={secondsLeft}
+            totalSeconds={votingSeconds}
+            candidates={candidates}
+            selectedId={votePick}
+            onSelect={setVotePick}
+            onSubmit={() => votePick && void rpcSubmitVote(sessionId, votePick).then(reload)}
           />
         </ScreenScroll>
+        {rules.sheet}
       </Screen>
     );
   }
 
   if (session.phase === 'results' || session.status === 'finished') {
     return (
-      <Screen background={palette.offWhite} gutter={palette.offWhite}>
+      <Screen background={palette.midnight} gutter={palette.midnight}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Text style={typeScale.h1}>Results</Text>
-          <ResultsBlock sessionId={sessionId} />
-          <Button label="Back to groups" variant="gold" onPress={() => router.replace('/groups')} />
+          <ResultsBlock sessionId={sessionId} onBack={() => router.replace('/groups')} />
         </ScreenScroll>
+        {rules.sheet}
       </Screen>
     );
   }
@@ -269,7 +264,7 @@ export default function OnlineDebateScreen() {
   return (
     <Screen background={palette.midnight} gutter={palette.midnight}>
       <ScreenScroll contentContainerStyle={styles.content}>
-        <Header help={() => setHelpOpen(true)} leaveHref="/debate" />
+        {rules.header}
         <Text style={styles.phase}>{session.phase}</Text>
         {isHost ? (
           <Button
@@ -285,28 +280,43 @@ export default function OnlineDebateScreen() {
   );
 }
 
-function ResultsBlock({ sessionId }: { sessionId: string }) {
+function ResultsBlock({ sessionId, onBack }: { sessionId: string; onBack: () => void }) {
   const [results, setResults] = useState<Awaited<ReturnType<typeof fetchDebateResults>>>(null);
+  const [players, setPlayers] = useState<OnlineSessionPlayerRow[]>([]);
   useEffect(() => {
     void fetchDebateResults(sessionId).then(setResults);
+    void fetchSessionPlayers(sessionId).then(setPlayers);
   }, [sessionId]);
-  if (!results) return <Text>Loading results…</Text>;
+  if (!results) return <Text style={styles.wait}>Loading results…</Text>;
+  const winningSide: DebateSide | null =
+    results.winning_side === 'for' || results.winning_side === 'against'
+      ? results.winning_side
+      : null;
+  const winningSides: DebateSide[] = results.tie ? [] : winningSide ? [winningSide] : [];
+  const mappedResults: DebateResults = {
+    winningSides,
+    sideTie: results.tie,
+    sideTotals: {
+      for: results.side_totals?.for ?? 0,
+      against: results.side_totals?.against ?? 0,
+    },
+    playerTotals: results.player_totals ?? {},
+    mvpIds: results.mvp_ids,
+    mvpTie: results.mvp_ids.length !== 1,
+  };
+  const debatePlayers = players.map((player) => ({
+    id: player.user_id,
+    displayName: player.display_name,
+    side: player.side,
+  }));
   return (
-    <View style={{ gap: 8 }}>
-      <Text style={styles.topic}>
-        {results.tie ? 'Side tie' : `Winning side: ${results.winning_side?.toUpperCase()}`}
-      </Text>
-      <Text style={styles.topic}>MVP count: {results.mvp_ids.length}</Text>
-    </View>
-  );
-}
-
-function Header({ help, leaveHref }: { help: () => void; leaveHref: '/debate' | '/groups' }) {
-  return (
-    <View style={styles.headerRow}>
-      <BackButton label="Leave" fallback={leaveHref} />
-      <Button label="?" variant="ghost" onPress={help} />
-    </View>
+    <DebateResultsView
+      dark
+      results={mappedResults}
+      players={debatePlayers}
+      scores={{}}
+      onBack={onBack}
+    />
   );
 }
 

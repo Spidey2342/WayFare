@@ -2,9 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Compass, Share2 } from 'lucide-react-native';
 
-import { StartHereChecklist } from '@/components/onboarding/StartHereChecklist';
 import { Avatar, Button, Chip, DeckTile, QuoteCard, Screen, ScreenScroll } from '@/components/ui';
-import { checklistProgress } from '@/features/onboarding/checklist';
 import { deckCatalog, sampleVerse } from '@/data/catalog';
 import { DeckIconView } from '@/features/decks/deckIcons';
 import { journeyNodes, levelForXp } from '@/features/journey/progress';
@@ -27,9 +25,6 @@ export default function HomeScreen() {
   const nodes = journeyNodes(progress);
   const lessonProgress =
     progress.completedLessons.length === 0 ? 0 : Math.min(1, progress.completedLessons.length / 12);
-  const checklist = useAppStore((state) => state.checklist);
-  const showStartHere = checklistProgress(checklist).visible;
-
   return (
     <Screen background={palette.offWhite} gutter={palette.offWhite}>
       <ScreenScroll contentContainerStyle={styles.content}>
@@ -39,52 +34,49 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View>
             <Text style={[styles.hello, { color: colors.textSecondary }]}>{greeting()}</Text>
-            <Text style={[styles.name, { color: colors.textPrimary }]}>Hello, {name}! 👋</Text>
+            <Text style={[styles.name, { color: colors.textPrimary }]}>Hello, {name}!</Text>
           </View>
           <Avatar name={name} color={color} size={48} />
         </View>
-        {showStartHere ? <StartHereChecklist /> : null}
-        {!showStartHere ? (
-          <View style={styles.journey}>
-            <View style={styles.journeyTop}>
-              <Text style={styles.journeyTitle}>Continue Journey</Text>
-              <Chip
-                label={progress.streakDays > 0 ? `${progress.streakDays} DAY STREAK` : 'Start here'}
-                tone="solidGold"
-              />
-            </View>
-            <View style={styles.path}>
-              {nodes.map((node) => (
-                <View
-                  key={node.id}
-                  style={[
-                    styles.node,
-                    node.state === 'complete' && styles.nodeDone,
-                    node.state === 'current' && styles.nodeOn,
-                  ]}
-                >
-                  <Text style={[styles.nodeText, node.state === 'current' && styles.nodeTextOn]}>
-                    {node.label.replace('W', '')}
-                  </Text>
-                </View>
-              ))}
-            </View>
-            <Text style={styles.journeyMeta}>
-              Level {level.level} · {level.displayTitle} · {progress.completedLessons.length}/12
-              lessons
-            </Text>
-            <View style={styles.lessonBarTrack}>
-              <View
-                style={[styles.lessonBarFill, { width: `${Math.round(lessonProgress * 100)}%` }]}
-              />
-            </View>
-            <Button
-              label="Start playing"
-              variant="gold"
-              onPress={() => router.push('/deck/identity')}
+        <View style={styles.journey}>
+          <View style={styles.journeyTop}>
+            <Text style={styles.journeyTitle}>Continue Journey</Text>
+            <Chip
+              label={progress.streakDays > 0 ? `${progress.streakDays} DAY STREAK` : 'Start here'}
+              tone="solidGold"
             />
           </View>
-        ) : null}
+          <View style={styles.path}>
+            {nodes.map((node) => (
+              <View
+                key={node.id}
+                style={[
+                  styles.node,
+                  node.state === 'complete' && styles.nodeDone,
+                  node.state === 'current' && styles.nodeOn,
+                ]}
+              >
+                <Text style={[styles.nodeText, node.state === 'current' && styles.nodeTextOn]}>
+                  {node.label.replace('W', '')}
+                </Text>
+              </View>
+            ))}
+          </View>
+          <Text style={styles.journeyMeta}>
+            Level {level.level} · {level.displayTitle} · {progress.completedLessons.length}/12
+            lessons
+          </Text>
+          <View style={styles.lessonBarTrack}>
+            <View
+              style={[styles.lessonBarFill, { width: `${Math.round(lessonProgress * 100)}%` }]}
+            />
+          </View>
+          <Button
+            label="Start playing"
+            variant="gold"
+            onPress={() => router.push('/deck/identity')}
+          />
+        </View>
         {lesson ? (
           <View
             style={[styles.today, { backgroundColor: colors.surface, borderColor: colors.border }]}

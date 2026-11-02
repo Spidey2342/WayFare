@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { AppState, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { GameHelpSheet } from '@/components/game/GameHelpSheet';
+import { GameRulesSheet } from '@/components/game/GameRulesSheet';
 import { Button, CardFace, EmptyState, FlipCard, Screen, TimerRing } from '@/components/ui';
-import { PASS_GAME_HELP, SOLO_GAME_HELP } from '@/features/game/helpCopy';
+import { useGameRules } from '@/features/game/useGameRules';
 import { canSkip, currentCard, currentPlayer } from '@/features/game/engine';
 import { useSessionStore } from '@/features/game/sessionStore';
 import { palette, spacing, typeScale } from '@/theme';
@@ -21,7 +21,11 @@ export default function GameScreen() {
   const bless = useSessionStore((state) => state.bless);
   const [hydrated, setHydrated] = useState(() => useSessionStore.persist.hasHydrated());
   const [paused, setPaused] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
+  const { entry, open, openRules, openIfFirstTime, closeRules } = useGameRules('card-game');
+
+  useEffect(() => {
+    openIfFirstTime();
+  }, [openIfFirstTime]);
 
   useEffect(() => {
     return useSessionStore.persist.onFinishHydration(() => setHydrated(true));
@@ -67,8 +71,6 @@ export default function GameScreen() {
       : Object.values(session.participation).reduce((sum, count) => sum + count, 0);
   const waitingBless = lastDice === 'bless' && !card;
 
-  const helpLines = session.mode === 'solo' ? SOLO_GAME_HELP : PASS_GAME_HELP;
-
   return (
     <>
       <Screen background={palette.midnight} gutter={palette.midnight}>
@@ -83,7 +85,7 @@ export default function GameScreen() {
               <Text style={styles.player}>{score}</Text>
             </View>
             <View style={styles.headerActions}>
-              <Button label="?" variant="ghost" onPress={() => setHelpOpen(true)} />
+              <Button label="?" variant="ghost" onPress={openRules} />
               <TurnTimer cardId={cardId} duration={card?.timerSeconds ?? 45} paused={paused} />
             </View>
           </View>
@@ -174,7 +176,7 @@ export default function GameScreen() {
           ) : null}
         </View>
       </Screen>
-      <GameHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} lines={helpLines} />
+      <GameRulesSheet open={open} onClose={closeRules} entry={entry} />
     </>
   );
 }

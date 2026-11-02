@@ -5,11 +5,11 @@ import { Compass, Home, Layers, User } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { SignInToPlaySheet } from '@/components/auth/SignInToPlaySheet';
-import { GameHelpSheet } from '@/components/game/GameHelpSheet';
+import { GameRulesSheet } from '@/components/game/GameRulesSheet';
 import { PlayModeSheet } from '@/components/game/PlayModeSheet';
+import { rulesForGame } from '@/data/gameRules';
 import { requiresAccountForPlayMode, type PlayMode } from '@/features/auth/routing';
 import { useAuth } from '@/features/auth/AuthContext';
-import { DEBATE_HELP, PASS_GAME_HELP, SOLO_GAME_HELP } from '@/features/game/helpCopy';
 import { useSessionStore } from '@/features/game/sessionStore';
 import { tapHaptic } from '@/services/haptics';
 import { useAppStore } from '@/store';
@@ -28,8 +28,9 @@ export function TabBar() {
   const insets = useSafeAreaInsets();
   const session = useSessionStore((state) => state.session);
   const { session: authSession } = useAuth();
-  const playModeHelpSeen = useAppStore((state) => state.playModeHelpSeen);
-  const markPlayModeHelpSeen = useAppStore((state) => state.markPlayModeHelpSeen);
+  const seenRules = useAppStore((state) => state.seenRules);
+  const markRulesSeen = useAppStore((state) => state.markRulesSeen);
+  const cardRules = rulesForGame('card-game');
   const [playSheet, setPlaySheet] = useState(false);
   const [signInSheet, setSignInSheet] = useState(false);
   const [helpSheet, setHelpSheet] = useState(false);
@@ -41,7 +42,8 @@ export function TabBar() {
   };
 
   const openHelpIfNeeded = (mode: PlayMode) => {
-    if (playModeHelpSeen[mode]) return;
+    if (mode === 'online') return;
+    if (seenRules['card-game']) return;
     setPendingMode(mode);
     setHelpSheet(true);
   };
@@ -64,7 +66,7 @@ export function TabBar() {
       setSignInSheet(true);
       return;
     }
-    if (!playModeHelpSeen[mode]) {
+    if (mode !== 'online' && !seenRules['card-game']) {
       openHelpIfNeeded(mode);
       return;
     }
@@ -115,23 +117,17 @@ export function TabBar() {
       </View>
       <PlayModeSheet open={playSheet} onClose={() => setPlaySheet(false)} onPick={pickMode} />
       <SignInToPlaySheet open={signInSheet} onClose={() => setSignInSheet(false)} />
-      <GameHelpSheet
+      <GameRulesSheet
         open={helpSheet}
         onClose={() => {
           setHelpSheet(false);
+          markRulesSeen('card-game');
           if (pendingMode) {
-            markPlayModeHelpSeen(pendingMode);
             continueMode(pendingMode);
             setPendingMode(null);
           }
         }}
-        lines={
-          pendingMode === 'solo'
-            ? SOLO_GAME_HELP
-            : pendingMode === 'online'
-              ? DEBATE_HELP
-              : PASS_GAME_HELP
-        }
+        entry={cardRules}
       />
     </>
   );

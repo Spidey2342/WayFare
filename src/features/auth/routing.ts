@@ -1,10 +1,16 @@
+export const AUTH_RETURN_TO_KEY = 'wayfare.auth.returnTo';
+
 const AUTH_REQUIRED_PREFIXES = ['/groups'] as const;
 
 export type PlayMode = 'solo' | 'pass' | 'online';
 
+const INTRO_PATHS = ['/welcome', '/how-it-works', '/choose-mode'] as const;
+
 export function requiresAuth(pathname: string): boolean {
   const path = pathname.split('?')[0] ?? pathname;
   if (path === '/debate/solo') return false;
+  if (path.startsWith('/debate/pass')) return false;
+  if (path === '/debate' || path === '/debate/') return false;
   if (path.startsWith('/debate/')) return true;
   return AUTH_REQUIRED_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
@@ -22,18 +28,10 @@ export function resolveAuthGateRedirect(args: {
   return null;
 }
 
-export type TutorialStep = 0 | 1 | 2 | 3;
-
-export function tutorialRouteForStep(step: number, completed: boolean): string | null {
-  if (completed) return null;
-  if (step <= 0) return '/onboarding/goal';
-  if (step === 1) return '/onboarding/how-wayfare';
-  if (step === 2) return '/onboarding/practice';
-  return null;
+export function introRedirectPath(pathname: string, introSeen: boolean): '/welcome' | null {
+  if (introSeen) return null;
+  const path = pathname.split('?')[0] ?? pathname;
+  if (INTRO_PATHS.some((intro) => path === intro || path.startsWith(`${intro}/`))) return null;
+  if (path.startsWith('/auth')) return null;
+  return '/welcome';
 }
-
-export function nextTutorialStep(current: number): number {
-  return Math.min(current + 1, 3);
-}
-
-export const AUTH_RETURN_TO_KEY = 'wayfare.auth.returnTo';

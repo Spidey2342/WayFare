@@ -26,7 +26,7 @@ export default function AuthWelcomeScreen() {
           variant="ghost"
           onPress={() => {
             continueAsGuest();
-            router.replace('/onboarding/goal');
+            router.replace('/welcome');
           }}
         />
         <Text style={styles.legal}>By continuing you agree to our Terms and Privacy Policy.</Text>

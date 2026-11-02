@@ -101,7 +101,7 @@ export default function ProfileScreen() {
             <SettingsRow
               icon={<HelpCircle color={palette.midnight} size={18} />}
               title="Help"
-              subtitle="Replay the tour"
+              subtitle="How cards and play modes work"
               onPress={() => setSheet('help')}
             />
             <SettingsRow
@@ -181,19 +181,10 @@ export default function ProfileScreen() {
           </>
         ) : null}
         {sheet === 'help' ? (
-          <>
-            <Text style={styles.sheetBody}>
-              Walk through how cards, play modes, and lessons work.
-            </Text>
-            <Button
-              label="Replay the tour"
-              variant="gold"
-              onPress={() => {
-                setSheet(null);
-                router.push('/onboarding/how-wayfare');
-              }}
-            />
-          </>
+          <Text style={styles.sheetBody}>
+            Open Play from the tab bar to pick Solo, Pass-the-phone, or Online. Learn paths and
+            quizzes live under Journey and Learn.
+          </Text>
         ) : null}
       </BottomSheet>
 

@@ -25,7 +25,9 @@ export default function SignUpScreen() {
       return;
     }
     if (!isSupabaseConfigured) {
-      setError('Sign-up needs Supabase configured in .env on this build.');
+      setError(
+        'Add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in .env (not .env.example), then restart Expo.',
+      );
       return;
     }
     if (password.length < 8) {

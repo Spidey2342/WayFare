@@ -1,8 +1,8 @@
 import {
+  introRedirectPath,
   requiresAccountForPlayMode,
   requiresAuth,
   resolveAuthGateRedirect,
-  tutorialRouteForStep,
 } from '@/features/auth/routing';
 
 describe('auth routing', () => {
@@ -11,6 +11,7 @@ describe('auth routing', () => {
     expect(requiresAuth('/groups/join')).toBe(true);
     expect(requiresAuth('/home')).toBe(false);
     expect(requiresAuth('/debate/solo')).toBe(false);
+    expect(requiresAuth('/debate/pass/setup')).toBe(false);
     expect(requiresAuth('/debate/abc-123')).toBe(true);
   });
 
@@ -29,12 +30,13 @@ describe('auth routing', () => {
   });
 });
 
-describe('tutorial resume', () => {
-  it('maps tutorial steps to routes', () => {
-    expect(tutorialRouteForStep(0, false)).toBe('/onboarding/goal');
-    expect(tutorialRouteForStep(1, false)).toBe('/onboarding/how-wayfare');
-    expect(tutorialRouteForStep(2, false)).toBe('/onboarding/practice');
-    expect(tutorialRouteForStep(3, false)).toBeNull();
-    expect(tutorialRouteForStep(0, true)).toBeNull();
+describe('app intro', () => {
+  it('redirects to welcome until intro is seen', () => {
+    expect(introRedirectPath('/home', false)).toBe('/welcome');
+    expect(introRedirectPath('/welcome', false)).toBeNull();
+    expect(introRedirectPath('/how-it-works', false)).toBeNull();
+    expect(introRedirectPath('/choose-mode', false)).toBeNull();
+    expect(introRedirectPath('/home', true)).toBeNull();
+    expect(introRedirectPath('/auth/sign-in', false)).toBeNull();
   });
 });

@@ -45,6 +45,8 @@ interface AppActions {
   markPlayModeHelpSeen: (mode: keyof PlayModeHelpSeen) => void;
   applyDebateAward: (args: Parameters<typeof mergeDebateAward>[1]) => void;
   awardFirstStepFromTutorial: () => void;
+  markIntroSeen: () => void;
+  markRulesSeen: (gameId: 'debate' | 'card-game') => void;
 }
 
 export type AppStore = PersistedApp & AppActions;
@@ -84,7 +86,6 @@ export const useAppStore = create<AppStore>()(
       completeLesson: (lessonId) =>
         set((state) => ({
           progress: applyLessonComplete(state.progress, lessonId, new Date()),
-          checklist: { ...state.checklist, lessonDone: true },
         })),
       toggleBook: (bookId) =>
         set((state) => ({ progress: toggleBookRead(state.progress, bookId) })),
@@ -112,6 +113,11 @@ export const useAppStore = create<AppStore>()(
         })),
       applyDebateAward: (args) =>
         set((state) => ({ progress: mergeDebateAward(state.progress, args, new Date()) })),
+      markIntroSeen: () => set({ introSeen: true, onboarded: true }),
+      markRulesSeen: (gameId) =>
+        set((state) => ({
+          seenRules: { ...state.seenRules, [gameId]: true },
+        })),
       awardFirstStepFromTutorial: () =>
         set((state) => {
           const badges = state.progress.badgesEarned.includes('first-step')
@@ -147,6 +153,8 @@ export const useAppStore = create<AppStore>()(
         localTutorialStep: state.localTutorialStep,
         localTutorialCompleted: state.localTutorialCompleted,
         playModeHelpSeen: state.playModeHelpSeen,
+        introSeen: state.introSeen,
+        seenRules: state.seenRules,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {

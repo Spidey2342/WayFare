@@ -1,23 +1,17 @@
-import { Redirect, usePathname, useSegments } from 'expo-router';
+import type { Href } from 'expo-router';
+import { Redirect, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 
 import { useAuth } from '@/features/auth/AuthContext';
 import {
   AUTH_RETURN_TO_KEY,
+  introRedirectPath,
   resolveAuthGateRedirect,
-  tutorialRouteForStep,
 } from '@/features/auth/routing';
 import { storage } from '@/services/storage';
 import { useAppStore } from '@/store';
 
-const PUBLIC_PREFIXES = [
-  '/auth',
-  '/welcome',
-  '/how-it-works',
-  '/choose-mode',
-  '/onboarding',
-  '/dev',
-];
+const PUBLIC_PREFIXES = ['/auth', '/welcome', '/how-it-works', '/choose-mode', '/dev'];
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
@@ -25,11 +19,9 @@ function isPublicPath(pathname: string): boolean {
 
 export function NavigationGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const segments = useSegments();
   const { ready, session, profile, isGuest } = useAuth();
   const hydrated = useAppStore((state) => state.hydrated);
-  const localTutorialCompleted = useAppStore((state) => state.localTutorialCompleted);
-  const localTutorialStep = useAppStore((state) => state.localTutorialStep);
+  const introSeen = useAppStore((state) => state.introSeen);
 
   useEffect(() => {
     if (!ready || !hydrated) return;
@@ -46,11 +38,7 @@ export function NavigationGuard({ children }: { children: React.ReactNode }) {
     return <Redirect href={authRedirect} />;
   }
 
-  const inAuth = segments[0] === 'auth';
-  const inOnboardingTutorial =
-    pathname.startsWith('/onboarding/goal') ||
-    pathname.startsWith('/onboarding/how-wayfare') ||
-    pathname.startsWith('/onboarding/practice');
+  const inAuth = pathname.startsWith('/auth');
 
   if (session && profile && !isGuest) {
     const needsProfile =
@@ -58,36 +46,25 @@ export function NavigationGuard({ children }: { children: React.ReactNode }) {
     if (needsProfile && !inAuth) {
       return <Redirect href="/auth/profile-setup" />;
     }
-
-    const tutorialDone = profile.tutorial_completed || localTutorialCompleted;
-    const step = profile.tutorial_completed ? 3 : profile.tutorial_step;
-    const tutorialRoute = tutorialRouteForStep(step, tutorialDone);
-    if (tutorialRoute && !inOnboardingTutorial && !inAuth && !isPublicPath(pathname)) {
-      return <Redirect href={tutorialRoute} />;
-    }
   }
 
-  if (
-    isGuest &&
-    !localTutorialCompleted &&
-    !inOnboardingTutorial &&
-    !inAuth &&
-    !isPublicPath(pathname)
-  ) {
-    const guestTutorial = tutorialRouteForStep(localTutorialStep, false);
-    if (guestTutorial) {
-      return <Redirect href={guestTutorial} />;
-    }
+  const introRoute = introRedirectPath(pathname, introSeen);
+  if (introRoute && !inAuth && !isPublicPath(pathname)) {
+    return <Redirect href={introRoute} />;
+  }
+
+  if (isGuest && !introSeen && !inAuth && !isPublicPath(pathname)) {
+    return <Redirect href="/welcome" />;
   }
 
   return children;
 }
 
-export async function consumeAuthReturnTo(router: { replace: (href: string) => void }) {
+export async function consumeAuthReturnTo(router: { replace: (href: Href) => void }) {
   const target = await storage.getItem(AUTH_RETURN_TO_KEY);
   await storage.removeItem(AUTH_RETURN_TO_KEY);
   if (target && target !== '/auth/welcome') {
-    router.replace(target);
+    router.replace(target as Href);
     return;
   }
   router.replace('/home');

@@ -2,9 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
-import { DebateHelpSheet } from '@/features/debate/components/DebateHelpSheet';
+import { Button, Screen, ScreenScroll } from '@/components/ui';
+import { DebatePrepPanel } from '@/features/debate/components/DebatePrepPanel';
+import { DebateResultsView } from '@/features/debate/components/DebateResultsView';
+import { useDebateRulesChrome } from '@/features/debate/components/DebateRulesChrome';
 import { DebateStage } from '@/features/debate/components/DebateStage';
+import { DebateVoteGrid } from '@/features/debate/components/DebateVoteGrid';
+import { PassToPlayerScreen } from '@/features/debate/components/PassToPlayerScreen';
+import { SideRevealCard } from '@/features/debate/components/SideRevealCard';
 import {
   assignPassSidesRandom,
   extendDebate,
@@ -18,9 +23,9 @@ import {
   tickSession,
 } from '@/features/debate/localSession';
 import { loadLocalDebate, updateLocalDebate } from '@/features/debate/localStore';
-import type { DebatePlayer, LocalDebateSession } from '@/features/debate/types';
+import type { LocalDebateSession } from '@/features/debate/types';
 import { useAppStore } from '@/store';
-import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
+import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
 export default function PassDebateSessionScreen() {
   const router = useRouter();
@@ -29,12 +34,14 @@ export default function PassDebateSessionScreen() {
   const [session, setSession] = useState<LocalDebateSession | undefined>(() =>
     loadLocalDebate(sessionId),
   );
-  const [helpOpen, setHelpOpen] = useState(() => !useAppStore.getState().playModeHelpSeen.debate);
   const [nowMs, setNowMs] = useState(() => Date.now());
   const [readyIds, setReadyIds] = useState<string[]>([]);
   const [votePick, setVotePick] = useState<string | null>(null);
+  const [revealIndex, setRevealIndex] = useState(0);
+  const [prepIndex, setPrepIndex] = useState(0);
+  const [confirmedVoterId, setConfirmedVoterId] = useState<string | null>(null);
   const applyDebate = useAppStore((state) => state.applyDebateAward);
-  const markDebateHelp = useAppStore((state) => state.markPlayModeHelpSeen);
+  const rules = useDebateRulesChrome({ fallback: '/debate/pass/setup', showRulesOnMount: true });
 
   useEffect(() => {
     const timer = setInterval(() => setNowMs(Date.now()), 1000);
@@ -98,7 +105,7 @@ export default function PassDebateSessionScreen() {
     return (
       <Screen background={palette.offWhite} gutter={palette.offWhite}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Header onHelp={() => setHelpOpen(true)} fallback="/debate/pass/setup" />
+          {rules.header}
           <Text style={typeScale.h2}>Lobby</Text>
           <Text style={styles.topic}>{session.topic.text}</Text>
           {session.players.map((player) => (
@@ -125,45 +132,63 @@ export default function PassDebateSessionScreen() {
             }}
           />
         </ScreenScroll>
-        <DebateHelpSheet
-          open={helpOpen}
-          onClose={() => {
-            setHelpOpen(false);
-            markDebateHelp('debate');
-          }}
-        />
+        {rules.sheet}
       </Screen>
     );
   }
 
   if (session.phase === 'side_reveal') {
+    const player = session.players[revealIndex];
+    const side = player?.side;
     return (
       <Screen background={palette.midnight} gutter={palette.midnight}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Header onHelp={() => setHelpOpen(true)} fallback="/debate" />
-          {session.players.map((player) => (
-            <View key={player.id} style={[styles.revealCard, sideStyle(player)]}>
-              <Text style={styles.revealName}>{player.displayName}</Text>
-              <Text style={styles.revealSide}>{player.side?.toUpperCase()}</Text>
-            </View>
-          ))}
-          <Button label="Start prep" variant="gold" onPress={() => persist(startPrep)} />
+          {rules.header}
+          {player && side ? <SideRevealCard side={side} playerName={player.displayName} /> : null}
+          {revealIndex < session.players.length - 1 ? (
+            <Button
+              label="Next player"
+              variant="gold"
+              onPress={() => setRevealIndex((index) => index + 1)}
+            />
+          ) : (
+            <Button label="Start prep" variant="gold" onPress={() => persist(startPrep)} />
+          )}
         </ScreenScroll>
-        <DebateHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
+        {rules.sheet}
       </Screen>
     );
   }
 
   if (session.phase === 'prep') {
+    const prepPlayer = session.players[prepIndex];
+    const side = prepPlayer?.side;
+    const secondsLeft = session.phaseEndsAt
+      ? Math.max(0, Math.ceil((session.phaseEndsAt - nowMs) / 1000))
+      : session.config.prepSeconds;
     return (
       <Screen background={palette.midnight} gutter={palette.midnight}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Header onHelp={() => setHelpOpen(true)} fallback="/debate" />
-          <Text style={styles.phaseTitle}>Prep</Text>
-          <Text style={styles.topicDark}>{session.topic.text}</Text>
+          {rules.header}
+          {prepPlayer && side ? (
+            <DebatePrepPanel
+              topic={session.topic.text}
+              side={side}
+              secondsLeft={secondsLeft}
+              totalSeconds={session.config.prepSeconds}
+            />
+          ) : null}
+          {prepIndex < session.players.length - 1 ? (
+            <Button
+              label={`Pass to ${session.players[prepIndex + 1]?.displayName ?? 'next'}`}
+              variant="secondary"
+              onPress={() => setPrepIndex((index) => index + 1)}
+            />
+          ) : null}
           <Button label="Skip prep" variant="ghost" onPress={() => persist(skipPrep)} />
           <Button label="Start debate" variant="gold" onPress={() => persist(startDebate)} />
         </ScreenScroll>
+        {rules.sheet}
       </Screen>
     );
   }
@@ -178,7 +203,7 @@ export default function PassDebateSessionScreen() {
     return (
       <Screen background={palette.midnight} gutter={palette.midnight}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Header onHelp={() => setHelpOpen(true)} fallback="/debate" />
+          {rules.header}
           <DebateStage
             topic={session.topic.text}
             secondsLeft={secondsLeft}
@@ -200,36 +225,45 @@ export default function PassDebateSessionScreen() {
             <Button label="Add 30 seconds" variant="ghost" onPress={() => persist(extendDebate)} />
           ) : null}
         </ScreenScroll>
-        <DebateHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
+        {rules.sheet}
       </Screen>
     );
   }
 
   if (session.phase === 'voting' && currentVoter) {
+    const voterReady = confirmedVoterId === currentVoter.id;
     const candidates = session.players.filter((player) => player.id !== currentVoter.id);
+    const secondsLeft = session.phaseEndsAt
+      ? Math.max(0, Math.ceil((session.phaseEndsAt - nowMs) / 1000))
+      : session.config.votingSeconds;
     return (
       <Screen background={palette.midnight} gutter={palette.midnight}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Text style={styles.passTitle}>Pass to {currentVoter.displayName}</Text>
-          <Text style={styles.passHint}>Tap who convinced you most. Votes stay secret.</Text>
-          {candidates.map((player) => (
-            <Button
-              key={player.id}
-              label={player.displayName}
-              variant={votePick === player.id ? 'gold' : 'secondary'}
-              onPress={() => setVotePick(player.id)}
+          {!voterReady ? (
+            <PassToPlayerScreen
+              playerName={currentVoter.displayName}
+              avatarKey={currentVoter.avatarKey}
+              onConfirm={() => setConfirmedVoterId(currentVoter.id)}
             />
-          ))}
-          <Button
-            label="Confirm vote"
-            variant="primary"
-            disabled={!votePick}
-            onPress={() => {
-              persist((current) => submitPassVote(current, currentVoter.id, votePick!));
-              setVotePick(null);
-            }}
-          />
+          ) : (
+            <>
+              {rules.header}
+              <DebateVoteGrid
+                secondsLeft={secondsLeft}
+                totalSeconds={session.config.votingSeconds}
+                candidates={candidates}
+                selectedId={votePick}
+                onSelect={setVotePick}
+                onSubmit={() => {
+                  persist((current) => submitPassVote(current, currentVoter.id, votePick!));
+                  setVotePick(null);
+                  setConfirmedVoterId(null);
+                }}
+              />
+            </>
+          )}
         </ScreenScroll>
+        {rules.sheet}
       </Screen>
     );
   }
@@ -237,31 +271,28 @@ export default function PassDebateSessionScreen() {
   if (session.phase === 'results' || session.status === 'finished') {
     const finished = session.results ? session : finalizeLocalSession(session);
     if (!session.results) persist(() => finished);
+    const xpGained = Object.values(finished.scores).reduce(
+      (sum, line) => sum + (line?.total ?? 0),
+      0,
+    );
     return (
-      <Screen background={palette.offWhite} gutter={palette.offWhite}>
+      <Screen background={palette.midnight} gutter={palette.midnight}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Text style={typeScale.h1}>Results</Text>
-          <Text style={styles.topic}>
-            Winning side:{' '}
-            {finished.results?.sideTie
-              ? 'Tie'
-              : finished.results?.winningSides.map((side) => side.toUpperCase()).join(' & ')}
-          </Text>
-          {session.players.map((player) => (
-            <Text key={player.id} style={styles.rowText}>
-              {player.displayName}: {finished.results?.playerTotals[player.id] ?? 0} votes · +
-              {finished.scores[player.id]?.total ?? 0} pts
-            </Text>
-          ))}
-          <Button
-            label="Done"
-            variant="gold"
-            onPress={() => {
-              awardIfNeeded(finished);
-              router.replace('/home');
-            }}
-          />
+          {finished.results ? (
+            <DebateResultsView
+              dark
+              results={finished.results}
+              players={session.players}
+              scores={finished.scores}
+              xpEarned={Math.max(1, xpGained)}
+              onBack={() => {
+                awardIfNeeded(finished);
+                router.replace('/home');
+              }}
+            />
+          ) : null}
         </ScreenScroll>
+        {rules.sheet}
       </Screen>
     );
   }
@@ -273,33 +304,9 @@ export default function PassDebateSessionScreen() {
   );
 }
 
-function Header({ onHelp, fallback }: { onHelp: () => void; fallback: string }) {
-  return (
-    <View style={styles.headerRow}>
-      <BackButton label="Exit" fallback={fallback} />
-      <Button label="?" variant="ghost" onPress={onHelp} />
-    </View>
-  );
-}
-
-function sideStyle(player: DebatePlayer) {
-  return {
-    backgroundColor: player.side === 'for' ? palette.coral : palette.teal,
-  };
-}
-
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   topic: { ...typeScale.bodyM, color: palette.ink },
-  topicDark: { color: palette.white, fontFamily: fontFamily.body, lineHeight: 24 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   name: { fontFamily: fontFamily.bodySemi, color: palette.ink, flex: 1 },
-  revealCard: { borderRadius: radii.card, padding: spacing.lg, gap: spacing.xs },
-  revealName: { color: palette.white, fontFamily: fontFamily.headingSemi, fontSize: 20 },
-  revealSide: { color: palette.white, fontFamily: fontFamily.bodySemi },
-  phaseTitle: { ...typeScale.h2, color: palette.white },
-  passTitle: { ...typeScale.h2, color: palette.white },
-  passHint: { color: palette.warmGray, fontFamily: fontFamily.body },
-  rowText: { fontFamily: fontFamily.body, color: palette.ink },
 });

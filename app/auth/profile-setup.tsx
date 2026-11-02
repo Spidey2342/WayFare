@@ -14,7 +14,6 @@ export default function ProfileSetupScreen() {
   const { colors } = useTheme();
   const { user, profile, setProfileLocal } = useAuth();
   const setProfileName = useAppStore((state) => state.setProfileName);
-  const markChecklistItem = useAppStore((state) => state.markChecklistItem);
   const [name, setName] = useState(profile?.display_name ?? '');
   const [verse, setVerse] = useState(profile?.favorite_verse ?? '');
   const [avatarKey, setAvatarKey] = useState(profile?.avatar_key ?? AVATAR_PRESETS[0].key);
@@ -48,8 +47,7 @@ export default function ProfileSetupScreen() {
       useAppStore.setState((state) => ({
         profile: { ...state.profile, name: name.trim(), avatarColor: preset.color },
       }));
-      markChecklistItem('profile');
-      router.replace('/onboarding/goal');
+      router.replace('/welcome');
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Could not save profile.');
     } finally {

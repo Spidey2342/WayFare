@@ -1,20 +1,34 @@
-import { Easing } from 'react-native-reanimated';
+import { Platform } from 'react-native';
 
 export const duration = {
-  fast: 160,
-  normal: 280,
-  slow: 480,
-  timer: 1000,
+  screen: 220,
+  sheet: 280,
+  stagger: 40,
+  pressIn: 80,
+  pressOut: 120,
 } as const;
 
 export const easing = {
-  standard: Easing.bezier(0.2, 0.8, 0.2, 1),
-  enter: Easing.out(Easing.cubic),
-  exit: Easing.in(Easing.cubic),
+  standard: 'ease-out' as const,
 };
 
 export const spring = {
-  gentle: { damping: 18, stiffness: 180, mass: 0.8 },
-  snappy: { damping: 16, stiffness: 260, mass: 0.6 },
-  dice: { damping: 12, stiffness: 140, mass: 0.9 },
+  press: { damping: 18, stiffness: 320, mass: 0.8 },
+  sheet: { damping: 22, stiffness: 280, mass: 0.9 },
+  flip: { damping: 16, stiffness: 260, mass: 1 },
 } as const;
+
+export const motion = {
+  duration,
+  easing,
+  spring,
+  scale: {
+    pressed: 0.97,
+  },
+} as const;
+
+export function lightTap() {
+  if (Platform.OS === 'web' && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    navigator.vibrate(8);
+  }
+}

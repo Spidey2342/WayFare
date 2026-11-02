@@ -20,7 +20,9 @@ export default function SignInScreen() {
 
   const submit = async () => {
     if (!isSupabaseConfigured) {
-      setError('Sign-in needs Supabase configured in .env on this build.');
+      setError(
+        'Add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in .env (not .env.example), then restart Expo.',
+      );
       return;
     }
     setLoading(true);

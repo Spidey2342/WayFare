@@ -10,6 +10,7 @@ import { fontFamily, palette, radii, shadows, spacing, typeScale } from '@/theme
 export default function ChooseModeScreen() {
   const router = useRouter();
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
+  const markIntroSeen = useAppStore((state) => state.markIntroSeen);
   const [mode, setMode] = useState<'pass' | 'team'>('team');
 
   return (
@@ -65,6 +66,7 @@ export default function ChooseModeScreen() {
           variant="gold"
           onPress={() => {
             completeOnboarding(mode);
+            markIntroSeen();
             router.replace('/home');
           }}
         />
