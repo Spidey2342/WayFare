@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
@@ -6,6 +6,12 @@ import { AuthField } from '@/components/auth/AuthField';
 import { consumeAuthReturnTo } from '@/components/navigation/NavigationGuard';
 import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
 import { friendlyAuthError } from '@/features/auth/authErrors';
+import {
+  clearLastUsedEmail,
+  readLastUsedEmail,
+  writeLastUsedEmail,
+} from '@/features/auth/lastUsedEmail';
+import { normalizeEmail } from '@/features/auth/normalizeEmail';
 import { googleAuthEnabled, isSupabaseConfigured, requireSupabase } from '@/services/supabase';
 import { fontFamily, palette, spacing, typeScale, useTheme } from '@/theme';
 
@@ -18,6 +24,17 @@ export default function SignInScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [remembered, setRemembered] = useState(false);
+
+  useEffect(() => {
+    if (typeof params.email === 'string' && params.email.length > 0) return;
+    void readLastUsedEmail().then((saved) => {
+      if (saved) {
+        setEmail(saved);
+        setRemembered(true);
+      }
+    });
+  }, [params.email]);
 
   const submit = async () => {
     if (!isSupabaseConfigured) {
@@ -30,10 +47,11 @@ export default function SignInScreen() {
     setError(null);
     try {
       const { error: signError } = await requireSupabase().auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        email: normalizeEmail(email),
         password,
       });
       if (signError) throw signError;
+      await writeLastUsedEmail(normalizeEmail(email));
       await consumeAuthReturnTo(router);
     } catch (caught) {
       setError(friendlyAuthError(caught));
@@ -50,6 +68,17 @@ export default function SignInScreen() {
         <Text style={{ color: colors.textSecondary, fontFamily: fontFamily.body }}>
           Sign in with your account
         </Text>
+        {remembered ? (
+          <Pressable
+            onPress={() => {
+              void clearLastUsedEmail();
+              setEmail('');
+              setRemembered(false);
+            }}
+          >
+            <Text style={styles.forgot}>Not you?</Text>
+          </Pressable>
+        ) : null}
         <AuthField
           label="EMAIL"
           value={email}

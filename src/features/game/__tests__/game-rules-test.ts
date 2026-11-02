@@ -4,7 +4,7 @@ import { defaultPersisted, migratePersisted } from '@/store/persist';
 describe('game rules copy', () => {
   it('uses verbatim debate and card titles', () => {
     expect(gameRules.debate.title).toBe('How Debate Works');
-    expect(gameRules.debate.rows[0]?.title).toBe('Pick a side.');
+    expect(gameRules.debate.rows[0]?.title).toBe('A topic appears.');
     expect(gameRules['card-game'].title).toBe('How to Play');
     expect(gameRules['card-game'].rows[2]?.title).toBe('Skip once.');
   });

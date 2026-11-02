@@ -23,7 +23,14 @@ Never commit `.env`. Never put the **service_role** key in the app or in git.
 3. Run once. Confirm tables `profiles`, `groups`, `group_members`, `onboarding_events` exist and RLS is enabled.
 4. Run `migrations/0003_fix_group_access.sql` if group lobby shows empty join code or zero members (fixes RLS recursion + adds `get_group_lobby`).
 5. Run `migrations/0004_prevent_duplicates.sql` to dedupe groups, add idempotent `create_group`, archival, and housekeeping. If index creation fails with duplicate `(owner_id, name_normalized)`, run `0005_merge_before_unique_index.sql` then re-run 0004.
-4. Paste and run `supabase/migrations/0002_debate.sql` for the full Debate game (topics, sessions, votes, results, RPCs).
+6. Run `migrations/0002_debate.sql` for Debate tables and legacy RPCs (votes kept but unused).
+7. Run `migrations/0006_debate_v2.sql` for Debate V2 (judge verdict, agree/disagree, topic history, guest merge RPC).
+
+**Exact SQL for Debate V2:** paste the full file [`migrations/0006_debate_v2.sql`](migrations/0006_debate_v2.sql) in the SQL editor after 0001–0005 and 0002.
+
+### Email confirmation (optional)
+
+Email confirmation is **off** by default for faster onboarding. To enable later: **Authentication → Providers → Email → Confirm email**, then adjust the app sign-up copy to mention inbox confirmation.
 
 **Option B — Supabase CLI**
 

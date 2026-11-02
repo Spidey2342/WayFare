@@ -37,7 +37,7 @@ export function SideRevealCard({ side, playerName }: Props) {
   }, [opacity, rotateY]);
 
   const colors =
-    side === 'for' ? ([palette.coral, '#E85A4F'] as const) : ([palette.teal, '#1F8A84'] as const);
+    side === 'agree' ? ([palette.coral, '#E85A4F'] as const) : ([palette.teal, '#1F8A84'] as const);
 
   const cardStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,

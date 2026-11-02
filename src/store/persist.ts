@@ -190,6 +190,7 @@ function readProgress(value: unknown, fallback: GameProgress, _fromVersion: numb
     quizzesCompleted: readCount(record, 'quizzesCompleted'),
     debateVotesCast: readCount(record, 'debateVotesCast'),
     debateMvps: readCount(record, 'debateMvps'),
+    debatesJudged: readCount(record, 'debatesJudged'),
     lastAppliedDebateId:
       typeof record.lastAppliedDebateId === 'string' ? record.lastAppliedDebateId : null,
   };

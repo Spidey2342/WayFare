@@ -30,7 +30,7 @@ describe('assignSidesBalanced', () => {
     for (let count = 2; count <= 8; count += 1) {
       const players = Array.from({ length: count }, (_, index) => ({ id: `p${index}` }));
       const sides = assignSidesBalanced(players, rng(count));
-      const forCount = Object.values(sides).filter((side) => side === 'for').length;
+      const forCount = Object.values(sides).filter((side) => side === 'agree').length;
       expect(Math.abs(forCount - (count - forCount))).toBeLessThanOrEqual(1);
       expect(forCount).toBeGreaterThan(0);
     }
@@ -49,9 +49,9 @@ describe('assignSidesBalanced', () => {
 
 describe('votes and results', () => {
   const players: DebatePlayer[] = [
-    { id: 'a', displayName: 'A', side: 'for' },
-    { id: 'b', displayName: 'B', side: 'for' },
-    { id: 'c', displayName: 'C', side: 'against' },
+    { id: 'a', displayName: 'A', side: 'agree' },
+    { id: 'b', displayName: 'B', side: 'agree' },
+    { id: 'c', displayName: 'C', side: 'disagree' },
   ];
 
   it('blocks self votes', () => {
@@ -61,20 +61,20 @@ describe('votes and results', () => {
   it('computes side winner and mvp ties', () => {
     const votes = { a: 'b', b: 'c', c: 'b' };
     const results = computeResults(players, votes);
-    expect(results.sideTotals.for).toBeGreaterThan(results.sideTotals.against);
-    expect(results.winningSides).toEqual(['for']);
+    expect(results.sideTotals.agree).toBeGreaterThan(results.sideTotals.disagree);
+    expect(results.winningSides).toEqual(['agree']);
     expect(results.mvpIds).toContain('b');
   });
 
   it('handles side tie', () => {
     const duo: DebatePlayer[] = [
-      { id: 'a', displayName: 'A', side: 'for' },
-      { id: 'b', displayName: 'B', side: 'against' },
+      { id: 'a', displayName: 'A', side: 'agree' },
+      { id: 'b', displayName: 'B', side: 'disagree' },
     ];
     const tiedVotes = { a: 'b', b: 'a' };
     const results = computeResults(duo, tiedVotes);
     expect(results.sideTie).toBe(true);
-    expect(results.winningSides.sort()).toEqual(['against', 'for']);
+    expect(results.winningSides.sort()).toEqual(['agree', 'disagree']);
   });
 
   it('scores participation, side win, and mvp', () => {
@@ -138,8 +138,8 @@ describe('phase transitions and early end', () => {
       {
         ...session,
         players: [
-          { id: 'p1', displayName: 'A', side: 'for' },
-          { id: 'p2', displayName: 'B', side: 'against' },
+          { id: 'p1', displayName: 'A', side: 'agree' },
+          { id: 'p2', displayName: 'B', side: 'disagree' },
         ],
       },
       0,
@@ -170,9 +170,9 @@ describe('manual sides validation', () => {
   it('requires balanced sides', () => {
     expect(() =>
       validateManualSides([
-        { id: 'a', displayName: 'A', side: 'for' },
-        { id: 'b', displayName: 'B', side: 'for' },
-        { id: 'c', displayName: 'C', side: 'for' },
+        { id: 'a', displayName: 'A', side: 'agree' },
+        { id: 'b', displayName: 'B', side: 'agree' },
+        { id: 'c', displayName: 'C', side: 'agree' },
       ]),
     ).toThrow();
   });
@@ -181,8 +181,8 @@ describe('manual sides validation', () => {
 describe('all votes submitted', () => {
   it('tracks pending votes', () => {
     const players: DebatePlayer[] = [
-      { id: 'a', displayName: 'A', side: 'for' },
-      { id: 'b', displayName: 'B', side: 'against' },
+      { id: 'a', displayName: 'A', side: 'agree' },
+      { id: 'b', displayName: 'B', side: 'disagree' },
     ];
     expect(allVotesSubmitted(players, { a: 'b', b: null })).toBe(false);
     expect(allVotesSubmitted(players, { a: 'b', b: 'a' })).toBe(true);
@@ -207,8 +207,8 @@ describe('finalize local session', () => {
       phase: 'voting',
       votes: { p1: 'p2', p2: 'p1' },
       players: [
-        { id: 'p1', displayName: 'A', side: 'for' },
-        { id: 'p2', displayName: 'B', side: 'against' },
+        { id: 'p1', displayName: 'A', side: 'agree' },
+        { id: 'p2', displayName: 'B', side: 'disagree' },
       ],
     });
     expect(session.scores.p1?.total).toBeGreaterThan(0);

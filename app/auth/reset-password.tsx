@@ -4,6 +4,7 @@ import { StyleSheet, Text } from 'react-native';
 import { AuthField } from '@/components/auth/AuthField';
 import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
 import { friendlyAuthError } from '@/features/auth/authErrors';
+import { normalizeEmail } from '@/features/auth/normalizeEmail';
 import { isSupabaseConfigured, requireSupabase } from '@/services/supabase';
 import { fontFamily, palette, spacing, typeScale, useTheme } from '@/theme';
 
@@ -24,7 +25,7 @@ export default function ResetPasswordScreen() {
     setMessage(null);
     try {
       const { error: resetError } = await requireSupabase().auth.resetPasswordForEmail(
-        email.trim(),
+        normalizeEmail(email),
       );
       if (resetError) throw resetError;
       setMessage('If that email exists, we sent a reset link.');

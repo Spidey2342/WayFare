@@ -1,15 +1,21 @@
 import { requireSupabase } from '@/services/supabase';
 
+import type { DebatePhase, DebateSide } from './types';
+
 export type OnlineDebateSessionRow = {
   id: string;
   group_id: string | null;
   host_id: string;
-  topic_id: string;
+  judge_id: string | null;
+  topic_id: string | null;
   status: 'active' | 'finished' | 'cancelled';
-  phase: 'lobby' | 'side_reveal' | 'prep' | 'debate' | 'voting' | 'results';
+  phase: DebatePhase;
   phase_ends_at: string | null;
   config: Record<string, unknown>;
   room_code: string | null;
+  soft_timer_minutes: number | null;
+  debate_started_at: string | null;
+  verdict_announced_at: string | null;
   ready_to_vote: string[];
 };
 
@@ -18,7 +24,8 @@ export type OnlineSessionPlayerRow = {
   user_id: string;
   display_name: string;
   avatar_key: string | null;
-  side: 'for' | 'against' | null;
+  side: DebateSide | null;
+  role: 'judge' | 'debater' | 'spectator';
   is_ready: boolean;
   ready_to_vote: boolean;
   last_seen_at: string;
@@ -28,10 +35,32 @@ export type DebateResultsRow = {
   session_id: string;
   winning_side: string | null;
   tie: boolean;
-  side_totals: { for?: number; against?: number };
+  side_totals: { agree?: number; disagree?: number; for?: number; against?: number };
   player_totals: Record<string, number>;
   mvp_ids: string[];
 };
+
+export type DebateVerdictRow = {
+  session_id: string;
+  winning_side: 'agree' | 'disagree' | 'draw';
+  mvp_user_id: string | null;
+  decided_by: string;
+  decided_at: string;
+  changed_at: string | null;
+};
+
+function mapSide(raw: string | null): DebateSide | null {
+  if (raw === 'agree' || raw === 'for') return 'agree';
+  if (raw === 'disagree' || raw === 'against') return 'disagree';
+  return null;
+}
+
+function mapPhase(raw: string): DebatePhase {
+  if (raw === 'side_reveal' || raw === 'prep') return 'picking';
+  if (raw === 'debate') return 'debating';
+  if (raw === 'voting') return 'verdict';
+  return raw as DebatePhase;
+}
 
 export async function rpcServerNow(): Promise<string> {
   const { data, error } = await requireSupabase().rpc('server_now');
@@ -41,7 +70,7 @@ export async function rpcServerNow(): Promise<string> {
 
 export async function rpcCreateDebateSession(
   groupId: string | null,
-  topicId: string,
+  topicId: string | null = null,
   config?: Record<string, unknown>,
 ) {
   const { data, error } = await requireSupabase().rpc('create_debate_session', {
@@ -59,44 +88,75 @@ export async function rpcJoinSessionByCode(code: string) {
   return data as string;
 }
 
-export async function rpcSetReady(sessionId: string, ready: boolean) {
-  const { error } = await requireSupabase().rpc('set_ready', {
+export async function rpcDebateTouchSession(sessionId: string) {
+  const { data, error } = await requireSupabase().rpc('debate_touch_session', {
     p_session: sessionId,
-    p_ready: ready,
   });
   if (error) throw error;
+  return data as string | null;
 }
 
-export async function rpcAssignSides(sessionId: string) {
-  const { error } = await requireSupabase().rpc('assign_sides', {
-    p_session: sessionId,
-    p_mode: 'random_balanced',
-  });
-  if (error) throw error;
-}
-
-export async function rpcAdvancePhase(sessionId: string) {
-  const { data, error } = await requireSupabase().rpc('advance_phase', { p_session: sessionId });
+export async function rpcDrawTopic(sessionId: string) {
+  const { data, error } = await requireSupabase().rpc('draw_topic', { p_session: sessionId });
   if (error) throw error;
   return data as string;
 }
 
-export async function rpcExtendDebate(sessionId: string) {
-  const { error } = await requireSupabase().rpc('extend_debate', { p_session: sessionId });
+export async function rpcShuffleTopic(sessionId: string) {
+  const { data, error } = await requireSupabase().rpc('shuffle_topic', { p_session: sessionId });
+  if (error) throw error;
+  return data as string;
+}
+
+export async function rpcConfirmTopic(sessionId: string) {
+  const { error } = await requireSupabase().rpc('confirm_topic', { p_session: sessionId });
   if (error) throw error;
 }
 
-export async function rpcMarkDebateReadyToVote(sessionId: string) {
-  const { error } = await requireSupabase().rpc('mark_debate_ready_to_vote', {
+export async function rpcChooseSide(sessionId: string, side: DebateSide) {
+  const { error } = await requireSupabase().rpc('choose_side', {
     p_session: sessionId,
+    p_side: side,
   });
   if (error) throw error;
 }
 
-export async function rpcSubmitVote(sessionId: string, votedFor: string) {
-  const { error } = await requireSupabase().rpc('submit_vote', {
+export async function rpcMovePlayer(sessionId: string, userId: string, side: DebateSide) {
+  const { error } = await requireSupabase().rpc('move_player', {
     p_session: sessionId,
-    p_voted_for: votedFor,
+    p_user: userId,
+    p_side: side,
+  });
+  if (error) throw error;
+}
+
+export async function rpcSetSoftTimer(sessionId: string, minutes: number | null) {
+  const { error } = await requireSupabase().rpc('set_soft_timer', {
+    p_session: sessionId,
+    p_minutes: minutes,
+  });
+  if (error) throw error;
+}
+
+export async function rpcStartDebate(sessionId: string) {
+  const { error } = await requireSupabase().rpc('start_debate', { p_session: sessionId });
+  if (error) throw error;
+}
+
+export async function rpcRequestVerdict(sessionId: string) {
+  const { error } = await requireSupabase().rpc('request_verdict', { p_session: sessionId });
+  if (error) throw error;
+}
+
+export async function rpcPublishVerdict(
+  sessionId: string,
+  winningSide: 'agree' | 'disagree' | 'draw',
+  mvpUserId: string | null,
+) {
+  const { error } = await requireSupabase().rpc('publish_verdict', {
+    p_session: sessionId,
+    p_winning_side: winningSide,
+    p_mvp_user_id: mvpUserId,
   });
   if (error) throw error;
 }
@@ -104,6 +164,15 @@ export async function rpcSubmitVote(sessionId: string, votedFor: string) {
 export async function rpcLeaveSession(sessionId: string) {
   const { error } = await requireSupabase().rpc('leave_session', { p_session: sessionId });
   if (error) throw error;
+}
+
+export async function rpcMergeGuestProgress(xp: number, badges: string[] = []) {
+  const { data, error } = await requireSupabase().rpc('merge_guest_progress', {
+    p_xp: xp,
+    p_badges: badges,
+  });
+  if (error) throw error;
+  return data as { merged: boolean; reason?: string; xp?: number };
 }
 
 export async function fetchDebateSession(
@@ -121,12 +190,19 @@ export async function fetchDebateSession(
     id: String(row.id),
     group_id: row.group_id ? String(row.group_id) : null,
     host_id: String(row.host_id),
-    topic_id: String(row.topic_id),
+    judge_id: row.judge_id ? String(row.judge_id) : null,
+    topic_id: row.topic_id ? String(row.topic_id) : null,
     status: row.status as OnlineDebateSessionRow['status'],
-    phase: row.phase as OnlineDebateSessionRow['phase'],
+    phase: mapPhase(String(row.phase)),
     phase_ends_at: row.phase_ends_at ? String(row.phase_ends_at) : null,
     config: (row.config as Record<string, unknown>) ?? {},
     room_code: row.room_code ? String(row.room_code) : null,
+    soft_timer_minutes:
+      row.soft_timer_minutes === null || row.soft_timer_minutes === undefined
+        ? null
+        : Number(row.soft_timer_minutes),
+    debate_started_at: row.debate_started_at ? String(row.debate_started_at) : null,
+    verdict_announced_at: row.verdict_announced_at ? String(row.verdict_announced_at) : null,
     ready_to_vote: Array.isArray(row.ready_to_vote) ? (row.ready_to_vote as string[]) : [],
   };
 }
@@ -137,7 +213,20 @@ export async function fetchSessionPlayers(sessionId: string): Promise<OnlineSess
     .select('*')
     .eq('session_id', sessionId);
   if (error) throw error;
-  return (data ?? []) as OnlineSessionPlayerRow[];
+  return (data ?? []).map((row) => {
+    const r = row as Record<string, unknown>;
+    return {
+      session_id: String(r.session_id),
+      user_id: String(r.user_id),
+      display_name: String(r.display_name),
+      avatar_key: r.avatar_key ? String(r.avatar_key) : null,
+      side: mapSide(r.side ? String(r.side) : null),
+      role: (r.role as OnlineSessionPlayerRow['role']) ?? 'debater',
+      is_ready: Boolean(r.is_ready),
+      ready_to_vote: Boolean(r.ready_to_vote),
+      last_seen_at: String(r.last_seen_at),
+    };
+  });
 }
 
 export async function fetchDebateResults(sessionId: string): Promise<DebateResultsRow | null> {
@@ -149,6 +238,17 @@ export async function fetchDebateResults(sessionId: string): Promise<DebateResul
   if (error) throw error;
   if (!data) return null;
   return data as DebateResultsRow;
+}
+
+export async function fetchDebateVerdict(sessionId: string): Promise<DebateVerdictRow | null> {
+  const { data, error } = await requireSupabase()
+    .from('debate_verdicts')
+    .select('*')
+    .eq('session_id', sessionId)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return data as DebateVerdictRow;
 }
 
 export async function fetchDebateTopicText(topicId: string): Promise<string | null> {

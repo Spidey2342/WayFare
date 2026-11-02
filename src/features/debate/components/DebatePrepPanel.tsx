@@ -23,8 +23,8 @@ export function DebatePrepPanel({
   onNotesChange,
   readOnlyNotes,
 }: Props) {
-  const sideColor = side === 'for' ? palette.coral : palette.teal;
-  const sideSoft = side === 'for' ? palette.coralSoft : palette.tealSoft;
+  const sideColor = side === 'agree' ? palette.coral : palette.teal;
+  const sideSoft = side === 'agree' ? palette.coralSoft : palette.tealSoft;
 
   return (
     <View style={styles.wrap}>

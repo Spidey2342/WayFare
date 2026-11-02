@@ -30,7 +30,7 @@ export function DebateResultsView({
 }: Props) {
   const forBar = useSharedValue(0);
   const againstBar = useSharedValue(0);
-  const totalVotes = Math.max(1, results.sideTotals.for + results.sideTotals.against);
+  const totalVotes = Math.max(1, results.sideTotals.agree + results.sideTotals.disagree);
   const mvpId = results.mvpIds[0];
   const mvp = players.find((player) => player.id === mvpId);
 
@@ -38,8 +38,8 @@ export function DebateResultsView({
     let reduce = false;
     void AccessibilityInfo.isReduceMotionEnabled().then((enabled) => {
       reduce = enabled;
-      const forRatio = results.sideTotals.for / totalVotes;
-      const againstRatio = results.sideTotals.against / totalVotes;
+      const forRatio = results.sideTotals.agree / totalVotes;
+      const againstRatio = results.sideTotals.disagree / totalVotes;
       if (reduce) {
         forBar.value = forRatio;
         againstBar.value = againstRatio;
@@ -48,7 +48,7 @@ export function DebateResultsView({
       forBar.value = withSpring(forRatio, motion.spring.sheet);
       againstBar.value = withSpring(againstRatio, motion.spring.sheet);
     });
-  }, [againstBar, forBar, results.sideTotals.against, results.sideTotals.for, totalVotes]);
+  }, [againstBar, forBar, results.sideTotals.disagree, results.sideTotals.agree, totalVotes]);
 
   const forStyle = useAnimatedStyle(() => ({ flex: forBar.value }));
   const againstStyle = useAnimatedStyle(() => ({ flex: againstBar.value }));
@@ -70,21 +70,21 @@ export function DebateResultsView({
 
       <View style={styles.bars}>
         <View style={styles.barRow}>
-          <Text style={[styles.barLabel, { color: palette.coral }]}>FOR</Text>
+          <Text style={[styles.barLabel, { color: palette.coral }]}>AGREE</Text>
           <View style={styles.barTrack}>
             <Animated.View style={[styles.barFill, { backgroundColor: palette.coral }, forStyle]} />
           </View>
-          <Text style={[styles.barCount, { color: textPrimary }]}>{results.sideTotals.for}</Text>
+          <Text style={[styles.barCount, { color: textPrimary }]}>{results.sideTotals.agree}</Text>
         </View>
         <View style={styles.barRow}>
-          <Text style={[styles.barLabel, { color: palette.teal }]}>AGAINST</Text>
+          <Text style={[styles.barLabel, { color: palette.teal }]}>DISAGREE</Text>
           <View style={styles.barTrack}>
             <Animated.View
               style={[styles.barFill, { backgroundColor: palette.teal }, againstStyle]}
             />
           </View>
           <Text style={[styles.barCount, { color: textPrimary }]}>
-            {results.sideTotals.against}
+            {results.sideTotals.disagree}
           </Text>
         </View>
       </View>

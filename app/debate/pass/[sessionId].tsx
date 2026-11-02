@@ -63,11 +63,11 @@ export default function PassDebateSessionScreen() {
   };
 
   const forPlayers = useMemo(
-    () => session?.players.filter((player) => player.side === 'for') ?? [],
+    () => session?.players.filter((player) => player.side === 'agree') ?? [],
     [session?.players],
   );
   const againstPlayers = useMemo(
-    () => session?.players.filter((player) => player.side === 'against') ?? [],
+    () => session?.players.filter((player) => player.side === 'disagree') ?? [],
     [session?.players],
   );
 

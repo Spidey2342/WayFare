@@ -1,4 +1,4 @@
-import type { DebatePlayer, DebateResults, PlayerScoreLine } from './types';
+import type { DebatePlayer, DebateResults, DebateSide, PlayerScoreLine } from './types';
 
 /** Winning side +3, MVP +2, participation +1 (stacking allowed). */
 export function scorePlayers(
@@ -8,7 +8,7 @@ export function scorePlayers(
   const lines: Record<string, PlayerScoreLine> = {};
   for (const player of players) {
     const participation = 1;
-    const sideWin = player.side && results.winningSides.includes(player.side) ? 3 : 0;
+    const sideWin = player.side && results.winningSides.includes(player.side as DebateSide) ? 3 : 0;
     const mvp = results.mvpIds.includes(player.id) ? 2 : 0;
     lines[player.id] = {
       playerId: player.id,

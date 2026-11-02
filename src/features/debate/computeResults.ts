@@ -6,12 +6,12 @@ export function computeResults(players: DebatePlayer[], votes: DebateVoteMap): D
   const sideTotals = sideVoteTotals(players, playerTotals);
 
   const winningSides: DebateSide[] = [];
-  if (sideTotals.for > sideTotals.against) winningSides.push('for');
-  else if (sideTotals.against > sideTotals.for) winningSides.push('against');
+  if (sideTotals.agree > sideTotals.disagree) winningSides.push('agree');
+  else if (sideTotals.disagree > sideTotals.agree) winningSides.push('disagree');
   else {
-    winningSides.push('for', 'against');
+    winningSides.push('agree', 'disagree');
   }
-  const sideTie = sideTotals.for === sideTotals.against;
+  const sideTie = sideTotals.agree === sideTotals.disagree;
 
   let maxVotes = 0;
   for (const total of Object.values(playerTotals)) {

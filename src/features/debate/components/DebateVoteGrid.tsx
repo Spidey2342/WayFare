@@ -19,8 +19,8 @@ type Props = {
 };
 
 function sideAccent(side: DebateSide | null) {
-  if (side === 'for') return palette.coral;
-  if (side === 'against') return palette.teal;
+  if (side === 'agree') return palette.coral;
+  if (side === 'disagree') return palette.teal;
   return palette.line;
 }
 

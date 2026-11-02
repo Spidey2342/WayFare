@@ -91,10 +91,12 @@ export default function SoloDebateScreen() {
               />
             ))}
             <View style={styles.sideRow}>
-              {(['for', 'against', 'random'] as const).map((side) => (
+              {(['agree', 'disagree', 'random'] as const).map((side) => (
                 <Button
                   key={side}
-                  label={side === 'random' ? 'Random side' : side.toUpperCase()}
+                  label={
+                    side === 'random' ? 'Surprise me' : side === 'agree' ? 'AGREE' : 'DISAGREE'
+                  }
                   variant={sidePick === side ? 'gold' : 'secondary'}
                   onPress={() => setSidePick(side)}
                 />
@@ -110,7 +112,7 @@ export default function SoloDebateScreen() {
 
   const solo = session.solo!;
   const player = session.players[0]!;
-  const side = player.side ?? 'for';
+  const side = player.side ?? 'agree';
   const secondsLeft = session.phaseEndsAt
     ? Math.max(0, Math.ceil((session.phaseEndsAt - nowMs) / 1000))
     : 0;
@@ -146,12 +148,12 @@ export default function SoloDebateScreen() {
     );
   }
 
-  if (solo.soloPhase === 'for' || solo.soloPhase === 'against') {
+  if (solo.soloPhase === 'agree' || solo.soloPhase === 'disagree') {
     const activeSide = solo.soloPhase;
-    const sideColor = activeSide === 'for' ? palette.coral : palette.teal;
-    const sideSoft = activeSide === 'for' ? palette.coralSoft : palette.tealSoft;
-    const forPlayers = session.players.filter((p) => p.side === 'for');
-    const againstPlayers = session.players.filter((p) => p.side === 'against');
+    const sideColor = activeSide === 'agree' ? palette.coral : palette.teal;
+    const sideSoft = activeSide === 'agree' ? palette.coralSoft : palette.tealSoft;
+    const forPlayers = session.players.filter((p) => p.side === 'agree');
+    const againstPlayers = session.players.filter((p) => p.side === 'disagree');
     return (
       <>
         <Screen background={palette.midnight} gutter={palette.midnight}>

@@ -49,19 +49,19 @@ export function DebateStage({
     <View style={styles.wrap} accessibilityRole="summary">
       <Text style={styles.reminder}>{DEBATE_KINDNESS_REMINDER}</Text>
       <View style={styles.header}>
-        <SideLabel label="FOR" color={palette.coral} />
+        <SideLabel label="AGREE" color={palette.coral} />
         <View style={styles.timerWrap}>
           <TimerRing secondsLeft={secondsLeft} total={totalSeconds} />
         </View>
-        <SideLabel label="AGAINST" color={palette.teal} />
+        <SideLabel label="DISAGREE" color={palette.teal} />
       </View>
       <View style={styles.topicCard}>
         <Text style={styles.topicLabel}>Topic</Text>
         <Text style={styles.topicText}>{topic}</Text>
       </View>
       <View style={styles.columns}>
-        <SideColumn side="for" players={forPlayers} accent={palette.coral} />
-        <SideColumn side="against" players={againstPlayers} accent={palette.teal} />
+        <SideColumn side="agree" players={forPlayers} accent={palette.coral} />
+        <SideColumn side="disagree" players={againstPlayers} accent={palette.teal} />
       </View>
       {showReadyButton ? (
         <View style={styles.readyBlock}>
@@ -104,7 +104,7 @@ function SideColumn({
   players,
   accent,
 }: {
-  side: 'for' | 'against';
+  side: 'agree' | 'disagree';
   players: DebatePlayer[];
   accent: string;
 }) {

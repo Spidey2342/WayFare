@@ -154,7 +154,7 @@ export default function GroupLobbyScreen() {
 
   const startMatch = async () => {
     try {
-      const sessionId = await rpcCreateDebateSession(id, 'topic-01');
+      const sessionId = await rpcCreateDebateSession(id, null);
       router.push(`/debate/${sessionId}`);
     } catch {
       setToast('Could not start game. Run Supabase migration 0002.');

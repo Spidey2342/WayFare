@@ -14,20 +14,20 @@ export const gameRules: Record<GameRulesId, GameRulesEntry> = {
     accent: 'coral',
     rows: [
       {
-        title: 'Pick a side.',
-        body: "You'll be given FOR or AGAINST. You might not agree with it, and that's the fun.",
+        title: 'A topic appears.',
+        body: 'We pick a random topic for your group.',
       },
       {
-        title: 'Make your case.',
-        body: 'Argue your side before the timer ends. Be sharp, be kind.',
+        title: 'Pick your side.',
+        body: 'Tap Agree or Disagree. You can switch until the leader starts.',
       },
       {
-        title: 'Vote.',
-        body: "Pick the player who convinced you most. You can't vote for yourself.",
+        title: 'Talk it out.',
+        body: 'Take as long as you need. Be sharp, be kind.',
       },
       {
-        title: 'Win.',
-        body: 'The side with the most votes wins. The top player is the MVP.',
+        title: 'The leader decides.',
+        body: 'The leader picks the side that made the stronger case, and the best speaker if they want.',
       },
     ],
   },

@@ -28,10 +28,10 @@ export function sideVoteTotals(
   let againstTotal = 0;
   for (const player of players) {
     const count = playerTotals[player.id] ?? 0;
-    if (player.side === 'for') forTotal += count;
-    else if (player.side === 'against') againstTotal += count;
+    if (player.side === 'agree') forTotal += count;
+    else if (player.side === 'disagree') againstTotal += count;
   }
-  return { for: forTotal, against: againstTotal };
+  return { agree: forTotal, disagree: againstTotal };
 }
 
 export function allVotesSubmitted(players: DebatePlayer[], votes: DebateVoteMap): boolean {

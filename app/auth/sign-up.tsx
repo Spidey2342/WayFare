@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { AuthField } from '@/components/auth/AuthField';
 import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
 import { friendlyAuthError } from '@/features/auth/authErrors';
+import { suggestEmailDomain } from '@/features/auth/emailTypoSuggest';
+import { normalizeEmail } from '@/features/auth/normalizeEmail';
+import { writeLastUsedEmail } from '@/features/auth/lastUsedEmail';
 import { googleAuthEnabled, isSupabaseConfigured, requireSupabase } from '@/services/supabase';
 import { fontFamily, palette, spacing, typeScale, useTheme } from '@/theme';
 
@@ -18,6 +21,13 @@ export default function SignUpScreen() {
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [duplicateNotice, setDuplicateNotice] = useState(false);
+  const [typoDismissed, setTypoDismissed] = useState(false);
+
+  const typoSuggestion = useMemo(() => {
+    if (typoDismissed) return null;
+    return suggestEmailDomain(email);
+  }, [email, typoDismissed]);
 
   const submit = async () => {
     if (!ageConfirmed) {
@@ -36,10 +46,11 @@ export default function SignUpScreen() {
     }
     setLoading(true);
     setError(null);
+    setDuplicateNotice(false);
     try {
       const client = requireSupabase();
-      const normalizedEmail = email.trim().toLowerCase();
-      const { error: signError } = await client.auth.signUp({
+      const normalizedEmail = normalizeEmail(email);
+      const { data, error: signError } = await client.auth.signUp({
         email: normalizedEmail,
         password,
         options: {
@@ -47,12 +58,17 @@ export default function SignUpScreen() {
         },
       });
       if (signError) throw signError;
+      const identities = data.user?.identities ?? [];
+      if (identities.length === 0) {
+        setDuplicateNotice(true);
+        return;
+      }
+      await writeLastUsedEmail(normalizedEmail);
       router.replace('/auth/profile-setup');
     } catch (caught) {
       const friendly = friendlyAuthError(caught);
-      if (friendly.includes('already has an account')) {
-        const normalizedEmail = email.trim().toLowerCase();
-        router.replace(`/auth/sign-in?email=${encodeURIComponent(normalizedEmail)}`);
+      if (friendly.toLowerCase().includes('already')) {
+        setDuplicateNotice(true);
         return;
       }
       setError(friendly);
@@ -78,9 +94,25 @@ export default function SignUpScreen() {
           value={email}
           keyboardType="email-address"
           autoCapitalize="none"
-          onChangeText={setEmail}
+          onChangeText={(value) => {
+            setEmail(value);
+            setTypoDismissed(false);
+          }}
           placeholder="mail@example.com"
         />
+        {typoSuggestion ? (
+          <View style={styles.typoBox}>
+            <Text style={styles.typoText}>Did you mean {typoSuggestion}?</Text>
+            <View style={styles.typoActions}>
+              <Pressable onPress={() => setEmail(typoSuggestion)}>
+                <Text style={styles.link}>Yes, use it</Text>
+              </Pressable>
+              <Pressable onPress={() => setTypoDismissed(true)}>
+                <Text style={styles.linkMuted}>No</Text>
+              </Pressable>
+            </View>
+          </View>
+        ) : null}
         <AuthField
           label="PASSWORD"
           value={password}
@@ -102,6 +134,21 @@ export default function SignUpScreen() {
             I confirm that I am 13 or older and agree to the terms and privacy policy.
           </Text>
         </Pressable>
+        {duplicateNotice ? (
+          <View style={styles.notice}>
+            <Text style={styles.noticeText}>You already have an account.</Text>
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: '/auth/sign-in',
+                  params: { email: normalizeEmail(email) },
+                })
+              }
+            >
+              <Text style={styles.link}>Log in instead</Text>
+            </Pressable>
+          </View>
+        ) : null}
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Button
           label="Create account"
@@ -143,6 +190,12 @@ const styles = StyleSheet.create({
   checkOn: { backgroundColor: palette.teal, borderColor: palette.teal },
   checkLabel: { flex: 1, fontFamily: fontFamily.body, lineHeight: 22 },
   error: { color: palette.coral, fontFamily: fontFamily.body },
+  notice: { gap: spacing.xs },
+  noticeText: { fontFamily: fontFamily.body, color: palette.ink },
+  typoBox: { gap: spacing.xs },
+  typoText: { fontFamily: fontFamily.body, color: palette.warmGray },
+  typoActions: { flexDirection: 'row', gap: spacing.md },
   footer: { textAlign: 'center', fontFamily: fontFamily.body, color: palette.warmGray },
   link: { color: palette.blue, fontFamily: fontFamily.bodySemi },
+  linkMuted: { color: palette.warmGray, fontFamily: fontFamily.bodySemi },
 });

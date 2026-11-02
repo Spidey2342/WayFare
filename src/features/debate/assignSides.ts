@@ -30,7 +30,7 @@ export function assignSidesBalanced(
   const forCount = Math.ceil(ids.length / 2);
   const assignment: Record<string, DebateSide> = {};
   ids.forEach((id, index) => {
-    assignment[id] = index < forCount ? 'for' : 'against';
+    assignment[id] = index < forCount ? 'agree' : 'disagree';
   });
   return assignment;
 }
@@ -49,11 +49,13 @@ export function validateManualSides(players: DebatePlayer[]): void {
   if (players.length < 2 || players.length > 8) {
     throw new Error('Debate needs between 2 and 8 players.');
   }
-  const assigned = players.filter((player) => player.side === 'for' || player.side === 'against');
+  const assigned = players.filter(
+    (player) => player.side === 'agree' || player.side === 'disagree',
+  );
   if (assigned.length !== players.length) {
     throw new Error('Every player needs a side before debate.');
   }
-  const forCount = players.filter((player) => player.side === 'for').length;
+  const forCount = players.filter((player) => player.side === 'agree').length;
   const againstCount = players.length - forCount;
   if (forCount === 0 || againstCount === 0) {
     throw new Error('Each side needs at least one player.');

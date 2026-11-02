@@ -1,7 +1,18 @@
-export type DebateSide = 'for' | 'against';
+export type DebateSide = 'agree' | 'disagree';
 
 export type DebatePhase =
-  'lobby' | 'side_reveal' | 'prep' | 'debate' | 'voting' | 'results' | 'ended';
+  | 'lobby'
+  | 'topic'
+  | 'picking'
+  | 'debating'
+  | 'verdict'
+  | 'results'
+  | 'ended'
+  /** @deprecated Legacy local/pass flows only */
+  | 'side_reveal'
+  | 'prep'
+  | 'debate'
+  | 'voting';
 
 export type DebateSessionStatus = 'active' | 'finished' | 'cancelled';
 
@@ -40,8 +51,8 @@ export interface DebateVoteMap {
 }
 
 export interface SideTotals {
-  for: number;
-  against: number;
+  agree: number;
+  disagree: number;
 }
 
 export interface DebateResults {
@@ -81,7 +92,7 @@ export interface LocalDebateSession {
     prepNotes: string;
     reflection: string;
     rating: number | null;
-    soloPhase: 'pick' | 'prep' | 'for' | 'against' | 'reflect' | 'done';
+    soloPhase: 'pick' | 'prep' | 'agree' | 'disagree' | 'reflect' | 'done';
   };
   pass?: {
     votingPlayerIndex: number;

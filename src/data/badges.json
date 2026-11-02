@@ -186,9 +186,9 @@
   {
     "id": "fair-judge",
     "name": "Fair Judge",
-    "description": "Vote in five debates.",
+    "description": "Judge five debates.",
     "icon": "scale",
     "color": "teal",
-    "rule": "debateVotes:5"
+    "rule": "debateJudge:5"
   }
 ]

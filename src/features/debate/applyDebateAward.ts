@@ -9,10 +9,13 @@ function ruleMetDebate(
   progress: GameProgress,
   votedThisRound: boolean,
   wasMvp: boolean,
+  wasJudge: boolean,
 ): boolean {
   const [kind, amountRaw] = rule.split(':');
   const amount = Number(amountRaw);
   if (kind === 'debateMvp') return progress.debateMvps >= amount || wasMvp;
+  if (kind === 'debateJudge')
+    return progress.debatesJudged >= amount || (wasJudge && progress.debatesJudged + 1 >= amount);
   if (kind === 'debateVotes')
     return (
       progress.debateVotesCast >= amount ||
@@ -25,12 +28,13 @@ function withDebateBadges(
   progress: GameProgress,
   votedThisRound: boolean,
   wasMvp: boolean,
+  wasJudge: boolean,
 ): GameProgress {
   const earned = new Set(progress.badgesEarned);
   for (const badge of badgesData) {
     if (
       badge.rule.startsWith('debate') &&
-      ruleMetDebate(badge.rule, progress, votedThisRound, wasMvp)
+      ruleMetDebate(badge.rule, progress, votedThisRound, wasMvp, wasJudge)
     ) {
       earned.add(badge.id);
     }
@@ -45,6 +49,7 @@ export function applyDebateAward(
     xpGained: number;
     votedThisRound: boolean;
     wasMvp: boolean;
+    wasJudge?: boolean;
     playerScore?: PlayerScoreLine;
   },
   now = new Date(),
@@ -58,7 +63,8 @@ export function applyDebateAward(
     sessionsCompleted: progress.sessionsCompleted + 1,
     debateVotesCast: progress.debateVotesCast + (args.votedThisRound ? 1 : 0),
     debateMvps: progress.debateMvps + (args.wasMvp ? 1 : 0),
+    debatesJudged: progress.debatesJudged + (args.wasJudge ? 1 : 0),
     lastAppliedDebateId: args.sessionId,
   };
-  return withDebateBadges(next, args.votedThisRound, args.wasMvp);
+  return withDebateBadges(next, args.votedThisRound, args.wasMvp, args.wasJudge ?? false);
 }

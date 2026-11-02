@@ -193,7 +193,7 @@ export function createSoloSession(
   config: DebateConfig = DEFAULT_CONFIG,
 ): LocalDebateSession {
   const side: DebateSide =
-    chosenSide === 'random' ? (Math.random() < 0.5 ? 'for' : 'against') : chosenSide;
+    chosenSide === 'random' ? (Math.random() < 0.5 ? 'agree' : 'disagree') : chosenSide;
   const soloPlayer: DebatePlayer = {
     id: 'solo',
     displayName: 'You',
@@ -242,23 +242,23 @@ export function soloAdvance(session: LocalDebateSession, now = Date.now()): Loca
   if (soloPhase === 'prep') {
     return {
       ...session,
-      solo: { ...session.solo, soloPhase: 'for' },
+      solo: { ...session.solo, soloPhase: 'agree' },
       phase: 'debate',
       phaseEndsAt: now + 60_000,
     };
   }
-  if (soloPhase === 'for') {
+  if (soloPhase === 'agree') {
     return {
       ...session,
-      solo: { ...session.solo, soloPhase: 'against' },
+      solo: { ...session.solo, soloPhase: 'disagree' },
       players: session.players.map((player) => ({
         ...player,
-        side: player.side === 'for' ? 'against' : 'for',
+        side: player.side === 'agree' ? 'disagree' : 'agree',
       })),
       phaseEndsAt: now + 60_000,
     };
   }
-  if (soloPhase === 'against') {
+  if (soloPhase === 'disagree') {
     return {
       ...session,
       solo: { ...session.solo, soloPhase: 'reflect' },
