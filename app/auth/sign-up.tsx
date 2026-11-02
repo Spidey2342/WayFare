@@ -38,17 +38,24 @@ export default function SignUpScreen() {
     setError(null);
     try {
       const client = requireSupabase();
+      const normalizedEmail = email.trim().toLowerCase();
       const { error: signError } = await client.auth.signUp({
-        email: email.trim(),
+        email: normalizedEmail,
         password,
         options: {
-          data: { display_name: displayName.trim() || 'Player' },
+          data: { display_name: displayName.trim().replace(/\s+/g, ' ') || 'Player' },
         },
       });
       if (signError) throw signError;
       router.replace('/auth/profile-setup');
     } catch (caught) {
-      setError(friendlyAuthError(caught));
+      const friendly = friendlyAuthError(caught);
+      if (friendly.includes('already has an account')) {
+        const normalizedEmail = email.trim().toLowerCase();
+        router.replace(`/auth/sign-in?email=${encodeURIComponent(normalizedEmail)}`);
+        return;
+      }
+      setError(friendly);
     } finally {
       setLoading(false);
     }

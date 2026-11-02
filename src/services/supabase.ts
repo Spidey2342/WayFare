@@ -80,6 +80,9 @@ export type GroupRow = {
   join_code: string;
   owner_id: string;
   created_at: string;
+  archived_at?: string | null;
+  name_normalized?: string;
+  last_activity_at?: string;
 };
 
 export type GroupMemberRow = {

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
 import { rpcJoinGroup } from '@/features/groups/api';
+import { friendlyJoinGroupError } from '@/features/groups/groupErrors';
 import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/theme';
 
 const BOXES = 6;
@@ -14,6 +15,7 @@ export default function JoinGroupScreen() {
   const [chars, setChars] = useState<string[]>(Array(BOXES).fill(''));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inFlight = useRef(false);
 
   const code = chars.join('');
 
@@ -27,18 +29,21 @@ export default function JoinGroupScreen() {
     setChars(next);
   };
 
-  const submit = async () => {
+  const submit = useCallback(async () => {
+    if (inFlight.current || loading) return;
+    inFlight.current = true;
     setLoading(true);
     setError(null);
     try {
       const groupId = await rpcJoinGroup(code);
       router.replace(`/groups/${groupId}/lobby`);
-    } catch {
-      setError('That code did not work. Check with your leader and try again.');
+    } catch (caught) {
+      setError(friendlyJoinGroupError(caught));
     } finally {
       setLoading(false);
+      inFlight.current = false;
     }
-  };
+  }, [code, loading, router]);
 
   return (
     <Screen background={palette.offWhite} gutter={palette.offWhite}>
@@ -53,6 +58,7 @@ export default function JoinGroupScreen() {
             <TextInput
               key={index}
               value={char}
+              editable={!loading}
               onChangeText={(value) => setAt(index, value)}
               autoCapitalize="characters"
               maxLength={1}
@@ -64,6 +70,7 @@ export default function JoinGroupScreen() {
         <Button
           label="Join group"
           variant="primary"
+          loading={loading}
           disabled={loading || code.length !== BOXES}
           onPress={() => void submit()}
         />

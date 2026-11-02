@@ -59,6 +59,7 @@
     "audit:after": "node scripts/capture-after-audit.mjs",
     "test:nav-audit": "node scripts/playwright-nav-dead-ends.mjs",
     "test:lobby-e2e": "node scripts/playwright-lobby-two-users.mjs",
+    "test:create-spam": "node scripts/playwright-create-group-spam.mjs",
     "audit:lobby": "node scripts/capture-lobby-audit.mjs",
     "test": "jest --ci --watchAll=false && npm run test:emoji && npm run test:nav-audit",
     "test:coverage": "jest --ci --watchAll=false --coverage",

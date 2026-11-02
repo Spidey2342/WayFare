@@ -1,14 +1,26 @@
+import { parseCreateGroupResult, type CreateGroupResult } from '@/features/groups/groupErrors';
 import type { LobbyRpcResponse } from '@/features/groups/lobbyModel';
 import { requireSupabase, type GroupMemberRow, type GroupRow } from '@/services/supabase';
 
-export async function rpcCreateGroup(name: string, description: string, isPrivate: boolean) {
+export async function rpcCreateGroup(
+  name: string,
+  description: string,
+  isPrivate: boolean,
+  requestId: string,
+): Promise<CreateGroupResult> {
   const { data, error } = await requireSupabase().rpc('create_group', {
     name,
     description,
     is_private: isPrivate,
+    request_id: requestId,
   });
   if (error) throw error;
-  return data as string;
+  return parseCreateGroupResult(data);
+}
+
+export async function rpcRestoreGroup(groupId: string) {
+  const { error } = await requireSupabase().rpc('restore_group', { p_group_id: groupId });
+  if (error) throw error;
 }
 
 export async function rpcJoinGroup(code: string) {
@@ -44,7 +56,11 @@ export async function fetchMyGroups(): Promise<GroupRow[]> {
   if (memberError) throw memberError;
   const ids = (memberships ?? []).map((row) => row.group_id as string);
   if (ids.length === 0) return [];
-  const { data, error } = await client.from('groups').select('*').in('id', ids);
+  const { data, error } = await client
+    .from('groups')
+    .select('*')
+    .in('id', ids)
+    .is('archived_at', null);
   if (error) throw error;
   return (data ?? []) as GroupRow[];
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { AuthField } from '@/components/auth/AuthField';
 import { consumeAuthReturnTo } from '@/components/navigation/NavigationGuard';
@@ -11,8 +11,9 @@ import { fontFamily, palette, spacing, typeScale, useTheme } from '@/theme';
 
 export default function SignInScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ email?: string }>();
   const { colors } = useTheme();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => (typeof params.email === 'string' ? params.email : ''));
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -29,7 +30,7 @@ export default function SignInScreen() {
     setError(null);
     try {
       const { error: signError } = await requireSupabase().auth.signInWithPassword({
-        email: email.trim(),
+        email: email.trim().toLowerCase(),
         password,
       });
       if (signError) throw signError;
