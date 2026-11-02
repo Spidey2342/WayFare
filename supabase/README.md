@@ -21,7 +21,7 @@ Never commit `.env`. Never put the **service_role** key in the app or in git.
 1. Open **SQL → New query**.
 2. Paste the full contents of `supabase/migrations/0001_init.sql`.
 3. Run once. Confirm tables `profiles`, `groups`, `group_members`, `onboarding_events` exist and RLS is enabled.
-4. Paste and run `supabase/migrations/0002_debate_sessions.sql` for online group debate (`game_sessions`, `game_session_players`, debate RPCs).
+4. Paste and run `supabase/migrations/0002_debate.sql` for the full Debate game (topics, sessions, votes, results, RPCs).
 
 **Option B — Supabase CLI**
 

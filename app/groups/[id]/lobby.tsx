@@ -5,8 +5,7 @@ import { Copy } from 'lucide-react-native';
 
 import { BackButton, BottomSheet, Button, Screen, ScreenScroll } from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthContext';
-import { rpcStartGroupDebate } from '@/features/debate/api';
-import { debateStatementsForDeck } from '@/features/debate/cards';
+import { rpcCreateDebateSession } from '@/features/debate/api';
 import {
   fetchGroup,
   fetchGroupMembers,
@@ -92,16 +91,7 @@ export default function GroupLobbyScreen() {
 
   const startMatch = async () => {
     try {
-      const statements = debateStatementsForDeck('church-culture', 6);
-      if (statements.length === 0) {
-        setMessage('No debate statements in this deck.');
-        return;
-      }
-      const sessionId = await rpcStartGroupDebate(
-        id,
-        'church-culture',
-        statements.map((item) => item.cardId),
-      );
+      const sessionId = await rpcCreateDebateSession(id, 'topic-01');
       router.push(`/debate/${sessionId}`);
     } catch {
       setMessage('Could not start debate. Run Supabase migration 0002.');

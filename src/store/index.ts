@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { applyDebateAward as mergeDebateAward } from '@/features/debate/applyDebateAward';
 import {
   applyLessonComplete,
   applyQuizComplete,
@@ -42,6 +43,7 @@ interface AppActions {
   setLocalTutorialStep: (step: number) => void;
   completeLocalTutorial: () => void;
   markPlayModeHelpSeen: (mode: keyof PlayModeHelpSeen) => void;
+  applyDebateAward: (args: Parameters<typeof mergeDebateAward>[1]) => void;
   awardFirstStepFromTutorial: () => void;
 }
 
@@ -108,6 +110,8 @@ export const useAppStore = create<AppStore>()(
         set((state) => ({
           playModeHelpSeen: { ...state.playModeHelpSeen, [mode]: true },
         })),
+      applyDebateAward: (args) =>
+        set((state) => ({ progress: mergeDebateAward(state.progress, args, new Date()) })),
       awardFirstStepFromTutorial: () =>
         set((state) => {
           const badges = state.progress.badgesEarned.includes('first-step')

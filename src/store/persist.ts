@@ -12,6 +12,7 @@ export type PlayModeHelpSeen = {
   solo: boolean;
   pass: boolean;
   online: boolean;
+  debate: boolean;
 };
 
 export interface PersistedApp {
@@ -31,7 +32,7 @@ export interface PersistedApp {
   playModeHelpSeen: PlayModeHelpSeen;
 }
 
-export const STORE_VERSION = 5;
+export const STORE_VERSION = 6;
 
 export function defaultPersisted(): PersistedApp {
   return {
@@ -51,7 +52,7 @@ export function defaultPersisted(): PersistedApp {
     checklist: defaultChecklistState(),
     localTutorialStep: 0,
     localTutorialCompleted: false,
-    playModeHelpSeen: { solo: false, pass: false, online: false },
+    playModeHelpSeen: { solo: false, pass: false, online: false, debate: false },
   };
 }
 
@@ -74,6 +75,7 @@ function readPlayModeHelp(value: unknown, fallback: PlayModeHelpSeen): PlayModeH
     solo: record.solo === true,
     pass: record.pass === true,
     online: record.online === true,
+    debate: record.debate === true,
   };
 }
 
@@ -168,5 +170,9 @@ function readProgress(value: unknown, fallback: GameProgress, _fromVersion: numb
     completedLessons: readStringList(record.completedLessons),
     booksRead: readStringList(record.booksRead),
     quizzesCompleted: readCount(record, 'quizzesCompleted'),
+    debateVotesCast: readCount(record, 'debateVotesCast'),
+    debateMvps: readCount(record, 'debateMvps'),
+    lastAppliedDebateId:
+      typeof record.lastAppliedDebateId === 'string' ? record.lastAppliedDebateId : null,
   };
 }

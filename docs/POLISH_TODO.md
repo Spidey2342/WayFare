@@ -4,10 +4,11 @@ Items deferred during BUILD FAST runs. Core behavior (RLS, solo/pass, practice r
 
 ## Debate
 
-- Same-phone pass-and-play debate flow (shared device voting UX).
-- Richer realtime error/reconnect states on `/debate/[sessionId]`.
-- Leader-only UI affordances vs participant read-only when not leader.
-- Debate results / recap screen after final round.
+- Automated host promotion after 20s disconnect (DB cron + toast).
+- Supabase Presence for connected/away/offline chips.
+- Full confetti + MVP card animation on results.
+- Exact `08-games.png` asset when added to reference folder.
+- Two-browser Playwright online test when CI Supabase secrets exist.
 
 ## Groups lobby
 

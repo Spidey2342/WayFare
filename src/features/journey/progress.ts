@@ -39,6 +39,9 @@ export interface GameProgress {
   completedLessons: string[];
   booksRead: string[];
   quizzesCompleted: number;
+  debateVotesCast: number;
+  debateMvps: number;
+  lastAppliedDebateId: string | null;
 }
 
 export interface SessionAward {
@@ -75,6 +78,9 @@ export function defaultProgress(now = new Date()): GameProgress {
     completedLessons: [],
     booksRead: [],
     quizzesCompleted: 0,
+    debateVotesCast: 0,
+    debateMvps: 0,
+    lastAppliedDebateId: null,
   };
 }
 
@@ -107,6 +113,8 @@ function ruleMet(rule: string, progress: GameProgress, award: SessionAward | nul
   if (kind === 'lessons') return progress.completedLessons.length >= amount;
   if (kind === 'books') return progress.booksRead.length >= amount;
   if (kind === 'quiz') return progress.quizzesCompleted >= amount;
+  if (kind === 'debateMvp') return progress.debateMvps >= amount;
+  if (kind === 'debateVotes') return progress.debateVotesCast >= amount;
   if (kind === 'card') {
     const totals: Record<string, number> = {
       word: progress.wordCards,

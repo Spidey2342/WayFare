@@ -11,7 +11,8 @@ export const SOLO_GAME_HELP = [
 ];
 
 export const DEBATE_HELP = [
-  'Read the statement on the card.',
-  'Tap Agree or Disagree before the timer ends.',
-  'The leader moves everyone to the next statement.',
+  'Pick a topic and join For or Against.',
+  'Prep your points, then argue while the timer runs.',
+  'Tap Ready to Vote when your side is done speaking.',
+  'Vote for the person who convinced you most (not yourself).',
 ];

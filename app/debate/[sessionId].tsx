@@ -2,39 +2,65 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { GameHelpSheet } from '@/components/game/GameHelpSheet';
-import { BackButton, Button, Screen, ScreenScroll, TimerRing } from '@/components/ui';
-import { DEBATE_HELP } from '@/features/game/helpCopy';
+import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthContext';
 import {
-  fetchDebatePlayers,
+  fetchDebateResults,
   fetchDebateSession,
-  rpcAdvanceDebateRound,
-  rpcCastDebateVote,
-  type OnlineDebatePlayerRow,
-  type OnlineDebateRow,
+  fetchDebateTopicText,
+  fetchSessionPlayers,
+  rpcAdvancePhase,
+  rpcAssignSides,
+  rpcExtendDebate,
+  rpcMarkDebateReadyToVote,
+  rpcSetReady,
+  rpcSubmitVote,
+  type OnlineDebateSessionRow,
+  type OnlineSessionPlayerRow,
 } from '@/features/debate/api';
-import { getDeck } from '@/features/decks/repository';
+import { DebateHelpSheet } from '@/features/debate/components/DebateHelpSheet';
+import { DebateStage } from '@/features/debate/components/DebateStage';
+import { useDebateClock } from '@/features/debate/hooks/useDebateClock';
+import { bundledDebateTopics } from '@/features/debate/localSession';
+import { useAppStore } from '@/store';
 import { isSupabaseConfigured, requireSupabase } from '@/services/supabase';
-import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
+import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
 export default function OnlineDebateScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const params = useLocalSearchParams<{ sessionId: string }>();
   const sessionId = typeof params.sessionId === 'string' ? params.sessionId : '';
-  const [session, setSession] = useState<OnlineDebateRow | null>(null);
-  const [players, setPlayers] = useState<OnlineDebatePlayerRow[]>([]);
-  const [seconds, setSeconds] = useState(30);
+  const [session, setSession] = useState<OnlineDebateSessionRow | null>(null);
+  const [players, setPlayers] = useState<OnlineSessionPlayerRow[]>([]);
+  const [topic, setTopic] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [votePick, setVotePick] = useState<string | null>(null);
+  const [reconnecting, setReconnecting] = useState(false);
+  const markHelp = useAppStore((state) => state.markPlayModeHelpSeen);
+  const { secondsLeft, syncing } = useDebateClock(session?.phase_ends_at);
 
   const reload = useCallback(async () => {
     if (!sessionId || !isSupabaseConfigured) return;
-    const row = await fetchDebateSession(sessionId);
-    const roster = await fetchDebatePlayers(sessionId);
-    setSession(row);
-    setPlayers(roster);
+    setReconnecting(true);
+    try {
+      const row = await fetchDebateSession(sessionId);
+      const roster = await fetchSessionPlayers(sessionId);
+      setSession(row);
+      setPlayers(roster);
+      if (row?.topic_id) {
+        const remote = await fetchDebateTopicText(row.topic_id);
+        setTopic(
+          remote ?? bundledDebateTopics().find((item) => item.id === row.topic_id)?.text ?? '',
+        );
+      }
+      setError(null);
+    } catch {
+      setError('Reconnecting…');
+    } finally {
+      setReconnecting(false);
+    }
   }, [sessionId]);
 
   useEffect(() => {
@@ -56,7 +82,7 @@ export default function OnlineDebateScreen() {
         {
           event: '*',
           schema: 'public',
-          table: 'game_session_players',
+          table: 'session_players',
           filter: `session_id=eq.${sessionId}`,
         },
         () => void reload(),
@@ -67,47 +93,37 @@ export default function OnlineDebateScreen() {
     };
   }, [sessionId, reload]);
 
-  useEffect(() => {
-    const timer = setInterval(() => setSeconds((value) => Math.max(0, value - 1)), 1000);
-    return () => clearInterval(timer);
-  }, [session?.round_index]);
-
-  const cardId = session?.card_ids[session.round_index];
-  const deck = session ? getDeck(session.deck_id) : undefined;
-  const prompt =
-    deck?.cards.find((card) => card.id === cardId)?.prompt ?? 'Read the statement and vote.';
-
-  const myVote = players.find((player) => player.user_id === user?.id)?.vote ?? null;
   const isHost = session?.host_id === user?.id;
-  const agreeCount = players.filter((player) => player.vote === 'agree').length;
-  const disagreeCount = players.filter((player) => player.vote === 'disagree').length;
-
-  const vote = async (choice: 'agree' | 'disagree') => {
-    setError(null);
-    try {
-      await rpcCastDebateVote(sessionId, choice);
-      await reload();
-    } catch {
-      setError('Could not send your vote. Try again.');
-    }
-  };
-
-  const nextRound = async () => {
-    setError(null);
-    try {
-      const index = await rpcAdvanceDebateRound(sessionId);
-      setSeconds(30);
-      await reload();
-      if (index < 0) router.replace('/groups');
-    } catch {
-      setError('Only the leader can advance the round.');
-    }
-  };
-
-  const title = useMemo(
-    () => (session?.status === 'complete' ? 'Debate complete' : 'Group debate'),
-    [session?.status],
+  const me = players.find((player) => player.user_id === user?.id);
+  const forPlayers = useMemo(
+    () =>
+      players
+        .filter((player) => player.side === 'for')
+        .map((player) => ({
+          id: player.user_id,
+          displayName: player.display_name,
+          side: 'for' as const,
+        })),
+    [players],
   );
+  const againstPlayers = useMemo(
+    () =>
+      players
+        .filter((player) => player.side === 'against')
+        .map((player) => ({
+          id: player.user_id,
+          displayName: player.display_name,
+          side: 'against' as const,
+        })),
+    [players],
+  );
+
+  const totalDebateSeconds = useMemo(() => {
+    const cfg = session?.config ?? {};
+    const base = Number(cfg.debateSeconds ?? 120);
+    const extra = cfg.debateExtended ? Number(cfg.debateExtensionSeconds ?? 30) : 0;
+    return base + extra;
+  }, [session?.config]);
 
   if (!isSupabaseConfigured) {
     return (
@@ -117,65 +133,191 @@ export default function OnlineDebateScreen() {
     );
   }
 
-  return (
-    <>
+  if (!session) {
+    return (
       <Screen background={palette.midnight} gutter={palette.midnight}>
+        <Text style={{ color: palette.white }}>
+          {reconnecting || syncing ? 'Loading…' : 'Session not found'}
+        </Text>
+      </Screen>
+    );
+  }
+
+  const readyCount = players.filter((player) => player.ready_to_vote).length;
+
+  const startFromLobby = async () => {
+    try {
+      await rpcAssignSides(sessionId);
+      await rpcAdvancePhase(sessionId);
+      await reload();
+    } catch {
+      setError('Could not start debate.');
+    }
+  };
+
+  if (session.phase === 'lobby') {
+    return (
+      <Screen background={palette.offWhite} gutter={palette.offWhite}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <View style={styles.topRow}>
-            <BackButton label="Leave" fallback="/groups" />
-            <Button label="?" variant="ghost" onPress={() => setHelpOpen(true)} />
-          </View>
-          <Text style={styles.kicker}>{title}</Text>
-          <TimerRing secondsLeft={seconds} total={30} />
-          <View style={styles.card}>
-            <Text style={styles.cardLabel}>Statement</Text>
-            <Text style={styles.prompt}>{prompt}</Text>
-          </View>
-          <Text style={styles.tally}>
-            Agree {agreeCount} · Disagree {disagreeCount}
-          </Text>
+          <Header help={() => setHelpOpen(true)} leaveHref="/debate" />
+          <Text style={typeScale.h2}>Lobby</Text>
+          <Text style={styles.code}>Code {session.room_code}</Text>
+          <Text style={styles.topic}>{topic}</Text>
+          {players.map((player) => (
+            <Text key={player.user_id} style={styles.playerLine}>
+              {player.display_name} {player.is_ready ? '· Ready' : ''}
+            </Text>
+          ))}
           <Button
-            label="Agree"
-            variant="gold"
-            disabled={!!myVote}
-            onPress={() => void vote('agree')}
-          />
-          <Button
-            label="Disagree"
+            label={me?.is_ready ? 'Unready' : 'Ready up'}
             variant="secondary"
-            disabled={!!myVote}
-            onPress={() => void vote('disagree')}
+            onPress={() => void rpcSetReady(sessionId, !me?.is_ready).then(reload)}
           />
-          {myVote ? <Text style={styles.meta}>You voted: {myVote}</Text> : null}
           {isHost ? (
-            <Button label="Next statement" variant="primary" onPress={() => void nextRound()} />
+            <Button label="Start debate" variant="gold" onPress={() => void startFromLobby()} />
           ) : null}
           {error ? <Text style={styles.error}>{error}</Text> : null}
         </ScreenScroll>
+        <DebateHelpSheet
+          open={helpOpen}
+          onClose={() => {
+            setHelpOpen(false);
+            markHelp('debate');
+          }}
+        />
       </Screen>
-      <GameHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} lines={DEBATE_HELP} />
-    </>
+    );
+  }
+
+  if (session.phase === 'debate') {
+    return (
+      <Screen background={palette.midnight} gutter={palette.midnight}>
+        <ScreenScroll contentContainerStyle={styles.content}>
+          <Header help={() => setHelpOpen(true)} leaveHref="/debate" />
+          {error ? <Text style={styles.errorDark}>{error}</Text> : null}
+          <DebateStage
+            topic={topic}
+            secondsLeft={secondsLeft}
+            totalSeconds={totalDebateSeconds}
+            forPlayers={forPlayers}
+            againstPlayers={againstPlayers}
+            readyCount={readyCount}
+            playerCount={players.length}
+            showReadyButton
+            readyDisabled={me?.ready_to_vote}
+            onReady={() => void rpcMarkDebateReadyToVote(sessionId).then(reload)}
+            onStickerPlaceholder={() => undefined}
+          />
+          {isHost ? (
+            <>
+              <Button
+                label="End debate early"
+                variant="secondary"
+                onPress={() => void rpcAdvancePhase(sessionId).then(reload)}
+              />
+              <Button
+                label="Add 30 seconds"
+                variant="ghost"
+                onPress={() => void rpcExtendDebate(sessionId).then(reload)}
+              />
+            </>
+          ) : null}
+        </ScreenScroll>
+        <DebateHelpSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
+      </Screen>
+    );
+  }
+
+  if (session.phase === 'voting') {
+    const candidates = players.filter((player) => player.user_id !== user?.id);
+    return (
+      <Screen background={palette.midnight} gutter={palette.midnight}>
+        <ScreenScroll contentContainerStyle={styles.content}>
+          <Header help={() => setHelpOpen(true)} leaveHref="/debate" />
+          <Text style={styles.phase}>Voting · {secondsLeft}s</Text>
+          {candidates.map((player) => (
+            <Button
+              key={player.user_id}
+              label={player.display_name}
+              variant={votePick === player.user_id ? 'gold' : 'secondary'}
+              onPress={() => setVotePick(player.user_id)}
+            />
+          ))}
+          <Button
+            label="Submit vote"
+            variant="primary"
+            disabled={!votePick}
+            onPress={() => votePick && void rpcSubmitVote(sessionId, votePick).then(reload)}
+          />
+        </ScreenScroll>
+      </Screen>
+    );
+  }
+
+  if (session.phase === 'results' || session.status === 'finished') {
+    return (
+      <Screen background={palette.offWhite} gutter={palette.offWhite}>
+        <ScreenScroll contentContainerStyle={styles.content}>
+          <Text style={typeScale.h1}>Results</Text>
+          <ResultsBlock sessionId={sessionId} />
+          <Button label="Back to groups" variant="gold" onPress={() => router.replace('/groups')} />
+        </ScreenScroll>
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen background={palette.midnight} gutter={palette.midnight}>
+      <ScreenScroll contentContainerStyle={styles.content}>
+        <Header help={() => setHelpOpen(true)} leaveHref="/debate" />
+        <Text style={styles.phase}>{session.phase}</Text>
+        {isHost ? (
+          <Button
+            label="Continue"
+            variant="gold"
+            onPress={() => void rpcAdvancePhase(sessionId).then(reload)}
+          />
+        ) : (
+          <Text style={styles.wait}>Waiting for host…</Text>
+        )}
+      </ScreenScroll>
+    </Screen>
+  );
+}
+
+function ResultsBlock({ sessionId }: { sessionId: string }) {
+  const [results, setResults] = useState<Awaited<ReturnType<typeof fetchDebateResults>>>(null);
+  useEffect(() => {
+    void fetchDebateResults(sessionId).then(setResults);
+  }, [sessionId]);
+  if (!results) return <Text>Loading results…</Text>;
+  return (
+    <View style={{ gap: 8 }}>
+      <Text style={styles.topic}>
+        {results.tie ? 'Side tie' : `Winning side: ${results.winning_side?.toUpperCase()}`}
+      </Text>
+      <Text style={styles.topic}>MVP count: {results.mvp_ids.length}</Text>
+    </View>
+  );
+}
+
+function Header({ help, leaveHref }: { help: () => void; leaveHref: '/debate' | '/groups' }) {
+  return (
+    <View style={styles.headerRow}>
+      <BackButton label="Leave" fallback={leaveHref} />
+      <Button label="?" variant="ghost" onPress={help} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
-  topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  kicker: { ...typeScale.caption, color: palette.goldDeep },
-  card: {
-    backgroundColor: palette.coral,
-    borderRadius: radii.card,
-    padding: spacing.xl,
-    gap: spacing.sm,
-  },
-  cardLabel: { ...typeScale.caption, color: palette.white, opacity: 0.85 },
-  prompt: {
-    fontFamily: fontFamily.headingSemi,
-    fontSize: 22,
-    color: palette.white,
-    lineHeight: 30,
-  },
-  tally: { color: palette.warmGray, fontFamily: fontFamily.bodySemi, textAlign: 'center' },
-  meta: { color: palette.white, fontFamily: fontFamily.body, textAlign: 'center' },
-  error: { color: palette.coral, fontFamily: fontFamily.body },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  code: { fontFamily: fontFamily.headingSemi, fontSize: 22, color: palette.ink },
+  topic: { ...typeScale.bodyM, color: palette.warmGray },
+  playerLine: { fontFamily: fontFamily.body, color: palette.ink },
+  error: { color: palette.coral },
+  errorDark: { color: palette.coralSoft },
+  phase: { color: palette.white, fontFamily: fontFamily.bodySemi, fontSize: 18 },
+  wait: { color: palette.warmGray },
 });

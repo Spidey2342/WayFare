@@ -7,13 +7,14 @@ type GameHelpSheetProps = {
   open: boolean;
   onClose: () => void;
   lines: string[];
+  title?: string;
 };
 
-export function GameHelpSheet({ open, onClose, lines }: GameHelpSheetProps) {
+export function GameHelpSheet({ open, onClose, lines, title = 'How to play' }: GameHelpSheetProps) {
   const { colors } = useTheme();
 
   return (
-    <BottomSheet visible={open} onClose={onClose} title="How to play">
+    <BottomSheet visible={open} onClose={onClose} title={title}>
       <View style={styles.body}>
         {lines.map((line) => (
           <Text key={line} style={[styles.line, { color: colors.textPrimary }]}>

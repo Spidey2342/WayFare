@@ -176,19 +176,19 @@
     "rule": "card:word:5"
   },
   {
-    "id": "path-finisher",
-    "name": "Path Finisher",
-    "description": "Complete every lesson path.",
-    "icon": "compass",
-    "color": "purple",
-    "rule": "lessons:12"
+    "id": "silver-tongue",
+    "name": "Silver Tongue",
+    "description": "Earn Most Convincing in a debate.",
+    "icon": "mic",
+    "color": "gold",
+    "rule": "debateMvp:1"
   },
   {
-    "id": "book-explorer",
-    "name": "Book Explorer",
-    "description": "Mark ten Bible books as read.",
-    "icon": "layers-3",
-    "color": "gold",
-    "rule": "books:10"
+    "id": "fair-judge",
+    "name": "Fair Judge",
+    "description": "Vote in five debates.",
+    "icon": "scale",
+    "color": "teal",
+    "rule": "debateVotes:5"
   }
 ]
