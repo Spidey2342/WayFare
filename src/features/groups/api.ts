@@ -1,3 +1,4 @@
+import type { LobbyRpcResponse } from '@/features/groups/lobbyModel';
 import { requireSupabase, type GroupMemberRow, type GroupRow } from '@/services/supabase';
 
 export async function rpcCreateGroup(name: string, description: string, isPrivate: boolean) {
@@ -46,6 +47,17 @@ export async function fetchMyGroups(): Promise<GroupRow[]> {
   const { data, error } = await client.from('groups').select('*').in('id', ids);
   if (error) throw error;
   return (data ?? []) as GroupRow[];
+}
+
+export async function rpcGetGroupLobby(groupId: string): Promise<LobbyRpcResponse> {
+  const { data, error } = await requireSupabase().rpc('get_group_lobby', {
+    p_group_id: groupId,
+  });
+  if (error) throw error;
+  if (!data || typeof data !== 'object') {
+    throw new Error('Lobby data was empty. Run migration 0003_fix_group_access.sql in Supabase.');
+  }
+  return data as LobbyRpcResponse;
 }
 
 export async function fetchGroup(groupId: string): Promise<GroupRow | null> {

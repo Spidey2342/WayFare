@@ -3,7 +3,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Plus, Users } from 'lucide-react-native';
 
-import { BackButton, Button, EmptyState, Screen, ScreenScroll } from '@/components/ui';
+import { Button, EmptyState, Screen, ScreenScroll } from '@/components/ui';
+import { ScreenHeader } from '@/components/navigation/ScreenHeader';
 import { useAuth } from '@/features/auth/AuthContext';
 import { fetchMyGroups } from '@/features/groups/api';
 import { isSupabaseConfigured, type GroupRow } from '@/services/supabase';
@@ -44,10 +45,10 @@ export default function GroupsScreen() {
 
   return (
     <Screen background={palette.offWhite} gutter={palette.offWhite}>
+      <ScreenHeader title="Groups" fallback="/home" />
       <ScreenScroll contentContainerStyle={styles.content}>
-        <BackButton label="Back" fallback="/home" />
         <View style={styles.head}>
-          <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Groups</Text>
+          <View style={{ flex: 1 }} />
           <Pressable accessibilityRole="button" onPress={() => router.push('/groups/create')}>
             <Plus color={palette.midnight} size={22} />
           </Pressable>

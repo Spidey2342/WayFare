@@ -8,6 +8,23 @@ const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim() ?? '';
 
 export const isSupabaseConfigured = url.length > 0 && anonKey.length > 0;
 
+/** Dev-only: confirms client config without logging secrets. */
+export function logSupabaseDevStatus() {
+  if (typeof __DEV__ === 'undefined' || !__DEV__) return;
+  if (!isSupabaseConfigured) {
+    console.warn(
+      '[Wayfare] Supabase not configured. Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in .env, then restart Metro.',
+    );
+    return;
+  }
+  try {
+    const host = new URL(url).host;
+    console.info(`[Wayfare] Supabase client configured (host: ${host}).`);
+  } catch {
+    console.info('[Wayfare] Supabase client configured.');
+  }
+}
+
 export const googleAuthEnabled =
   process.env.EXPO_PUBLIC_GOOGLE_AUTH_ENABLED === 'true' && isSupabaseConfigured;
 

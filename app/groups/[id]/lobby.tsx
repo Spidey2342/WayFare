@@ -1,70 +1,107 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Pressable, Share, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Platform, Pressable, Share, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Copy } from 'lucide-react-native';
+import { Check, Copy, Settings } from 'lucide-react-native';
 
-import { BackButton, BottomSheet, Button, Screen, ScreenScroll } from '@/components/ui';
+import { ScreenHeader } from '@/components/navigation/ScreenHeader';
+import {
+  Avatar,
+  BottomSheet,
+  Button,
+  Chip,
+  Screen,
+  ScreenScroll,
+  SkeletonLoader,
+} from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthContext';
 import { rpcCreateDebateSession } from '@/features/debate/api';
+import { rpcGetGroupLobby, rpcRemoveMember, rpcRotateCode } from '@/features/groups/api';
 import {
-  fetchGroup,
-  fetchGroupMembers,
-  fetchMemberProfiles,
-  rpcRemoveMember,
-  rpcRotateCode,
-} from '@/features/groups/api';
-import { requireSupabase } from '@/services/supabase';
-import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
-
-type MemberView = { userId: string; name: string; role: string; ready: boolean };
+  baseMembersFromRpc,
+  canLeaderStartGame,
+  copyCodeResult,
+  friendlyLobbyError,
+  membersWithPresence,
+  readyCount,
+  waitingForMorePlayers,
+  type LobbyMemberRow,
+} from '@/features/groups/lobbyModel';
+import { useLobbyPresence } from '@/features/groups/useLobbyPresence';
+import { goBackOr } from '@/navigation/goBackOr';
+import { isSupabaseConfigured, logSupabaseDevStatus, requireSupabase } from '@/services/supabase';
+import { copyTextToClipboard } from '@/utils/clipboard';
+import { avatarColorForKey } from '@/data/avatarPresets';
+import { fontFamily, minTapTarget, palette, radii, spacing, typeScale } from '@/theme';
 
 export default function GroupLobbyScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const params = useLocalSearchParams<{ id: string }>();
   const id = typeof params.id === 'string' ? params.id : '';
-  const [title, setTitle] = useState('Group lobby');
-  const [code, setCode] = useState('');
-  const [members, setMembers] = useState<MemberView[]>([]);
-  const [readySelf, setReadySelf] = useState(false);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [groupName, setGroupName] = useState('');
+  const [joinCode, setJoinCode] = useState('');
+  const [baseMembers, setBaseMembers] = useState<LobbyMemberRow[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
   const [toolsOpen, setToolsOpen] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+
+  const { readyMap, onlineMap, setSelfReady, clearPresence, selfReady } = useLobbyPresence(
+    id,
+    user?.id,
+  );
+
+  const members = useMemo(
+    () => membersWithPresence(baseMembers, readyMap, onlineMap),
+    [baseMembers, onlineMap, readyMap],
+  );
+
+  const isLeader = members.some((member) => member.userId === user?.id && member.role === 'leader');
+  const waiting = waitingForMorePlayers(members);
+  const startEnabled = canLeaderStartGame(members);
 
   const reload = useCallback(async () => {
-    if (!id) return;
-    const group = await fetchGroup(id);
-    setTitle(group?.name ?? 'Group lobby');
-    setCode(group?.join_code ?? '');
-    const rows = await fetchGroupMembers(id);
-    const profiles = await fetchMemberProfiles(rows.map((row) => row.user_id));
-    const names = new Map(
-      profiles.map((profile) => [profile.id, profile.display_name ?? 'Member']),
-    );
-    setMembers(
-      rows.map((row) => ({
-        userId: row.user_id,
-        name: names.get(row.user_id) ?? 'Member',
-        role: row.role,
-        ready: row.user_id === user?.id ? readySelf : false,
-      })),
-    );
-  }, [id, readySelf, user?.id]);
+    if (!id) {
+      setError('Missing group id.');
+      setLoading(false);
+      return;
+    }
+    if (!isSupabaseConfigured) {
+      setError('Supabase is not configured. Add keys to .env and restart Expo.');
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const payload = await rpcGetGroupLobby(id);
+      setGroupName(payload.group.name);
+      setJoinCode(payload.group.join_code ?? '');
+      setBaseMembers(baseMembersFromRpc(payload));
+    } catch (caught) {
+      setError(friendlyLobbyError(caught));
+      setJoinCode('');
+      setBaseMembers([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- data fetch on mount
+    logSupabaseDevStatus();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial lobby fetch
     void reload();
   }, [reload]);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !isSupabaseConfigured) return;
     const channel = requireSupabase()
       .channel(`group-members-${id}`)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'group_members', filter: `group_id=eq.${id}` },
-        () => {
-          void reload();
-        },
+        () => void reload(),
       )
       .subscribe();
     return () => {
@@ -72,20 +109,46 @@ export default function GroupLobbyScreen() {
     };
   }, [id, reload]);
 
-  const isLeader = members.some((member) => member.userId === user?.id && member.role === 'leader');
+  const leaveLobby = useCallback(async () => {
+    await clearPresence();
+    goBackOr(router, `/groups/${id}`);
+  }, [clearPresence, id, router]);
 
   const copyCode = async () => {
-    setMessage('Code copied');
-    await Share.share({ message: `Join my Wayfare group with code ${code}` });
+    const result = copyCodeResult(joinCode, await copyTextToClipboard(joinCode));
+    setToast(result.message);
+  };
+
+  const shareCode = async () => {
+    const code = joinCode.trim();
+    if (!code) {
+      setToast('No join code to share yet.');
+      return;
+    }
+    const message = `Join my Wayfare group with code ${code}`;
+    try {
+      if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({ text: message });
+        return;
+      }
+      await Share.share({ message });
+    } catch {
+      const copied = await copyTextToClipboard(code);
+      setToast(copied ? 'Code copied' : "Couldn't share. Select the code and copy it manually.");
+    }
+  };
+
+  const toggleReady = async () => {
+    await setSelfReady(!selfReady);
   };
 
   const rotate = async () => {
     try {
       const next = await rpcRotateCode(id);
-      setCode(next);
-      setMessage('New code created');
+      setJoinCode(next);
+      setToast('New code created');
     } catch {
-      setMessage('Only the leader can rotate the code.');
+      setToast('Only the leader can rotate the code.');
     }
   };
 
@@ -94,7 +157,7 @@ export default function GroupLobbyScreen() {
       const sessionId = await rpcCreateDebateSession(id, 'topic-01');
       router.push(`/debate/${sessionId}`);
     } catch {
-      setMessage('Could not start debate. Run Supabase migration 0002.');
+      setToast('Could not start game. Run Supabase migration 0002.');
     }
   };
 
@@ -103,49 +166,116 @@ export default function GroupLobbyScreen() {
     if (!target) return;
     try {
       await rpcRemoveMember(id, target.userId);
-      setMessage('Member removed');
+      setToast('Member removed');
       void reload();
     } catch {
-      setMessage('Could not remove member.');
+      setToast('Could not remove member.');
     }
   };
 
   return (
     <Screen background={palette.midnight} gutter={palette.midnight}>
-      <ScreenScroll contentContainerStyle={styles.content}>
-        <BackButton label="Back" fallback={`/groups/${id}`} />
-        <Text style={[typeScale.h1, { color: palette.white }]}>{title}</Text>
-        <View style={styles.codeBox}>
-          <Text style={styles.codeLabel}>Join code</Text>
-          <View style={styles.codeRow}>
-            <Text style={styles.code}>{code}</Text>
-            <Pressable accessibilityRole="button" onPress={() => void copyCode()}>
-              <Copy color={palette.gold} size={20} />
+      <ScreenHeader
+        variant="dark"
+        title={loading ? 'Group lobby' : groupName}
+        fallback={`/groups/${id}`}
+        backLabel="Go back"
+        onBackPress={() => void leaveLobby()}
+        rightAction={
+          isLeader ? (
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Leader settings"
+              onPress={() => setToolsOpen(true)}
+              style={styles.settingsBtn}
+            >
+              <Settings color={palette.white} size={22} />
             </Pressable>
+          ) : (
+            <View style={styles.settingsBtn} />
+          )
+        }
+      />
+
+      <ScreenScroll contentContainerStyle={styles.content}>
+        {loading ? (
+          <View style={styles.stack}>
+            <SkeletonLoader height={120} />
+            <SkeletonLoader height={56} />
+            <SkeletonLoader height={56} />
+            <SkeletonLoader height={56} />
           </View>
-        </View>
-        <Text style={styles.section}>Members ({members.length})</Text>
-        {members.map((member) => (
-          <View key={member.userId} style={styles.memberRow}>
-            <Text style={styles.memberName}>{member.name}</Text>
-            <Text style={member.ready ? styles.ready : styles.waiting}>
-              {member.ready ? 'Ready' : 'Waiting'}
-            </Text>
+        ) : error ? (
+          <View style={styles.errorCard}>
+            <Text style={styles.errorTitle}>Could not load lobby</Text>
+            <Text style={styles.errorBody}>{error}</Text>
+            <Button label="Retry" variant="gold" onPress={() => void reload()} />
           </View>
-        ))}
-        <Button
-          label={readySelf ? 'You are ready' : 'Mark ready'}
-          variant="secondary"
-          onPress={() => setReadySelf(true)}
-        />
-        {isLeader ? (
+        ) : (
           <>
-            <Button label="Start debate" variant="gold" onPress={() => void startMatch()} />
-            <Button label="Leader tools" variant="ghost" onPress={() => setToolsOpen(true)} />
+            <View style={styles.codeCard}>
+              <Text style={styles.codeKicker}>SHARE ROOM CODE</Text>
+              <View style={styles.codeRow}>
+                <Text selectable style={styles.codeValue}>
+                  {joinCode}
+                </Text>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Copy room code"
+                  disabled={!joinCode.trim()}
+                  onPress={() => void copyCode()}
+                  style={[styles.iconBtn, !joinCode.trim() && styles.iconBtnDisabled]}
+                >
+                  <Copy color={palette.gold} size={22} />
+                </Pressable>
+              </View>
+              <Button label="Share" variant="secondary" onPress={() => void shareCode()} />
+            </View>
+
+            <View style={styles.membersHead}>
+              <Text style={styles.membersLabel}>MEMBERS ({members.length})</Text>
+              {isLeader ? <Chip label="LEADER VIEW" tone="gold" /> : null}
+            </View>
+
+            <View style={styles.memberList}>
+              {members.map((member) => (
+                <MemberRow key={member.userId} member={member} isYou={member.userId === user?.id} />
+              ))}
+            </View>
+
+            <Button
+              label={selfReady ? 'READY' : 'Mark ready'}
+              variant={selfReady ? 'secondary' : 'secondary'}
+              onPress={() => void toggleReady()}
+            />
+
+            {isLeader ? (
+              <View style={styles.startBlock}>
+                <Button
+                  label="Start Game"
+                  variant="gold"
+                  disabled={!startEnabled}
+                  onPress={() => void startMatch()}
+                />
+                <Text style={styles.startHint}>
+                  {startEnabled
+                    ? `${readyCount(members)} players ready`
+                    : `Waiting for ${waiting} more player${waiting === 1 ? '' : 's'}...`}
+                </Text>
+              </View>
+            ) : (
+              <Text style={styles.startHint}>
+                {startEnabled
+                  ? 'Waiting for the leader to start…'
+                  : `Waiting for ${waiting} more player${waiting === 1 ? '' : 's'}...`}
+              </Text>
+            )}
+
+            {toast ? <Text style={styles.toast}>{toast}</Text> : null}
           </>
-        ) : null}
-        {message ? <Text style={styles.message}>{message}</Text> : null}
+        )}
       </ScreenScroll>
+
       <BottomSheet visible={toolsOpen} onClose={() => setToolsOpen(false)} title="Leader tools">
         <View style={{ gap: spacing.sm }}>
           <Button label="Rotate join code" variant="secondary" onPress={() => void rotate()} />
@@ -160,32 +290,142 @@ export default function GroupLobbyScreen() {
   );
 }
 
+function MemberRow({ member, isYou }: { member: LobbyMemberRow; isYou: boolean }) {
+  return (
+    <View style={styles.memberRow}>
+      <Avatar
+        name={member.displayName}
+        color={avatarColorForKey(member.avatarKey ?? member.userId)}
+        size={48}
+      />
+      <View style={styles.memberMeta}>
+        <View style={styles.nameRow}>
+          <Text style={styles.memberName} numberOfLines={1}>
+            {member.displayName}
+            {isYou ? ' (You)' : ''}
+          </Text>
+          {member.role === 'leader' ? <Text style={styles.leaderBadge}>Leader</Text> : null}
+        </View>
+      </View>
+      <View style={[styles.statusChip, member.ready ? styles.statusReady : styles.statusWait]}>
+        {member.ready ? <Check color={palette.teal} size={14} /> : null}
+        <Text style={member.ready ? styles.statusReadyText : styles.statusWaitText}>
+          {member.ready ? 'READY' : 'WAITING...'}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
-  codeBox: {
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.xl,
+    gap: spacing.lg,
+    justifyContent: 'center',
+  },
+  stack: { gap: spacing.md },
+  settingsBtn: {
+    width: minTapTarget,
+    height: minTapTarget,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  codeCard: {
     backgroundColor: '#252838',
     borderRadius: radii.card,
     padding: spacing.lg,
+    gap: spacing.md,
+  },
+  codeKicker: {
+    ...typeScale.caption,
+    color: palette.warmGray,
+    letterSpacing: 1.4,
+  },
+  codeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     gap: spacing.sm,
   },
-  codeLabel: { ...typeScale.caption, color: palette.warmGray },
-  codeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  code: {
-    fontFamily: fontFamily.headingSemi,
-    fontSize: 28,
+  codeValue: {
+    flex: 1,
+    fontFamily: fontFamily.heading,
+    fontSize: 36,
+    lineHeight: 44,
     color: palette.white,
-    letterSpacing: 4,
+    letterSpacing: 6,
   },
-  section: { color: palette.warmGray, fontFamily: fontFamily.bodySemi },
+  iconBtn: {
+    width: minTapTarget,
+    height: minTapTarget,
+    borderRadius: minTapTarget / 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  iconBtnDisabled: { opacity: 0.4 },
+  membersHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  membersLabel: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 12,
+    letterSpacing: 1.2,
+    color: palette.warmGray,
+  },
+  memberList: { gap: spacing.sm },
   memberRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#3A3D52',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: '#252838',
+    borderRadius: radii.card,
+    padding: spacing.md,
   },
-  memberName: { color: palette.white, fontFamily: fontFamily.bodySemi },
-  ready: { color: palette.teal, fontFamily: fontFamily.bodySemi },
-  waiting: { color: palette.warmGray, fontFamily: fontFamily.body },
-  message: { color: palette.gold, fontFamily: fontFamily.body },
+  memberMeta: { flex: 1 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, flexWrap: 'wrap' },
+  memberName: {
+    color: palette.white,
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 16,
+    flexShrink: 1,
+  },
+  leaderBadge: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 11,
+    color: palette.gold,
+    letterSpacing: 0.6,
+  },
+  statusChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 6,
+    borderRadius: radii.pill,
+  },
+  statusReady: { backgroundColor: palette.tealSoft },
+  statusWait: { backgroundColor: 'rgba(255,255,255,0.08)' },
+  statusReadyText: { fontFamily: fontFamily.bodySemi, fontSize: 11, color: palette.teal },
+  statusWaitText: { fontFamily: fontFamily.bodySemi, fontSize: 11, color: palette.warmGray },
+  startBlock: { gap: spacing.sm, marginTop: spacing.md },
+  startHint: {
+    textAlign: 'center',
+    color: palette.warmGray,
+    fontFamily: fontFamily.body,
+    fontSize: 14,
+  },
+  toast: { color: palette.gold, fontFamily: fontFamily.body, textAlign: 'center' },
+  errorCard: {
+    backgroundColor: '#252838',
+    borderRadius: radii.card,
+    padding: spacing.lg,
+    gap: spacing.md,
+  },
+  errorTitle: { ...typeScale.h3, color: palette.white },
+  errorBody: { ...typeScale.bodyM, color: palette.warmGray, lineHeight: 22 },
 });

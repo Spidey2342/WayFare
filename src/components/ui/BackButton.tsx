@@ -13,5 +13,12 @@ type BackButtonProps = {
 
 export function BackButton({ label = 'Back', fallback, variant = 'ghost' }: BackButtonProps) {
   const router = useRouter();
-  return <Button label={label} variant={variant} onPress={() => goBackOr(router, fallback)} />;
+  return (
+    <Button
+      label={label}
+      variant={variant}
+      accessibilityLabel={label === 'Back' ? 'Go back' : label}
+      onPress={() => goBackOr(router, fallback)}
+    />
+  );
 }
