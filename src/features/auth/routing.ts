@@ -19,12 +19,16 @@ export function requiresAccountForPlayMode(mode: PlayMode): boolean {
   return mode === 'online';
 }
 
+export function unsignedEntryPath(): '/auth/sign-in' {
+  return '/auth/sign-in';
+}
+
 export function resolveAuthGateRedirect(args: {
   pathname: string;
   hasSession: boolean;
-}): '/auth/welcome' | null {
+}): '/auth/sign-in' | null {
   if (args.hasSession) return null;
-  if (requiresAuth(args.pathname)) return '/auth/welcome';
+  if (requiresAuth(args.pathname)) return unsignedEntryPath();
   return null;
 }
 

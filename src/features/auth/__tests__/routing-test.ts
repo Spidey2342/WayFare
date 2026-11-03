@@ -17,7 +17,7 @@ describe('auth routing', () => {
 
   it('redirects guests away from protected routes', () => {
     expect(resolveAuthGateRedirect({ pathname: '/groups', hasSession: false })).toBe(
-      '/auth/welcome',
+      '/auth/sign-in',
     );
     expect(resolveAuthGateRedirect({ pathname: '/groups', hasSession: true })).toBeNull();
     expect(resolveAuthGateRedirect({ pathname: '/home', hasSession: false })).toBeNull();

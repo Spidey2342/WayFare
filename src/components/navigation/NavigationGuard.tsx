@@ -7,14 +7,26 @@ import {
   AUTH_RETURN_TO_KEY,
   introRedirectPath,
   resolveAuthGateRedirect,
+  unsignedEntryPath,
 } from '@/features/auth/routing';
+import { isSupabaseConfigured } from '@/services/supabase';
 import { storage } from '@/services/storage';
 import { useAppStore } from '@/store';
 
-const PUBLIC_PREFIXES = ['/auth', '/welcome', '/how-it-works', '/choose-mode', '/dev'];
+const GUEST_INTRO_PREFIXES = ['/welcome', '/how-it-works', '/choose-mode'];
 
-function isPublicPath(pathname: string): boolean {
-  return PUBLIC_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+function isAuthPath(pathname: string): boolean {
+  return pathname === '/auth' || pathname.startsWith('/auth/');
+}
+
+function isGuestIntroPath(pathname: string): boolean {
+  return GUEST_INTRO_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
+function isDevPath(pathname: string): boolean {
+  return pathname === '/dev' || pathname.startsWith('/dev/');
 }
 
 export function NavigationGuard({ children }: { children: React.ReactNode }) {
@@ -22,6 +34,7 @@ export function NavigationGuard({ children }: { children: React.ReactNode }) {
   const { ready, session, profile, isGuest } = useAuth();
   const hydrated = useAppStore((state) => state.hydrated);
   const introSeen = useAppStore((state) => state.introSeen);
+  const guestBrowseAccepted = useAppStore((state) => state.guestBrowseAccepted);
 
   useEffect(() => {
     if (!ready || !hydrated) return;
@@ -38,7 +51,19 @@ export function NavigationGuard({ children }: { children: React.ReactNode }) {
     return <Redirect href={authRedirect} />;
   }
 
-  const inAuth = pathname.startsWith('/auth');
+  const needsSignIn =
+    isSupabaseConfigured && !session && !guestBrowseAccepted && !isAuthPath(pathname);
+
+  if (needsSignIn) {
+    if (isGuestIntroPath(pathname) || isDevPath(pathname)) {
+      return <Redirect href={unsignedEntryPath()} />;
+    }
+    if (!pathname.startsWith('/auth')) {
+      return <Redirect href={unsignedEntryPath()} />;
+    }
+  }
+
+  const inAuth = isAuthPath(pathname);
 
   if (session && profile && !isGuest) {
     const needsProfile =
@@ -48,13 +73,11 @@ export function NavigationGuard({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const introRoute = introRedirectPath(pathname, introSeen);
-  if (introRoute && !inAuth && !isPublicPath(pathname)) {
-    return <Redirect href={introRoute} />;
-  }
-
-  if (isGuest && !introSeen && !inAuth && !isPublicPath(pathname)) {
-    return <Redirect href="/welcome" />;
+  if (guestBrowseAccepted) {
+    const introRoute = introRedirectPath(pathname, introSeen);
+    if (introRoute && !inAuth && !isGuestIntroPath(pathname) && !isDevPath(pathname)) {
+      return <Redirect href={introRoute} />;
+    }
   }
 
   return children;
@@ -63,7 +86,7 @@ export function NavigationGuard({ children }: { children: React.ReactNode }) {
 export async function consumeAuthReturnTo(router: { replace: (href: Href) => void }) {
   const target = await storage.getItem(AUTH_RETURN_TO_KEY);
   await storage.removeItem(AUTH_RETURN_TO_KEY);
-  if (target && target !== '/auth/welcome') {
+  if (target && target !== unsignedEntryPath()) {
     router.replace(target as Href);
     return;
   }

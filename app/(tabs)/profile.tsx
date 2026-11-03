@@ -211,7 +211,7 @@ export default function ProfileScreen() {
           void (async () => {
             await signOut();
             setConfirm(false);
-            router.replace('/auth/welcome');
+            router.replace('/auth/sign-in');
           })();
         }}
         onClose={() => setConfirm(false)}
@@ -229,7 +229,7 @@ export default function ProfileScreen() {
             }
             setConfirmDelete(false);
             setSheet(null);
-            router.replace('/auth/welcome');
+            router.replace('/auth/sign-in');
           })();
         }}
         onClose={() => setConfirmDelete(false)}

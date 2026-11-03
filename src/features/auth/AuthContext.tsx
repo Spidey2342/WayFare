@@ -32,7 +32,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(!isSupabaseConfigured);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
-  const [isGuest, setIsGuest] = useState(!isSupabaseConfigured);
+  const guestBrowseAccepted = useAppStore((state) => state.guestBrowseAccepted);
+  const setGuestBrowseAccepted = useAppStore((state) => state.setGuestBrowseAccepted);
+
+  const isGuest = !isSupabaseConfigured || (!session && guestBrowseAccepted);
 
   const refreshProfile = async () => {
     const userId = session?.user?.id;
@@ -53,21 +56,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     client.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setSession(data.session);
-      setIsGuest(!data.session);
       setReady(true);
     });
 
     const { data: sub } = client.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
-      setIsGuest(!nextSession);
-      if (!nextSession) setProfile(null);
+      if (!nextSession) {
+        setProfile(null);
+        setGuestBrowseAccepted(false);
+      }
     });
 
     return () => {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, []);
+  }, [setGuestBrowseAccepted]);
 
   useEffect(() => {
     setSignedInPersistUser(session?.user?.id ?? null);
@@ -90,7 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const continueAsGuest = () => {
-    setIsGuest(true);
+    setGuestBrowseAccepted(true);
   };
 
   const signOut = async () => {
@@ -99,9 +103,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     await clearActiveUserSession();
     useAppStore.getState().clearUserSessionState();
+    setGuestBrowseAccepted(false);
     setSession(null);
     setProfile(null);
-    setIsGuest(true);
   };
 
   const value = useMemo<AuthContextValue>(

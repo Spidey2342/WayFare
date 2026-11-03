@@ -27,12 +27,13 @@ export function emptyProgress() {
   };
 }
 
-export function guestStore(version = 8) {
+export function guestStore(version = 9) {
   return {
     state: {
       themePreference: 'light',
       onboarded: true,
       introSeen: true,
+      guestBrowseAccepted: true,
       profile: { name: '', avatarColor: '' },
       hydrated: true,
       progress: emptyProgress(),

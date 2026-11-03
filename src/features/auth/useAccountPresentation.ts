@@ -4,6 +4,7 @@ import { avatarColorForKey } from '@/data/avatarPresets';
 import { syncMyStats, type CachedBadge, type CachedUserStats } from '@/features/debate/statsCache';
 import { levelForXp } from '@/features/journey/progress';
 import { useAuth } from '@/features/auth/AuthContext';
+import { isSupabaseConfigured } from '@/services/supabase';
 import { useAppStore } from '@/store';
 
 export type AccountPresentation =
@@ -67,7 +68,10 @@ export function useAccountPresentation(): AccountPresentation {
 
   if (!ready) return { status: 'loading' };
 
-  if (!session || isGuest) {
+  if (!session) {
+    if (!isGuest && isSupabaseConfigured) {
+      return { status: 'loading' };
+    }
     return {
       status: 'guest',
       displayName: 'Guest',

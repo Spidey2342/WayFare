@@ -49,6 +49,7 @@ interface AppActions {
   awardFirstStepFromTutorial: () => void;
   markIntroSeen: () => void;
   markRulesSeen: (gameId: 'debate' | 'card-game') => void;
+  setGuestBrowseAccepted: (accepted: boolean) => void;
 }
 
 export type AppStore = PersistedApp & AppActions;
@@ -126,6 +127,7 @@ export const useAppStore = create<AppStore>()(
         set((state) => ({
           seenRules: { ...state.seenRules, [gameId]: true },
         })),
+      setGuestBrowseAccepted: (guestBrowseAccepted) => set({ guestBrowseAccepted }),
       awardFirstStepFromTutorial: () =>
         set((state) => {
           const badges = state.progress.badgesEarned.includes('first-step')
@@ -162,6 +164,7 @@ export const useAppStore = create<AppStore>()(
         localTutorialCompleted: state.localTutorialCompleted,
         playModeHelpSeen: state.playModeHelpSeen,
         introSeen: state.introSeen,
+        guestBrowseAccepted: state.guestBrowseAccepted,
         seenRules: state.seenRules,
       }),
       onRehydrateStorage: () => (state) => {
