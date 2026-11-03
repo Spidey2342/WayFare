@@ -1,29 +1,55 @@
-import { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pause, Play, Settings } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
-import { Button, Screen, ScreenScroll } from '@/components/ui';
-import { DebatePrepPanel } from '@/features/debate/components/DebatePrepPanel';
+import { Screen } from '@/components/ui';
+import { useAuth } from '@/features/auth/AuthContext';
 import { DebateResultsView } from '@/features/debate/components/DebateResultsView';
 import { useDebateRulesChrome } from '@/features/debate/components/DebateRulesChrome';
-import { DebateStage } from '@/features/debate/components/DebateStage';
-import { DebateVoteGrid } from '@/features/debate/components/DebateVoteGrid';
-import { PassToPlayerScreen } from '@/features/debate/components/PassToPlayerScreen';
-import { SideRevealCard } from '@/features/debate/components/SideRevealCard';
+import { DebateSoftTimerSheet } from '@/features/debate/components/DebateSoftTimerSheet';
+import { LeaveGameSheet } from '@/features/debate/components/LeaveGameSheet';
+import { PassJudgeSheet } from '@/features/debate/components/PassJudgeSheet';
 import {
-  assignPassSidesRandom,
-  extendDebate,
-  finalizeLocalSession,
+  DebateGoldButton,
+  DebateKindnessQuote,
+  DebateModeHeader,
+  DebateOutlineButton,
+  DebateSideBoard,
+  DebateTimerChip,
+  DebateTopicCard,
+  DebateVerdictPicker,
+  debateUi,
+  formatDebateCategory,
+  type DebateSidePlayer,
+} from '@/features/debate/components/debateV2Ui';
+import { PassReadyScreen } from '@/features/debate/components/PassReadyScreen';
+import { PassSidePickScreen } from '@/features/debate/components/PassSidePickScreen';
+import { PassToPlayerScreen } from '@/features/debate/components/PassToPlayerScreen';
+import { balanceSummary } from '@/features/debate/engine/balanceSummary';
+import { formatElapsedChip, softTimerState } from '@/features/debate/engine/softTimerState';
+import {
+  beginPassDebateFromReady,
+  bundledDebateTopics,
+  confirmPassHandoff,
+  confirmPassTopic,
+  currentPassPicker,
   hostEndDebate,
-  skipPrep,
-  startDebate,
-  startPrep,
-  submitPassVote,
-  tapReadyToVote,
+  passElapsedMs,
+  passPauseDebate,
+  passResumeDebate,
+  passSetSoftTimer,
+  passTransferJudge,
+  pickPassSide,
+  passCanStartDebate,
+  publishPassVerdict,
+  shufflePassTopic,
   tickSession,
+  topicById,
 } from '@/features/debate/localSession';
 import { loadLocalDebate, updateLocalDebate } from '@/features/debate/localStore';
-import type { LocalDebateSession } from '@/features/debate/types';
+import { awardPassDebateSignedIn } from '@/features/debate/outbox';
+import type { DebateSide, LocalDebateSession } from '@/features/debate/types';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
@@ -35,11 +61,13 @@ export default function PassDebateSessionScreen() {
     loadLocalDebate(sessionId),
   );
   const [nowMs, setNowMs] = useState(() => Date.now());
-  const [readyIds, setReadyIds] = useState<string[]>([]);
-  const [votePick, setVotePick] = useState<string | null>(null);
-  const [revealIndex, setRevealIndex] = useState(0);
-  const [prepIndex, setPrepIndex] = useState(0);
-  const [confirmedVoterId, setConfirmedVoterId] = useState<string | null>(null);
+  const [verdictSide, setVerdictSide] = useState<'agree' | 'disagree' | 'draw' | null>(null);
+  const [mvpId, setMvpId] = useState<string | null>(null);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [judgeSheetOpen, setJudgeSheetOpen] = useState(false);
+  const [softTimerOpen, setSoftTimerOpen] = useState(false);
+  const awardedRef = useRef(false);
+  const { user, isGuest } = useAuth();
   const applyDebate = useAppStore((state) => state.applyDebateAward);
   const rules = useDebateRulesChrome({ fallback: '/debate/pass/setup', showRulesOnMount: true });
 
@@ -62,251 +90,279 @@ export default function PassDebateSessionScreen() {
     setSession(next);
   };
 
-  const forPlayers = useMemo(
-    () => session?.players.filter((player) => player.side === 'agree') ?? [],
-    [session?.players],
+  const debaters = useMemo(
+    () => session?.players.filter((player) => player.id !== session.hostId) ?? [],
+    [session],
   );
-  const againstPlayers = useMemo(
-    () => session?.players.filter((player) => player.side === 'disagree') ?? [],
-    [session?.players],
-  );
+
+  const awardIfNeeded = (finishedSession: LocalDebateSession) => {
+    if (awardedRef.current) return;
+    awardedRef.current = true;
+    const you = finishedSession.players[0];
+    const xpGained = you ? (finishedSession.scores[you.id]?.total ?? 0) : 0;
+    const clientId = `${finishedSession.id}:pass`;
+    if (isGuest || !user) {
+      applyDebate({
+        sessionId: finishedSession.id,
+        xpGained: Math.max(0, xpGained),
+        votedThisRound: false,
+        wasMvp: finishedSession.results?.mvpIds.includes(you?.id ?? '') ?? false,
+      });
+      return;
+    }
+    void awardPassDebateSignedIn(clientId, Math.max(0, xpGained));
+  };
 
   if (!session) {
     return (
-      <Screen>
-        <Text style={typeScale.h2}>Session not found</Text>
-        <Button
-          label="Back"
-          variant="primary"
-          onPress={() => router.replace('/debate/pass/setup')}
+      <Screen background={palette.midnightDeep} gutter={palette.midnightDeep}>
+        <Text style={[typeScale.h2, { color: palette.white }]}>Session not found</Text>
+        <DebateGoldButton label="BACK" onPress={() => router.replace('/debate/pass/setup')} />
+      </Screen>
+    );
+  }
+
+  const shell = (children: ReactNode, headerTitle = 'SAME PHONE') => (
+    <Screen background={palette.midnightDeep} gutter={palette.midnightDeep}>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <DebateModeHeader
+          title={headerTitle}
+          onBack={() => setLeaveOpen(true)}
+          onInfo={rules.openRulesLink}
         />
-      </Screen>
+        {children}
+      </ScrollView>
+      <LeaveGameSheet
+        visible={leaveOpen}
+        onStay={() => setLeaveOpen(false)}
+        onLeave={() => {
+          setLeaveOpen(false);
+          router.replace('/debate');
+        }}
+      />
+      <PassJudgeSheet
+        visible={judgeSheetOpen}
+        players={session?.players ?? []}
+        currentJudgeId={session?.hostId ?? ''}
+        onClose={() => setJudgeSheetOpen(false)}
+        onSelect={(playerId) => {
+          persist((current) => passTransferJudge(current, playerId));
+          setJudgeSheetOpen(false);
+        }}
+      />
+      {rules.sheet}
+    </Screen>
+  );
+
+  if (session.phase === 'topic') {
+    const topics = bundledDebateTopics();
+    return shell(
+      <>
+        <DebateModeHeader title="DEBATE MODE" onInfo={rules.openRulesLink} />
+        <DebateTopicCard
+          category={formatDebateCategory(session.topic.category)}
+          text={session.topic.text}
+        />
+        <DebateKindnessQuote />
+        <DebateGoldButton label="USE THIS TOPIC" onPress={() => persist(confirmPassTopic)} />
+        <DebateOutlineButton
+          label="SHUFFLE TOPIC"
+          icon="shuffle"
+          onPress={() => {
+            const pool = topics.filter((item) => item.id !== session.topic.id);
+            const next = pool[Math.floor(Math.random() * pool.length)] ?? topics[0]!;
+            persist((current) => shufflePassTopic(current, topicById(next.id) ?? next));
+          }}
+        />
+      </>,
     );
   }
 
-  const currentVoter = session.pass ? session.players[session.pass.votingPlayerIndex] : undefined;
+  if (session.phase === 'picking') {
+    const pass = session.pass;
+    if (pass?.allSidesPicked) {
+      return shell(
+        <PassReadyScreen
+          topic={session.topic.text}
+          players={session.players}
+          judgeId={session.hostId}
+          canStart={passCanStartDebate(session)}
+          onStart={() => persist(beginPassDebateFromReady)}
+        />,
+      );
+    }
 
-  const awardIfNeeded = (finishedSession: LocalDebateSession) => {
-    const xpGained = Object.values(finishedSession.scores).reduce(
-      (sum, line) => sum + (line?.total ?? 0),
-      0,
-    );
-    const votedThisRound = Object.values(finishedSession.votes).some(Boolean);
-    const wasMvp = finishedSession.results?.mvpIds.length === 1;
-    applyDebate({
-      sessionId: finishedSession.id,
-      xpGained: Math.max(1, xpGained),
-      votedThisRound,
-      wasMvp,
-    });
-  };
+    const picker = currentPassPicker(session);
+    if (!picker || !pass) {
+      return shell(<Text style={styles.error}>No debaters to pick sides.</Text>);
+    }
 
-  if (session.phase === 'lobby') {
-    return (
-      <Screen background={palette.offWhite} gutter={palette.offWhite}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          {rules.header}
-          <Text style={typeScale.h2}>Lobby</Text>
-          <Text style={styles.topic}>{session.topic.text}</Text>
-          {session.players.map((player) => (
-            <View key={player.id} style={styles.row}>
-              <Text style={styles.name}>{player.displayName}</Text>
-              <Button
-                label={readyIds.includes(player.id) ? 'Ready' : 'Mark ready'}
-                variant={readyIds.includes(player.id) ? 'gold' : 'secondary'}
-                onPress={() =>
-                  setReadyIds((ids) => (ids.includes(player.id) ? ids : [...ids, player.id]))
-                }
-              />
-            </View>
-          ))}
-          <Button
-            label="Reveal sides"
-            variant="primary"
-            onPress={() => {
-              if (readyIds.length < session.players.length) {
-                persist((current) => assignPassSidesRandom(current, () => 0.42));
-              } else {
-                persist((current) => assignPassSidesRandom(current, () => Math.random()));
-              }
-            }}
-          />
-        </ScreenScroll>
-        {rules.sheet}
-      </Screen>
-    );
-  }
+    if (!pass.handoffConfirmed) {
+      return shell(
+        <PassToPlayerScreen
+          playerName={picker.displayName}
+          avatarKey={picker.avatarKey}
+          onConfirm={() => persist(confirmPassHandoff)}
+        />,
+      );
+    }
 
-  if (session.phase === 'side_reveal') {
-    const player = session.players[revealIndex];
-    const side = player?.side;
-    return (
-      <Screen background={palette.midnight} gutter={palette.midnight}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          {rules.header}
-          {player && side ? <SideRevealCard side={side} playerName={player.displayName} /> : null}
-          {revealIndex < session.players.length - 1 ? (
-            <Button
-              label="Next player"
-              variant="gold"
-              onPress={() => setRevealIndex((index) => index + 1)}
-            />
-          ) : (
-            <Button label="Start prep" variant="gold" onPress={() => persist(startPrep)} />
-          )}
-        </ScreenScroll>
-        {rules.sheet}
-      </Screen>
-    );
-  }
-
-  if (session.phase === 'prep') {
-    const prepPlayer = session.players[prepIndex];
-    const side = prepPlayer?.side;
-    const secondsLeft = session.phaseEndsAt
-      ? Math.max(0, Math.ceil((session.phaseEndsAt - nowMs) / 1000))
-      : session.config.prepSeconds;
-    return (
-      <Screen background={palette.midnight} gutter={palette.midnight}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          {rules.header}
-          {prepPlayer && side ? (
-            <DebatePrepPanel
-              topic={session.topic.text}
-              side={side}
-              secondsLeft={secondsLeft}
-              totalSeconds={session.config.prepSeconds}
-            />
-          ) : null}
-          {prepIndex < session.players.length - 1 ? (
-            <Button
-              label={`Pass to ${session.players[prepIndex + 1]?.displayName ?? 'next'}`}
-              variant="secondary"
-              onPress={() => setPrepIndex((index) => index + 1)}
-            />
-          ) : null}
-          <Button label="Skip prep" variant="ghost" onPress={() => persist(skipPrep)} />
-          <Button label="Start debate" variant="gold" onPress={() => persist(startDebate)} />
-        </ScreenScroll>
-        {rules.sheet}
-      </Screen>
+    return shell(
+      <PassSidePickScreen
+        topic={session.topic.text}
+        playerName={picker.displayName}
+        onPick={(side: DebateSide) => persist((current) => pickPassSide(current, picker.id, side))}
+      />,
     );
   }
 
   if (session.phase === 'debate') {
-    const total =
-      session.config.debateSeconds +
-      (session.debateExtended ? session.config.debateExtensionSeconds : 0);
-    const secondsLeft = session.phaseEndsAt
-      ? Math.max(0, Math.ceil((session.phaseEndsAt - nowMs) / 1000))
-      : total;
-    return (
-      <Screen background={palette.midnight} gutter={palette.midnight}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          {rules.header}
-          <DebateStage
-            topic={session.topic.text}
-            secondsLeft={secondsLeft}
-            totalSeconds={total}
-            forPlayers={forPlayers}
-            againstPlayers={againstPlayers}
-            readyCount={session.readyToVote.length}
-            playerCount={session.players.length}
-            showReadyButton
-            onReady={() => persist((current) => tapReadyToVote(current, current.players[0]!.id))}
-            onStickerPlaceholder={() => undefined}
-          />
-          <Button
-            label="Host: end debate"
-            variant="secondary"
-            onPress={() => persist(hostEndDebate)}
-          />
-          {!session.debateExtended ? (
-            <Button label="Add 30 seconds" variant="ghost" onPress={() => persist(extendDebate)} />
-          ) : null}
-        </ScreenScroll>
-        {rules.sheet}
-      </Screen>
+    const roster = session.players.map((player) => ({
+      id: player.id,
+      displayName: player.displayName,
+      side: player.side,
+      role: (player.id === session.hostId ? 'judge' : 'debater') as 'judge' | 'debater',
+    }));
+    const balance = balanceSummary(roster);
+    const mapSide = (list: { id: string; displayName: string }[]): DebateSidePlayer[] =>
+      list.map((player) => ({
+        id: player.id,
+        displayName: player.displayName,
+        avatarKey: session.players.find((p) => p.id === player.id)?.avatarKey ?? null,
+      }));
+    const elapsedMs = passElapsedMs(session, nowMs);
+    const clock = session.localClock;
+    const timer = softTimerState(
+      clock?.softTimerMinutes === null || clock?.softTimerMinutes === undefined
+        ? null
+        : (clock.softTimerMinutes as 3 | 5 | 10),
+      clock?.debateStartedAt ?? null,
+      nowMs,
+    );
+    const showNudge = timer.kind === 'nudge' && !clock?.nudgeShown;
+    return shell(
+      <>
+        <View style={styles.debateTopBar}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() =>
+              persist((current) =>
+                current.localClock?.pausedAt ? passResumeDebate(current) : passPauseDebate(current),
+              )
+            }
+            style={styles.iconBtn}
+          >
+            {clock?.pausedAt ? (
+              <Play color={debateUi.muted} size={20} />
+            ) : (
+              <Pause color={debateUi.muted} size={20} />
+            )}
+          </Pressable>
+          <DebateTimerChip label={formatElapsedChip(elapsedMs)} />
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setSoftTimerOpen(true)}
+            style={styles.iconBtn}
+          >
+            <Settings color={debateUi.muted} size={20} />
+          </Pressable>
+        </View>
+        <DebateOutlineButton label="PASS JUDGE ROLE" onPress={() => setJudgeSheetOpen(true)} />
+        <DebateTopicCard
+          category={formatDebateCategory(session.topic.category)}
+          text={session.topic.text}
+        />
+        <DebateSideBoard
+          agree={mapSide(balance.agree)}
+          disagree={mapSide(balance.disagree)}
+          readOnly
+        />
+        {showNudge ? (
+          <Text style={styles.nudge}>Time&apos;s up. Keep going or wrap up?</Text>
+        ) : null}
+        <DebateGoldButton label="READY FOR VERDICT" onPress={() => persist(hostEndDebate)} />
+        <DebateSoftTimerSheet
+          visible={softTimerOpen}
+          selected={
+            clock?.softTimerMinutes === 3 ||
+            clock?.softTimerMinutes === 5 ||
+            clock?.softTimerMinutes === 10
+              ? clock.softTimerMinutes
+              : null
+          }
+          onClose={() => setSoftTimerOpen(false)}
+          onSelect={(minutes) => persist((current) => passSetSoftTimer(current, minutes))}
+        />
+      </>,
+      'DEBATE MODE',
     );
   }
 
-  if (session.phase === 'voting' && currentVoter) {
-    const voterReady = confirmedVoterId === currentVoter.id;
-    const candidates = session.players.filter((player) => player.id !== currentVoter.id);
-    const secondsLeft = session.phaseEndsAt
-      ? Math.max(0, Math.ceil((session.phaseEndsAt - nowMs) / 1000))
-      : session.config.votingSeconds;
-    return (
-      <Screen background={palette.midnight} gutter={palette.midnight}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          {!voterReady ? (
-            <PassToPlayerScreen
-              playerName={currentVoter.displayName}
-              avatarKey={currentVoter.avatarKey}
-              onConfirm={() => setConfirmedVoterId(currentVoter.id)}
-            />
-          ) : (
-            <>
-              {rules.header}
-              <DebateVoteGrid
-                secondsLeft={secondsLeft}
-                totalSeconds={session.config.votingSeconds}
-                candidates={candidates}
-                selectedId={votePick}
-                onSelect={setVotePick}
-                onSubmit={() => {
-                  persist((current) => submitPassVote(current, currentVoter.id, votePick!));
-                  setVotePick(null);
-                  setConfirmedVoterId(null);
-                }}
-              />
-            </>
-          )}
-        </ScreenScroll>
-        {rules.sheet}
-      </Screen>
+  if (session.phase === 'verdict') {
+    const mvpPool = debaters.map((player) => ({
+      id: player.id,
+      displayName: player.displayName,
+      avatarKey: player.avatarKey ?? null,
+    }));
+    return shell(
+      <>
+        <DebateVerdictPicker
+          selected={verdictSide}
+          onSelect={setVerdictSide}
+          mvpPlayers={mvpPool}
+          mvpId={mvpId}
+          onMvp={setMvpId}
+        />
+        <DebateGoldButton
+          label="ANNOUNCE WINNER"
+          disabled={!verdictSide}
+          onPress={() => {
+            if (!verdictSide) return;
+            persist((current) => publishPassVerdict(current, verdictSide, mvpId));
+          }}
+        />
+      </>,
     );
   }
 
   if (session.phase === 'results' || session.status === 'finished') {
-    const finished = session.results ? session : finalizeLocalSession(session);
-    if (!session.results) persist(() => finished);
-    const xpGained = Object.values(finished.scores).reduce(
+    const xpGained = Object.values(session.scores).reduce(
       (sum, line) => sum + (line?.total ?? 0),
       0,
     );
-    return (
-      <Screen background={palette.midnight} gutter={palette.midnight}>
-        <ScreenScroll contentContainerStyle={styles.content}>
-          {finished.results ? (
-            <DebateResultsView
-              dark
-              results={finished.results}
-              players={session.players}
-              scores={finished.scores}
-              xpEarned={Math.max(1, xpGained)}
-              onBack={() => {
-                awardIfNeeded(finished);
-                router.replace('/home');
-              }}
-            />
-          ) : null}
-        </ScreenScroll>
-        {rules.sheet}
-      </Screen>
+    return shell(
+      session.results ? (
+        <DebateResultsView
+          variant="v2"
+          dark
+          results={session.results}
+          players={session.players}
+          scores={session.scores}
+          xpEarned={Math.max(1, xpGained)}
+          onPlayAgain={() => router.replace('/debate/pass/setup')}
+          onBack={() => {
+            awardIfNeeded(session);
+            router.replace('/debate');
+          }}
+          backLabel="BACK TO DEBATE"
+        />
+      ) : (
+        <Text style={styles.error}>Results missing.</Text>
+      ),
     );
   }
 
-  return (
-    <Screen>
-      <Text>Loading debate…</Text>
-    </Screen>
-  );
+  return shell(<Text style={styles.error}>Unknown phase: {session.phase}</Text>);
 }
 
 const styles = StyleSheet.create({
-  content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
-  topic: { ...typeScale.bodyM, color: palette.ink },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  name: { fontFamily: fontFamily.bodySemi, color: palette.ink, flex: 1 },
+  scroll: { padding: spacing.lg, paddingBottom: 48, gap: spacing.md },
+  error: { fontFamily: fontFamily.body, color: palette.coral, textAlign: 'center' },
+  debateTopBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  nudge: { fontFamily: fontFamily.body, color: palette.gold, textAlign: 'center' },
 });

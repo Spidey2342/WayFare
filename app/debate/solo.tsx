@@ -1,35 +1,99 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Clock, Flame, Gavel, Mic, Wand2, Zap } from 'lucide-react-native';
 
-import { Button, Screen, ScreenScroll, TimerRing } from '@/components/ui';
-import { DebatePrepPanel } from '@/features/debate/components/DebatePrepPanel';
+import { Screen, ScreenScroll, TimerRing } from '@/components/ui';
+import { useAuth } from '@/features/auth/AuthContext';
 import { useDebateRulesChrome } from '@/features/debate/components/DebateRulesChrome';
-import { DebateStage } from '@/features/debate/components/DebateStage';
+import {
+  DebateDailyChallengeCard,
+  DebateGoldButton,
+  DebateModeHeader,
+  DebateOutlineButton,
+  DebateStanceToggle,
+  DebateTimerChip,
+  debateUi,
+} from '@/features/debate/components/debateV2Ui';
 import { newLocalDebateId } from '@/features/debate/ids';
 import {
   bundledDebateTopics,
+  hydrateDebateTopics,
   createSoloSession,
   soloAdvance,
   soloComplete,
   soloStartPrepTimer,
   topicById,
 } from '@/features/debate/localSession';
+import { soloDisplayXp } from '@/features/debate/engine/soloDailyCap';
 import { saveLocalDebate, updateLocalDebate } from '@/features/debate/localStore';
+import { awardSoloDebatesSignedIn, ensureOutboxFlushOnReconnect } from '@/features/debate/outbox';
+import { readCachedStats, syncMyStats } from '@/features/debate/statsCache';
 import type { DebateSide, LocalDebateSession } from '@/features/debate/types';
 import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
+
+function shuffleTopicId(current: string, topics: ReturnType<typeof bundledDebateTopics>) {
+  const pool = topics.filter((topic) => topic.id !== current);
+  return pool[Math.floor(Math.random() * pool.length)]?.id ?? current;
+}
+
+function parsePoints(notes: string): [string, string, string] {
+  const lines = notes.split('\n');
+  return [lines[0] ?? '', lines[1] ?? '', lines[2] ?? ''];
+}
+
+function joinPoints(a: string, b: string, c: string) {
+  return [a, b, c].join('\n');
+}
 
 export default function SoloDebateScreen() {
   const router = useRouter();
   const topics = bundledDebateTopics();
   const [topicId, setTopicId] = useState(topics[0]?.id ?? 'topic-01');
-  const [sidePick, setSidePick] = useState<DebateSide | 'random'>('random');
+  const [stance, setStance] = useState<DebateSide>('agree');
   const [session, setSession] = useState<LocalDebateSession | null>(null);
   const [recording, setRecording] = useState(false);
+  const [verdictPick, setVerdictPick] = useState<'agree' | 'disagree' | null>(null);
   const applyDebate = useAppStore((state) => state.applyDebateAward);
+  const guestStreak = useAppStore((state) => state.progress.streakDays);
+  const { user, isGuest } = useAuth();
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const [o3Xp, setO3Xp] = useState(1);
+  const [o3Streak, setO3Streak] = useState(0);
+  const [o3Pending, setO3Pending] = useState(false);
+  const awardStarted = useRef(false);
   const rules = useDebateRulesChrome({ fallback: '/debate', showRulesOnMount: true });
+
+  const topic = useMemo(() => topicById(topicId) ?? topics[0]!, [topicId, topics]);
+
+  useEffect(() => {
+    void hydrateDebateTopics();
+    ensureOutboxFlushOnReconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!session?.solo || session.solo.soloPhase !== 'reflect') return;
+    if (awardStarted.current) return;
+    awardStarted.current = true;
+    void (async () => {
+      if (isGuest || !user) {
+        setO3Xp(1);
+        setO3Streak(Math.max(1, guestStreak));
+        return;
+      }
+      const cached = await readCachedStats();
+      const clientId = `${session.id}:solo`;
+      const result = await awardSoloDebatesSignedIn(clientId);
+      const synced = await syncMyStats();
+      const todayCount = synced.stats?.solo_debates_today ?? cached.stats?.solo_debates_today ?? 0;
+      const streak =
+        result.streak_days ?? synced.stats?.streak_days ?? cached.stats?.streak_days ?? 0;
+      setO3Pending(Boolean(result.pending));
+      setO3Streak(streak);
+      setO3Xp(soloDisplayXp(todayCount, result.xp ?? 0));
+    })();
+  }, [session, user, isGuest, guestStreak]);
 
   useEffect(() => {
     const timer = setInterval(() => setNowMs(Date.now()), 1000);
@@ -50,59 +114,53 @@ export default function SoloDebateScreen() {
   }, [session]);
 
   const start = () => {
-    const topic = topicById(topicId) ?? topics[0]!;
     const id = newLocalDebateId('solo');
-    let created = createSoloSession(id, topic, sidePick);
+    let created = createSoloSession(id, topic, stance);
     created = soloStartPrepTimer(created);
     saveLocalDebate(created);
     setSession(created);
+  };
+
+  const surprise = () => {
+    setTopicId(shuffleTopicId(topicId, topics));
+    setStance(Math.random() > 0.5 ? 'agree' : 'disagree');
   };
 
   const finish = () => {
     if (!session) return;
     const done = soloComplete(session);
     saveLocalDebate(done);
-    applyDebate({
-      sessionId: done.id,
-      xpGained: 4,
-      votedThisRound: false,
-      wasMvp: false,
-    });
+    if (isGuest || !user) {
+      applyDebate({
+        sessionId: done.id,
+        xpGained: 1,
+        votedThisRound: Boolean(verdictPick),
+        wasMvp: false,
+      });
+    }
     router.replace('/home');
   };
 
   if (!session) {
     return (
       <>
-        <Screen background={palette.offWhite} gutter={palette.offWhite}>
+        <Screen background={palette.midnightDeep} gutter={palette.midnightDeep}>
           <ScreenScroll contentContainerStyle={styles.content}>
-            {rules.header}
-            <Text style={typeScale.h1}>Solo debate</Text>
-            <Text style={styles.lead}>Practice both sides on your own time.</Text>
-            <Pressable accessibilityRole="button" onPress={rules.openRulesLink}>
-              <Text style={styles.howLink}>How to play</Text>
+            <DebateModeHeader
+              title="SOLO MODE"
+              onBack={() => router.replace('/debate')}
+              onInfo={rules.openRulesLink}
+            />
+            <DebateDailyChallengeCard
+              text={topic.text}
+              onShuffle={() => setTopicId(shuffleTopicId(topicId, topics))}
+            />
+            <DebateStanceToggle selected={stance} onSelect={setStance} />
+            <Pressable accessibilityRole="button" onPress={surprise} style={styles.surpriseBtn}>
+              <Wand2 color={debateUi.muted} size={18} />
+              <Text style={styles.surpriseText}>SURPRISE ME</Text>
             </Pressable>
-            {topics.slice(0, 4).map((topic) => (
-              <Button
-                key={topic.id}
-                label={topic.text.slice(0, 56) + (topic.text.length > 56 ? '…' : '')}
-                variant={topicId === topic.id ? 'primary' : 'ghost'}
-                onPress={() => setTopicId(topic.id)}
-              />
-            ))}
-            <View style={styles.sideRow}>
-              {(['agree', 'disagree', 'random'] as const).map((side) => (
-                <Button
-                  key={side}
-                  label={
-                    side === 'random' ? 'Surprise me' : side === 'agree' ? 'AGREE' : 'DISAGREE'
-                  }
-                  variant={sidePick === side ? 'gold' : 'secondary'}
-                  onPress={() => setSidePick(side)}
-                />
-              ))}
-            </View>
-            <Button label="Begin" variant="gold" onPress={start} />
+            <DebateGoldButton label="START SOLO DEBATE" onPress={start} />
           </ScreenScroll>
         </Screen>
         {rules.sheet}
@@ -113,76 +171,64 @@ export default function SoloDebateScreen() {
   const solo = session.solo!;
   const player = session.players[0]!;
   const side = player.side ?? 'agree';
+  const sideColor = side === 'agree' ? debateUi.agree : debateUi.disagree;
   const secondsLeft = session.phaseEndsAt
     ? Math.max(0, Math.ceil((session.phaseEndsAt - nowMs) / 1000))
     : 0;
+  const [p1, p2, p3] = parsePoints(solo.prepNotes);
 
   if (solo.soloPhase === 'prep') {
+    const minutes = Math.floor(secondsLeft / 60);
+    const secs = String(secondsLeft % 60).padStart(2, '0');
     return (
       <>
-        <Screen background={palette.midnight} gutter={palette.midnight}>
+        <Screen background={palette.midnightDeep} gutter={palette.midnightDeep}>
           <ScreenScroll contentContainerStyle={styles.content}>
-            {rules.header}
-            <DebatePrepPanel
-              topic={session.topic.text}
-              side={side}
-              secondsLeft={secondsLeft}
-              totalSeconds={session.config.prepSeconds}
-              notes={solo.prepNotes}
-              onNotesChange={(text) =>
-                setSession({
-                  ...session,
-                  solo: { ...solo, prepNotes: text },
-                })
-              }
-            />
-            <Button
-              label="Start arguing"
-              variant="gold"
-              onPress={() => setSession(soloAdvance(session))}
-            />
-          </ScreenScroll>
-        </Screen>
-        {rules.sheet}
-      </>
-    );
-  }
-
-  if (solo.soloPhase === 'agree' || solo.soloPhase === 'disagree') {
-    const activeSide = solo.soloPhase;
-    const sideColor = activeSide === 'agree' ? palette.coral : palette.teal;
-    const sideSoft = activeSide === 'agree' ? palette.coralSoft : palette.tealSoft;
-    const forPlayers = session.players.filter((p) => p.side === 'agree');
-    const againstPlayers = session.players.filter((p) => p.side === 'disagree');
-    return (
-      <>
-        <Screen background={palette.midnight} gutter={palette.midnight}>
-          <ScreenScroll contentContainerStyle={styles.content}>
-            {rules.header}
-            <View style={[styles.sideChip, { backgroundColor: sideSoft, borderColor: sideColor }]}>
-              <Text style={styles.sideKicker}>YOUR SIDE</Text>
-              <Text style={[styles.sideValue, { color: sideColor }]}>
-                {activeSide.toUpperCase()}
+            <View style={styles.prepHead}>
+              <Text style={[styles.stanceLabel, { color: sideColor }]}>
+                STANCE: {side.toUpperCase()}
               </Text>
+              <DebateTimerChip label={`${minutes}:${secs}`} />
             </View>
-            <View style={styles.timerCenter}>
-              <TimerRing secondsLeft={secondsLeft} total={60} size={120} />
+            <Text style={styles.prepTitle}>Make Your Case</Text>
+            <Text style={styles.prepQuote}>&ldquo;{session.topic.text}&rdquo;</Text>
+            <View style={styles.pointsCard}>
+              <Text style={styles.pointsKicker}>YOUR 3 MAIN POINTS</Text>
+              {[0, 1, 2].map((index) => {
+                const value = [p1, p2, p3][index] ?? '';
+                const placeholders = [
+                  'Tap to add your first point…',
+                  'Tap to add your second point…',
+                  'Tap to add your third point…',
+                ];
+                return (
+                  <View key={index} style={styles.pointRow}>
+                    <Text style={styles.pointNum}>{index + 1}</Text>
+                    <TextInput
+                      multiline
+                      placeholder={placeholders[index]}
+                      placeholderTextColor={debateUi.muted}
+                      style={[styles.pointInput, value ? styles.pointInputFilled : null]}
+                      value={value}
+                      onChangeText={(text) => {
+                        const next = [p1, p2, p3];
+                        next[index] = text;
+                        setSession({
+                          ...session,
+                          solo: {
+                            ...solo,
+                            prepNotes: joinPoints(next[0] ?? '', next[1] ?? '', next[2] ?? ''),
+                          },
+                        });
+                      }}
+                    />
+                  </View>
+                );
+              })}
             </View>
-            <DebateStage
-              topic={session.topic.text}
-              secondsLeft={secondsLeft}
-              totalSeconds={60}
-              forPlayers={forPlayers}
-              againstPlayers={againstPlayers}
-              readyCount={0}
-              playerCount={1}
-              showReadyButton={false}
-              announceTimer={false}
-            />
             {Platform.OS === 'web' && typeof MediaRecorder !== 'undefined' ? (
-              <Button
-                label={recording ? 'Stop voice note' : 'Optional voice note'}
-                variant="ghost"
+              <Pressable
+                accessibilityRole="button"
                 onPress={async () => {
                   if (recording) {
                     setRecording(false);
@@ -198,11 +244,16 @@ export default function SoloDebateScreen() {
                     setRecording(false);
                   }
                 }}
-              />
+                style={styles.voiceBtn}
+              >
+                <Mic color={debateUi.muted} size={18} />
+                <Text style={styles.voiceText}>
+                  {recording ? 'STOP RECORDING' : 'RECORD VOICE NOTE'}
+                </Text>
+              </Pressable>
             ) : null}
-            <Button
-              label="Next side"
-              variant="gold"
+            <DebateGoldButton
+              label="I'VE MADE MY CASE"
               onPress={() => setSession(soloAdvance(session))}
             />
           </ScreenScroll>
@@ -212,29 +263,78 @@ export default function SoloDebateScreen() {
     );
   }
 
+  if (solo.soloPhase === 'agree' || solo.soloPhase === 'disagree') {
+    const activeSide = solo.soloPhase;
+    const activeColor = activeSide === 'agree' ? debateUi.agree : debateUi.disagree;
+    return (
+      <>
+        <Screen background={palette.midnightDeep} gutter={palette.midnightDeep}>
+          <ScreenScroll contentContainerStyle={styles.content}>
+            <Text style={[styles.stanceLabel, { color: activeColor }]}>
+              PRACTICE: {activeSide.toUpperCase()}
+            </Text>
+            <View style={styles.timerCenter}>
+              <TimerRing secondsLeft={secondsLeft} total={60} size={120} />
+            </View>
+            <Text style={styles.prepQuote}>&ldquo;{session.topic.text}&rdquo;</Text>
+            <DebateGoldButton label="NEXT" onPress={() => setSession(soloAdvance(session))} />
+          </ScreenScroll>
+        </Screen>
+        {rules.sheet}
+      </>
+    );
+  }
+
   return (
     <>
-      <Screen background={palette.offWhite} gutter={palette.offWhite}>
+      <Screen background={palette.midnightDeep} gutter={palette.midnightDeep}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Text style={typeScale.h2}>Reflection</Text>
-          <Text style={styles.lead}>Which side was harder? What did you learn?</Text>
-          <TextInput
-            multiline
-            style={styles.notesLight}
-            value={solo.reflection}
-            onChangeText={(text) => setSession({ ...session, solo: { ...solo, reflection: text } })}
-          />
-          <View style={styles.sideRow}>
-            {[1, 2, 3, 4, 5].map((rating) => (
-              <Button
-                key={rating}
-                label={String(rating)}
-                variant={solo.rating === rating ? 'gold' : 'ghost'}
-                onPress={() => setSession({ ...session, solo: { ...solo, rating } })}
-              />
+          <View style={styles.verdictIcon}>
+            <Gavel color={debateUi.ink} size={28} />
+          </View>
+          <Text style={styles.prepTitle}>The Verdict</Text>
+          <Text style={styles.verdictSub}>Which side convinced you more?</Text>
+          <View style={styles.verdictRow}>
+            {(['agree', 'disagree'] as const).map((pick) => (
+              <Pressable
+                key={pick}
+                onPress={() => setVerdictPick(pick)}
+                style={[
+                  styles.verdictPill,
+                  verdictPick === pick && {
+                    borderColor: pick === 'agree' ? debateUi.agree : debateUi.disagree,
+                  },
+                ]}
+              >
+                <Text style={styles.verdictPillText}>{pick.toUpperCase()}</Text>
+              </Pressable>
             ))}
           </View>
-          <Button label="Finish and earn XP" variant="primary" onPress={finish} />
+          <Text style={styles.unsure}>STILL UNSURE</Text>
+          <View style={styles.rewardRow}>
+            <View style={styles.rewardTile}>
+              {o3Pending ? (
+                <Clock color={debateUi.gold} size={18} />
+              ) : (
+                <Zap color={debateUi.gold} size={18} />
+              )}
+              <Text style={styles.rewardValue}>+{o3Xp}</Text>
+              <Text style={styles.rewardLabel}>POINTS EARNED</Text>
+            </View>
+            <View style={styles.rewardTile}>
+              <Flame color={debateUi.agree} size={18} />
+              <Text style={styles.rewardValue}>{o3Streak}</Text>
+              <Text style={styles.rewardLabel}>DAY STREAK</Text>
+            </View>
+          </View>
+          <DebateGoldButton
+            label="ANOTHER TOPIC"
+            onPress={() => {
+              awardStarted.current = false;
+              setSession(null);
+            }}
+          />
+          <DebateOutlineButton label="BACK TO DASHBOARD" onPress={finish} />
         </ScreenScroll>
       </Screen>
       {rules.sheet}
@@ -244,37 +344,130 @@ export default function SoloDebateScreen() {
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
-  lead: { ...typeScale.bodyM, color: palette.warmGray },
-  howLink: {
-    fontFamily: fontFamily.bodySemi,
-    fontSize: 15,
-    color: palette.teal,
-    textDecorationLine: 'underline',
-  },
-  sideRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
-  sideChip: {
-    alignSelf: 'center',
-    borderRadius: radii.pill,
-    borderWidth: 2,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
+  surpriseBtn: {
+    flexDirection: 'row',
+    gap: spacing.sm,
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'center',
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: debateUi.cardBorder,
+    minHeight: 48,
   },
-  sideKicker: {
+  surpriseText: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 13,
+    letterSpacing: 0.8,
+    color: debateUi.muted,
+  },
+  prepHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  stanceLabel: { fontFamily: fontFamily.bodySemi, fontSize: 12, letterSpacing: 1 },
+  prepTitle: { ...typeScale.h2, color: palette.white },
+  prepQuote: {
+    fontFamily: fontFamily.body,
+    fontSize: 15,
+    lineHeight: 22,
+    color: debateUi.muted,
+    fontStyle: 'italic',
+  },
+  pointsCard: {
+    backgroundColor: debateUi.card,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: debateUi.cardBorder,
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  pointsKicker: {
     fontFamily: fontFamily.bodySemi,
     fontSize: 11,
-    letterSpacing: 1.4,
-    color: palette.warmGray,
+    letterSpacing: 1,
+    color: debateUi.gold,
   },
-  sideValue: { fontFamily: fontFamily.heading, fontSize: 28 },
-  timerCenter: { alignItems: 'center' },
-  notesLight: {
-    minHeight: 120,
-    borderRadius: radii.card,
+  pointRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' },
+  pointNum: {
+    fontFamily: fontFamily.headingSemi,
+    fontSize: 18,
+    color: debateUi.gold,
+    width: 20,
+    marginTop: 10,
+  },
+  pointInput: {
+    flex: 1,
+    minHeight: 52,
+    borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: palette.line,
+    borderColor: debateUi.cardBorder,
+    padding: spacing.sm,
+    color: palette.white,
+    fontFamily: fontFamily.body,
+    fontSize: 15,
+    backgroundColor: '#141824',
+  },
+  pointInputFilled: {
+    borderColor: debateUi.disagree,
+    backgroundColor: 'rgba(78, 205, 196, 0.08)',
+  },
+  voiceBtn: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+  },
+  voiceText: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 12,
+    letterSpacing: 0.6,
+    color: debateUi.muted,
+  },
+  timerCenter: { alignItems: 'center' },
+  verdictIcon: {
+    alignSelf: 'center',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: debateUi.gold,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  verdictSub: { fontFamily: fontFamily.body, color: debateUi.muted, textAlign: 'center' },
+  verdictRow: { flexDirection: 'row', gap: spacing.sm },
+  verdictPill: {
+    flex: 1,
+    borderRadius: radii.pill,
+    borderWidth: 2,
+    borderColor: debateUi.cardBorder,
+    paddingVertical: spacing.md,
+    alignItems: 'center',
+    backgroundColor: debateUi.card,
+  },
+  verdictPillText: { fontFamily: fontFamily.bodySemi, color: palette.white, letterSpacing: 0.5 },
+  unsure: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 11,
+    letterSpacing: 1,
+    color: debateUi.muted,
+    textAlign: 'center',
+  },
+  rewardRow: { flexDirection: 'row', gap: spacing.sm },
+  rewardTile: {
+    flex: 1,
+    backgroundColor: debateUi.card,
+    borderRadius: radii.md,
     padding: spacing.md,
-    backgroundColor: palette.white,
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 1,
+    borderColor: debateUi.cardBorder,
+  },
+  rewardValue: { fontFamily: fontFamily.headingSemi, fontSize: 18, color: palette.white },
+  rewardLabel: {
+    fontFamily: fontFamily.bodySemi,
+    fontSize: 9,
+    letterSpacing: 0.8,
+    color: debateUi.muted,
+    textAlign: 'center',
   },
 });

@@ -18,7 +18,7 @@ const samples = [
   {
     id: 's1',
     type: 'prayer' as const,
-    author: 'Ama',
+    author: 'Member A',
     group: 'Youth night',
     time: 'Example',
     content: 'Please pray for courage before I read Scripture on Sunday.',
@@ -27,7 +27,7 @@ const samples = [
   {
     id: 's2',
     type: 'testimony' as const,
-    author: 'Kofi',
+    author: 'Member B',
     group: 'Identity deck',
     time: 'Example',
     content: 'I remembered that God knew me before I knew how to introduce myself.',

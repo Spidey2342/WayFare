@@ -22,7 +22,7 @@ export default function LobbyPreviewScreen() {
       ? [
           {
             userId: '1',
-            displayName: 'Kofi',
+            displayName: 'Leader',
             avatarKey: 'sunrise',
             role: 'leader',
             ready: true,
@@ -30,7 +30,7 @@ export default function LobbyPreviewScreen() {
           },
           {
             userId: '2',
-            displayName: 'Ama',
+            displayName: 'Member',
             avatarKey: 'teal',
             role: 'member',
             ready: true,
@@ -48,7 +48,7 @@ export default function LobbyPreviewScreen() {
       : [
           {
             userId: '1',
-            displayName: 'Kofi',
+            displayName: 'Leader',
             avatarKey: 'sunrise',
             role: 'leader',
             ready: false,
@@ -61,7 +61,7 @@ export default function LobbyPreviewScreen() {
 
   return (
     <Screen background={palette.midnight} gutter={palette.midnight}>
-      <ScreenHeader variant="dark" title="Unity Youth" fallback="/groups" />
+      <ScreenHeader variant="dark" title="Sample Group" fallback="/groups" />
       <ScreenScroll contentContainerStyle={styles.content}>
         <View style={styles.codeCard}>
           <Text style={styles.codeKicker}>SHARE ROOM CODE</Text>

@@ -34,17 +34,17 @@ export interface PersistedApp {
   seenRules: Partial<Record<'debate' | 'card-game', boolean>>;
 }
 
-export const STORE_VERSION = 7;
+export const STORE_VERSION = 8;
+
+/** No default identity — empty until the user or guest flow sets one. */
+export const EMPTY_PROFILE: Profile = { name: '', avatarColor: '' };
 
 export function defaultPersisted(): PersistedApp {
   return {
     themePreference: 'light',
     onboarded: false,
     preferredMode: null,
-    profile: {
-      name: 'Kofi',
-      avatarColor: '#FFB800',
-    },
+    profile: { ...EMPTY_PROFILE },
     installPromptDismissed: false,
     guidelinesSeen: false,
     foundingMember: false,
@@ -92,15 +92,34 @@ function isPreference(value: unknown): value is ThemePreference {
   return value === 'system' || value === 'light' || value === 'dark';
 }
 
-function readProfile(value: unknown, fallback: Profile): Profile {
-  if (!value || typeof value !== 'object') return fallback;
+function readProfile(value: unknown): Profile {
+  if (!value || typeof value !== 'object') return { ...EMPTY_PROFILE };
   const record = value as Record<string, unknown>;
+  const name =
+    typeof record.name === 'string' && record.name.trim().length > 0 ? record.name.trim() : '';
+  const avatarColor =
+    typeof record.avatarColor === 'string' && record.avatarColor.length > 0
+      ? record.avatarColor
+      : EMPTY_PROFILE.avatarColor;
+  return { name, avatarColor };
+}
+
+function stripLegacyPersistedProfile(profile: Profile): Profile {
   return {
-    name:
-      typeof record.name === 'string' && record.name.trim().length > 0
-        ? record.name
-        : fallback.name,
-    avatarColor: typeof record.avatarColor === 'string' ? record.avatarColor : fallback.avatarColor,
+    name: '',
+    avatarColor: profile.avatarColor || EMPTY_PROFILE.avatarColor,
+  };
+}
+
+function stripLegacyDemoProgress(progress: GameProgress): GameProgress {
+  return {
+    ...progress,
+    xp: 0,
+    streakDays: 0,
+    badgesEarned: [],
+    debateMvps: 0,
+    debatesJudged: 0,
+    debateVotesCast: 0,
   };
 }
 
@@ -115,7 +134,13 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
     ? record.themePreference
     : base.themePreference;
 
-  const progress = readProgress(record.progress, base.progress, fromVersion);
+  let progress = readProgress(record.progress, base.progress, fromVersion);
+  let profile = readProfile(record.profile);
+
+  if (fromVersion < 8) {
+    profile = stripLegacyPersistedProfile(profile);
+    progress = stripLegacyDemoProgress(progress);
+  }
 
   return {
     ...base,
@@ -125,7 +150,7 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
       record.preferredMode === 'pass' || record.preferredMode === 'team'
         ? record.preferredMode
         : null,
-    profile: readProfile(record.profile, base.profile),
+    profile,
     installPromptDismissed: record.installPromptDismissed === true,
     guidelinesSeen: record.guidelinesSeen === true,
     foundingMember: record.foundingMember === true,

@@ -1,9 +1,12 @@
 import type { Session, User } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
+import { rpcEnsureProfile } from '@/features/auth/ensureProfileApi';
+import { activateUserSession, clearActiveUserSession } from '@/features/auth/userSession';
 import { isSupabaseConfigured, requireSupabase, type ProfileRow } from '@/services/supabase';
+import { useAppStore } from '@/store';
 
-import { fetchProfile, upsertProfileFields } from './profileApi';
+import { setSignedInPersistUser } from '@/store/signedInPersist';
 
 interface AuthContextValue {
   ready: boolean;
@@ -19,6 +22,12 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+async function bootstrapSignedInUser(userId: string): Promise<ProfileRow | null> {
+  await activateUserSession(userId);
+  const ensured = await rpcEnsureProfile(userId);
+  return ensured?.profile ?? null;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(!isSupabaseConfigured);
   const [session, setSession] = useState<Session | null>(null);
@@ -26,11 +35,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isGuest, setIsGuest] = useState(!isSupabaseConfigured);
 
   const refreshProfile = async () => {
-    if (!session?.user) {
+    const userId = session?.user?.id;
+    if (!userId) {
       setProfile(null);
       return;
     }
-    const row = await fetchProfile(session.user.id);
+    const row = await bootstrapSignedInUser(userId);
     setProfile(row);
   };
 
@@ -60,16 +70,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    setSignedInPersistUser(session?.user?.id ?? null);
+  }, [session?.user?.id]);
+
+  useEffect(() => {
     const userId = session?.user?.id;
-    if (!userId) return;
+    if (!userId || isGuest) return undefined;
     let cancelled = false;
-    void fetchProfile(userId).then((row) => {
+    void bootstrapSignedInUser(userId).then((row) => {
       if (!cancelled) setProfile(row);
     });
     return () => {
       cancelled = true;
     };
-  }, [session?.user?.id]);
+  }, [session?.user?.id, isGuest]);
 
   const setProfileLocal = (patch: Partial<ProfileRow>) => {
     setProfile((current) => (current ? { ...current, ...patch } : null));
@@ -83,6 +97,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (isSupabaseConfigured) {
       await requireSupabase().auth.signOut();
     }
+    await clearActiveUserSession();
+    useAppStore.getState().clearUserSessionState();
     setSession(null);
     setProfile(null);
     setIsGuest(true);
@@ -100,7 +116,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setProfileLocal,
       signOut,
     }),
-    // refreshProfile is stable enough for context consumers
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [ready, session, profile, isGuest],
   );
@@ -112,15 +127,4 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
-}
-
-export async function saveProfilePatch(
-  userId: string,
-  patch: Partial<ProfileRow>,
-  setProfileLocal: (patch: Partial<ProfileRow>) => void,
-) {
-  setProfileLocal(patch);
-  if (isSupabaseConfigured) {
-    await upsertProfileFields(userId, patch);
-  }
 }

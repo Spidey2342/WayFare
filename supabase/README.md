@@ -25,6 +25,13 @@ Never commit `.env`. Never put the **service_role** key in the app or in git.
 5. Run `migrations/0004_prevent_duplicates.sql` to dedupe groups, add idempotent `create_group`, archival, and housekeeping. If index creation fails with duplicate `(owner_id, name_normalized)`, run `0005_merge_before_unique_index.sql` then re-run 0004.
 6. Run `migrations/0002_debate.sql` for Debate tables and legacy RPCs (votes kept but unused).
 7. Run `migrations/0006_debate_v2.sql` for Debate V2 (judge verdict, agree/disagree, topic history, guest merge RPC).
+8. Run `migrations/0007_debate_data_and_pause.sql` for pause/resume, user stats tables, topic sync RPCs, solo award RPC.
+9. Run `migrations/0008_debate_rules.sql` for `get_session_state`, verdict window, `finalize_round`, `next_round`, `end_session`, `claim_judge`, spec error codes.
+10. Run `migrations/0009_seed_debate_topics.sql` for 120 idempotent debate topics (replaces manual seed file).
+11. Run `migrations/0010_solo_pass_awards.sql` for idempotent solo/pass awards and streak on `user_stats`.
+12. Run `migrations/0011_ensure_profile.sql` for `ensure_profile()` (creates missing `profiles` + `user_stats` rows after sign-in).
+
+**Legacy (optional):** `reference/warefare-debate-topics/seed_debate_topics.sql` if you applied 0007 before 0009 existed.
 
 **Exact SQL for Debate V2:** paste the full file [`migrations/0006_debate_v2.sql`](migrations/0006_debate_v2.sql) in the SQL editor after 0001–0005 and 0002.
 

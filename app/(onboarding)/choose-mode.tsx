@@ -39,9 +39,9 @@ export default function ChooseModeScreen() {
           </Text>
           <AvatarStack
             people={[
-              { name: 'Kofi', color: palette.gold },
-              { name: 'Ama', color: palette.teal },
-              { name: 'Paul', color: palette.coral },
+              { name: 'P1', color: palette.gold },
+              { name: 'P2', color: palette.teal },
+              { name: 'P3', color: palette.coral },
             ]}
           />
         </Pressable>

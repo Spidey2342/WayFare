@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 import { chromium, devices } from 'playwright';
 
+import { guestStore } from './playwright-guest-store.mjs';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 const outDir = path.join(root, 'docs', 'audit', 'nav');
@@ -20,17 +22,7 @@ const ROUTES = [
 ];
 
 function store() {
-  return {
-    state: {
-      themePreference: 'light',
-      onboarded: true,
-      introSeen: true,
-      profile: { name: 'Kofi', avatarColor: '#FFB800' },
-      hydrated: true,
-      progress: { xp: 0, streakDays: 0, lastPlayedDate: null, cardsPlayed: 0, actsOfService: 0, sessionsCompleted: 0, completedWeeks: [], badgesEarned: [], wordCards: 0, questionCards: 0, dareCards: 0, challengeCards: 0, testimonyCards: 0, weeklyCompleted: false, weeklyWeekKey: '2026-W44', lastAppliedSessionId: null },
-    },
-    version: 7,
-  };
+  return guestStore(8);
 }
 
 async function main() {

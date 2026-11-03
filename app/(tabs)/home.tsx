@@ -2,9 +2,19 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Compass, Share2 } from 'lucide-react-native';
 
-import { Avatar, Button, Chip, DeckTile, QuoteCard, Screen, ScreenScroll } from '@/components/ui';
+import {
+  Avatar,
+  Button,
+  Chip,
+  DeckTile,
+  QuoteCard,
+  Screen,
+  ScreenScroll,
+  SkeletonLoader,
+} from '@/components/ui';
 import { deckCatalog, sampleVerse } from '@/data/catalog';
 import { DeckIconView } from '@/features/decks/deckIcons';
+import { rankForAccount, useAccountPresentation } from '@/features/auth/useAccountPresentation';
 import { journeyNodes, levelForXp } from '@/features/journey/progress';
 import { todayLesson } from '@/features/learn/repository';
 import { useOnline } from '@/hooks/useOnline';
@@ -15,10 +25,28 @@ import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/them
 export default function HomeScreen() {
   const router = useRouter();
   const { colors } = useTheme();
-  const name = useAppStore((state) => state.profile.name);
+  const account = useAccountPresentation();
   const progress = useAppStore((state) => state.progress);
-  const level = levelForXp(progress.xp);
-  const color = useAppStore((state) => state.profile.avatarColor);
+  const rank = rankForAccount(account);
+  const xpForJourney =
+    account.status === 'ready' ? account.xp : account.status === 'guest' ? account.xp : 0;
+  const streakForChip =
+    account.status === 'ready' || account.status === 'guest' ? account.streakDays : 0;
+  const helloLabel =
+    account.status === 'loading'
+      ? null
+      : account.status === 'guest'
+        ? 'Guest'
+        : account.status === 'ready' && account.displayName
+          ? account.displayName
+          : null;
+  const avatarName = helloLabel ?? '?';
+  const avatarColor =
+    account.status === 'loading'
+      ? palette.line
+      : account.status === 'ready' || account.status === 'guest'
+        ? account.avatarColor
+        : palette.line;
   const online = useOnline();
   const quick = deckCatalog.filter((deck) => deck.id === 'identity' || deck.id === 'courage');
   const lesson = todayLesson(progress.completedLessons);
@@ -34,15 +62,23 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View>
             <Text style={[styles.hello, { color: colors.textSecondary }]}>{greeting()}</Text>
-            <Text style={[styles.name, { color: colors.textPrimary }]}>Hello, {name}!</Text>
+            {helloLabel ? (
+              <Text style={[styles.name, { color: colors.textPrimary }]}>Hello, {helloLabel}!</Text>
+            ) : (
+              <SkeletonLoader height={28} />
+            )}
           </View>
-          <Avatar name={name} color={color} size={48} />
+          {account.status === 'loading' ? (
+            <SkeletonLoader height={48} />
+          ) : (
+            <Avatar name={avatarName} color={avatarColor} size={48} />
+          )}
         </View>
         <View style={styles.journey}>
           <View style={styles.journeyTop}>
             <Text style={styles.journeyTitle}>Continue Journey</Text>
             <Chip
-              label={progress.streakDays > 0 ? `${progress.streakDays} DAY STREAK` : 'Start here'}
+              label={streakForChip > 0 ? `${streakForChip} DAY STREAK` : 'Start here'}
               tone="solidGold"
             />
           </View>
@@ -63,8 +99,8 @@ export default function HomeScreen() {
             ))}
           </View>
           <Text style={styles.journeyMeta}>
-            Level {level.level} · {level.displayTitle} · {progress.completedLessons.length}/12
-            lessons
+            Level {levelForXp(xpForJourney).level} · {rank.displayTitle} ·{' '}
+            {progress.completedLessons.length}/12 lessons
           </Text>
           <View style={styles.lessonBarTrack}>
             <View

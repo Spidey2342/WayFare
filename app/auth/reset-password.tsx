@@ -4,12 +4,12 @@ import { StyleSheet, Text } from 'react-native';
 import { AuthField } from '@/components/auth/AuthField';
 import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
 import { friendlyAuthError } from '@/features/auth/authErrors';
+import { authScreen } from '@/features/auth/authScreenTheme';
 import { normalizeEmail } from '@/features/auth/normalizeEmail';
 import { isSupabaseConfigured, requireSupabase } from '@/services/supabase';
-import { fontFamily, palette, spacing, typeScale, useTheme } from '@/theme';
+import { fontFamily, spacing, typeScale } from '@/theme';
 
 export default function ResetPasswordScreen() {
-  const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -37,11 +37,11 @@ export default function ResetPasswordScreen() {
   };
 
   return (
-    <Screen background={palette.offWhite} gutter={palette.offWhite}>
+    <Screen background={authScreen.bg} gutter={authScreen.bg}>
       <ScreenScroll contentContainerStyle={styles.content}>
         <BackButton label="Back" fallback="/auth/sign-in" />
-        <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Reset your password</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: fontFamily.body, lineHeight: 22 }}>
+        <Text style={[typeScale.h1, { color: authScreen.text }]}>Reset your password</Text>
+        <Text style={styles.lead}>
           Enter your email and we will send a link to choose a new password.
         </Text>
         <AuthField
@@ -54,7 +54,7 @@ export default function ResetPasswordScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Button
           label="Send reset link"
-          variant="primary"
+          variant="gold"
           disabled={loading}
           onPress={() => void submit()}
         />
@@ -65,6 +65,7 @@ export default function ResetPasswordScreen() {
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
-  ok: { color: palette.teal, fontFamily: fontFamily.body },
-  error: { color: palette.coral, fontFamily: fontFamily.body },
+  lead: { color: authScreen.muted, fontFamily: fontFamily.body, lineHeight: 22 },
+  ok: { color: authScreen.gold, fontFamily: fontFamily.body },
+  error: { color: authScreen.error, fontFamily: fontFamily.body },
 });

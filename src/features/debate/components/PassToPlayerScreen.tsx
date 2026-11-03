@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { Smartphone } from 'lucide-react-native';
+import { Hand } from 'lucide-react-native';
 
-import { Avatar, Button } from '@/components/ui';
+import { Avatar } from '@/components/ui';
+import { DebateGoldButton, debateUi } from '@/features/debate/components/debateV2Ui';
 import { avatarColorForKey } from '@/data/avatarPresets';
 import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
@@ -12,15 +13,25 @@ type Props = {
 };
 
 export function PassToPlayerScreen({ playerName, avatarKey, onConfirm }: Props) {
+  const firstName = playerName.split(' ')[0] ?? playerName;
   return (
     <View style={styles.wrap}>
-      <View style={styles.iconCircle}>
-        <Smartphone color={palette.teal} size={32} />
+      <View style={styles.avatarRing}>
+        <Avatar
+          name={playerName}
+          color={avatarColorForKey(avatarKey ?? playerName)}
+          size={120}
+          ring
+        />
+        <View style={styles.handBadge}>
+          <Hand color={debateUi.ink} size={18} />
+        </View>
       </View>
-      <Text style={styles.title}>Pass to {playerName}</Text>
-      <Avatar name={playerName} color={avatarColorForKey(avatarKey ?? playerName)} size={88} ring />
-      <Text style={styles.hint}>Only {playerName} should see the next screen.</Text>
-      <Button label={`I'm ${playerName}`} variant="gold" onPress={onConfirm} />
+      <Text style={styles.title}>Pass the phone to {firstName}</Text>
+      <Text style={styles.hint}>
+        It&apos;s time to pick a side. Hand the device over to {playerName} to continue.
+      </Text>
+      <DebateGoldButton label={`I'M ${firstName.toUpperCase()}`} onPress={onConfirm} />
     </View>
   );
 }
@@ -33,20 +44,24 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     paddingHorizontal: spacing.lg,
   },
-  iconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: palette.tealSoft,
+  avatarRing: { position: 'relative' },
+  handBadge: {
+    position: 'absolute',
+    bottom: 4,
+    right: -4,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: debateUi.gold,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: { ...typeScale.h1, color: palette.white, textAlign: 'center' },
+  title: { ...typeScale.h2, color: palette.white, textAlign: 'center' },
   hint: {
     fontFamily: fontFamily.body,
     fontSize: 15,
     lineHeight: 22,
-    color: palette.warmGray,
+    color: debateUi.muted,
     textAlign: 'center',
     maxWidth: 320,
   },

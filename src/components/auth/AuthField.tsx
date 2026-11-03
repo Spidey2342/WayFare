@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TextInput, View, type TextInputProps } from 'react-native';
 
+import { AUTH_LOOK, authScreen } from '@/features/auth/authScreenTheme';
 import { fontFamily, palette, radii, spacing, typeScale, useTheme } from '@/theme';
 
 type AuthFieldProps = TextInputProps & {
@@ -9,14 +10,21 @@ type AuthFieldProps = TextInputProps & {
 
 export function AuthField({ label, error, style, ...rest }: AuthFieldProps) {
   const { colors } = useTheme();
+  const dark = AUTH_LOOK === 'dark';
   return (
     <View style={styles.wrap}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, dark && { color: authScreen.muted }]}>{label}</Text>
       <TextInput
-        placeholderTextColor={palette.warmGray}
+        placeholderTextColor={dark ? authScreen.muted : palette.warmGray}
         style={[
           styles.input,
-          { color: colors.textPrimary, borderColor: error ? palette.coral : colors.border },
+          dark
+            ? {
+                color: authScreen.text,
+                borderColor: error ? authScreen.error : authScreen.border,
+                backgroundColor: authScreen.inputBg,
+              }
+            : { color: colors.textPrimary, borderColor: error ? palette.coral : colors.border },
           style,
         ]}
         {...rest}

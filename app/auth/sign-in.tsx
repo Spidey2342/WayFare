@@ -4,7 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 
 import { AuthField } from '@/components/auth/AuthField';
 import { consumeAuthReturnTo } from '@/components/navigation/NavigationGuard';
-import { BackButton, Button, Screen, ScreenScroll } from '@/components/ui';
+import { AuthBackLink } from '@/components/auth/AuthBackLink';
+import { Button, Screen, ScreenScroll } from '@/components/ui';
 import { friendlyAuthError } from '@/features/auth/authErrors';
 import {
   clearLastUsedEmail,
@@ -13,12 +14,12 @@ import {
 } from '@/features/auth/lastUsedEmail';
 import { normalizeEmail } from '@/features/auth/normalizeEmail';
 import { googleAuthEnabled, isSupabaseConfigured, requireSupabase } from '@/services/supabase';
-import { fontFamily, palette, spacing, typeScale, useTheme } from '@/theme';
+import { authScreen } from '@/features/auth/authScreenTheme';
+import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
 export default function SignInScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ email?: string }>();
-  const { colors } = useTheme();
   const [email, setEmail] = useState(() => (typeof params.email === 'string' ? params.email : ''));
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -60,36 +61,42 @@ export default function SignInScreen() {
     }
   };
 
+  const displayName = email.trim().split('@')[0]?.replace(/\./g, ' ').split(' ')[0] ?? 'Player';
+  const welcomeTitle = remembered
+    ? `Welcome back, ${displayName.charAt(0).toUpperCase()}${displayName.slice(1)}!`
+    : 'Welcome back';
+
   return (
-    <Screen background={palette.offWhite} gutter={palette.offWhite}>
+    <Screen background={authScreen.bg} gutter={authScreen.bg}>
       <ScreenScroll contentContainerStyle={styles.content}>
-        <BackButton label="Back" fallback="/auth/welcome" />
-        <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Welcome back</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: fontFamily.body }}>
-          Sign in with your account
-        </Text>
+        <AuthBackLink fallback="/auth/welcome" />
+        <Text style={[typeScale.h1, { color: authScreen.text }]}>{welcomeTitle}</Text>
         {remembered ? (
-          <Pressable
-            onPress={() => {
-              void clearLastUsedEmail();
-              setEmail('');
-              setRemembered(false);
-            }}
-          >
-            <Text style={styles.forgot}>Not you?</Text>
-          </Pressable>
-        ) : null}
-        <AuthField
-          label="EMAIL"
-          value={email}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          onChangeText={setEmail}
-        />
+          <View style={styles.emailRow}>
+            <Text style={styles.emailText}>{email}</Text>
+            <Pressable
+              onPress={() => {
+                void clearLastUsedEmail();
+                setEmail('');
+                setRemembered(false);
+              }}
+            >
+              <Text style={styles.notYou}>NOT YOU?</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <AuthField
+            label="EMAIL ADDRESS"
+            value={email}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            onChangeText={setEmail}
+          />
+        )}
         <View style={styles.passwordHead}>
-          <Text style={styles.fieldLabel}>PASSWORD</Text>
+          <Text style={styles.fieldLabel}>YOUR PASSWORD</Text>
           <Pressable onPress={() => router.push('/auth/reset-password')}>
-            <Text style={styles.forgot}>Forgot password?</Text>
+            <Text style={styles.forgotCaps}>FORGOT PASSWORD?</Text>
           </Pressable>
         </View>
         <AuthField
@@ -102,12 +109,7 @@ export default function SignInScreen() {
           <Text style={styles.toggle}>{showPassword ? 'Hide password' : 'Show password'}</Text>
         </Pressable>
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button
-          label="Sign in"
-          variant="primary"
-          disabled={loading}
-          onPress={() => void submit()}
-        />
+        <Button label="LOG IN" variant="gold" disabled={loading} onPress={() => void submit()} />
         {googleAuthEnabled ? (
           <Button
             label="Continue with Google"
@@ -124,13 +126,26 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
   passwordHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  emailRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexWrap: 'wrap' },
+  emailText: { fontFamily: fontFamily.body, color: authScreen.muted, fontSize: 15 },
+  notYou: {
+    fontFamily: fontFamily.bodySemi,
+    color: authScreen.gold,
+    fontSize: 11,
+    letterSpacing: 0.8,
+  },
   fieldLabel: {
     fontFamily: fontFamily.bodySemi,
-    fontSize: 12,
-    letterSpacing: 0.6,
-    color: palette.warmGray,
+    fontSize: 11,
+    letterSpacing: 1,
+    color: authScreen.muted,
   },
-  forgot: { fontFamily: fontFamily.bodySemi, color: palette.blue, fontSize: 13 },
-  toggle: { fontFamily: fontFamily.bodySemi, color: palette.blue, fontSize: 14 },
+  forgotCaps: {
+    fontFamily: fontFamily.bodySemi,
+    color: authScreen.muted,
+    fontSize: 10,
+    letterSpacing: 0.8,
+  },
+  toggle: { fontFamily: fontFamily.bodySemi, color: authScreen.gold, fontSize: 14 },
   error: { color: palette.coral, fontFamily: fontFamily.body },
 });

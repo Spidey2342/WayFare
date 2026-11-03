@@ -1,6 +1,9 @@
+import { parseSessionSnapshot, type DebateSessionSnapshot } from '@/features/debate/sessionState';
 import { requireSupabase } from '@/services/supabase';
 
 import type { DebatePhase, DebateSide } from './types';
+
+export type { DebateSessionSnapshot };
 
 export type OnlineDebateSessionRow = {
   id: string;
@@ -16,6 +19,8 @@ export type OnlineDebateSessionRow = {
   soft_timer_minutes: number | null;
   debate_started_at: string | null;
   verdict_announced_at: string | null;
+  paused_at: string | null;
+  total_paused_seconds: number;
   ready_to_vote: string[];
 };
 
@@ -96,67 +101,179 @@ export async function rpcDebateTouchSession(sessionId: string) {
   return data as string | null;
 }
 
-export async function rpcDrawTopic(sessionId: string) {
-  const { data, error } = await requireSupabase().rpc('draw_topic', { p_session: sessionId });
-  if (error) throw error;
-  return data as string;
-}
-
-export async function rpcShuffleTopic(sessionId: string) {
-  const { data, error } = await requireSupabase().rpc('shuffle_topic', { p_session: sessionId });
-  if (error) throw error;
-  return data as string;
-}
-
-export async function rpcConfirmTopic(sessionId: string) {
-  const { error } = await requireSupabase().rpc('confirm_topic', { p_session: sessionId });
-  if (error) throw error;
-}
-
-export async function rpcChooseSide(sessionId: string, side: DebateSide) {
-  const { error } = await requireSupabase().rpc('choose_side', {
+export async function rpcDrawTopic(sessionId: string, expectedPhase?: string) {
+  const { data, error } = await requireSupabase().rpc('draw_topic', {
     p_session: sessionId,
-    p_side: side,
+    p_expected_phase: expectedPhase ?? null,
+  });
+  if (error) throw error;
+  return data as string;
+}
+
+export async function rpcShuffleTopic(sessionId: string, expectedPhase = 'topic') {
+  const { data, error } = await requireSupabase().rpc('shuffle_topic', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+  return data as string;
+}
+
+export async function rpcGetSessionState(sessionId: string): Promise<DebateSessionSnapshot | null> {
+  const { data, error } = await requireSupabase().rpc('get_session_state', {
+    p_session: sessionId,
+  });
+  if (error) throw error;
+  return parseSessionSnapshot(data);
+}
+
+export async function rpcConfirmTopic(sessionId: string, expectedPhase = 'topic') {
+  const { error } = await requireSupabase().rpc('confirm_topic', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
   });
   if (error) throw error;
 }
 
-export async function rpcMovePlayer(sessionId: string, userId: string, side: DebateSide) {
+export async function rpcChooseSide(
+  sessionId: string,
+  side: DebateSide,
+  expectedPhase = 'picking',
+) {
+  const { error } = await requireSupabase().rpc('choose_side', {
+    p_session: sessionId,
+    p_side: side,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+}
+
+export async function rpcMovePlayer(
+  sessionId: string,
+  userId: string,
+  side: DebateSide,
+  expectedPhase = 'picking',
+) {
   const { error } = await requireSupabase().rpc('move_player', {
     p_session: sessionId,
     p_user: userId,
     p_side: side,
+    p_expected_phase: expectedPhase,
   });
   if (error) throw error;
 }
 
-export async function rpcSetSoftTimer(sessionId: string, minutes: number | null) {
+export async function rpcSetSoftTimer(
+  sessionId: string,
+  minutes: number | null,
+  expectedPhase = 'debating',
+) {
   const { error } = await requireSupabase().rpc('set_soft_timer', {
     p_session: sessionId,
     p_minutes: minutes,
+    p_expected_phase: expectedPhase,
   });
   if (error) throw error;
 }
 
-export async function rpcStartDebate(sessionId: string) {
-  const { error } = await requireSupabase().rpc('start_debate', { p_session: sessionId });
+export async function rpcStartDebate(sessionId: string, expectedPhase = 'picking') {
+  const { error } = await requireSupabase().rpc('start_debate', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
+  });
   if (error) throw error;
 }
 
-export async function rpcRequestVerdict(sessionId: string) {
-  const { error } = await requireSupabase().rpc('request_verdict', { p_session: sessionId });
+export async function rpcRequestVerdict(sessionId: string, expectedPhase = 'debating') {
+  const { error } = await requireSupabase().rpc('request_verdict', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
+  });
   if (error) throw error;
 }
 
+export async function rpcPauseDebate(sessionId: string, expectedPhase = 'debating') {
+  const { error } = await requireSupabase().rpc('pause_debate', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+}
+
+export async function rpcResumeDebate(sessionId: string, expectedPhase = 'debating') {
+  const { error } = await requireSupabase().rpc('resume_debate', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+}
+
+export async function rpcCancelVerdict(sessionId: string, expectedPhase = 'verdict') {
+  const { error } = await requireSupabase().rpc('cancel_verdict', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+}
+
+export async function rpcChangeVerdict(
+  sessionId: string,
+  winningSide: 'agree' | 'disagree' | 'draw',
+  mvpUserId: string | null,
+  expectedPhase = 'results',
+) {
+  const { error } = await requireSupabase().rpc('change_verdict', {
+    p_session: sessionId,
+    p_winning_side: winningSide,
+    p_mvp_user_id: mvpUserId,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+}
+
+export async function rpcSubmitVerdict(
+  sessionId: string,
+  winningSide: 'agree' | 'disagree' | 'draw',
+  mvpUserId: string | null,
+  expectedPhase = 'verdict',
+) {
+  const { error } = await requireSupabase().rpc('submit_verdict', {
+    p_session: sessionId,
+    p_winning_side: winningSide,
+    p_mvp_user_id: mvpUserId,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+}
+
+/** Thin wrapper — announces to RESULTS without awarding XP (spec). */
 export async function rpcPublishVerdict(
   sessionId: string,
   winningSide: 'agree' | 'disagree' | 'draw',
   mvpUserId: string | null,
+  expectedPhase = 'verdict',
 ) {
   const { error } = await requireSupabase().rpc('publish_verdict', {
     p_session: sessionId,
     p_winning_side: winningSide,
     p_mvp_user_id: mvpUserId,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+}
+
+export async function rpcNextRound(sessionId: string, expectedPhase = 'results') {
+  const { error } = await requireSupabase().rpc('next_round', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
+  });
+  if (error) throw error;
+}
+
+export async function rpcEndSession(sessionId: string, expectedPhase = 'results') {
+  const { error } = await requireSupabase().rpc('end_session', {
+    p_session: sessionId,
+    p_expected_phase: expectedPhase,
   });
   if (error) throw error;
 }
@@ -164,6 +281,23 @@ export async function rpcPublishVerdict(
 export async function rpcLeaveSession(sessionId: string) {
   const { error } = await requireSupabase().rpc('leave_session', { p_session: sessionId });
   if (error) throw error;
+}
+
+export async function rpcAwardSoloDebate(clientId: string) {
+  const { data, error } = await requireSupabase().rpc('award_solo_debate', {
+    p_client_id: clientId,
+  });
+  if (error) throw error;
+  return data as Record<string, unknown>;
+}
+
+export async function rpcAwardPassDebate(clientId: string, xp: number) {
+  const { data, error } = await requireSupabase().rpc('award_pass_debate', {
+    p_client_id: clientId,
+    p_xp: xp,
+  });
+  if (error) throw error;
+  return data as Record<string, unknown>;
 }
 
 export async function rpcMergeGuestProgress(xp: number, badges: string[] = []) {
@@ -203,6 +337,8 @@ export async function fetchDebateSession(
         : Number(row.soft_timer_minutes),
     debate_started_at: row.debate_started_at ? String(row.debate_started_at) : null,
     verdict_announced_at: row.verdict_announced_at ? String(row.verdict_announced_at) : null,
+    paused_at: row.paused_at ? String(row.paused_at) : null,
+    total_paused_seconds: Number(row.total_paused_seconds ?? 0),
     ready_to_vote: Array.isArray(row.ready_to_vote) ? (row.ready_to_vote as string[]) : [],
   };
 }

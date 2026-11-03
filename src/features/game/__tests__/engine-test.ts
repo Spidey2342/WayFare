@@ -28,11 +28,11 @@ function config(overrides: Partial<SessionConfig> = {}): SessionConfig {
     id: 'session-1',
     mode: 'team',
     players: [
-      { id: 'p1', name: 'Kofi', teamId: 'a' },
+      { id: 'p1', name: 'Player 1', teamId: 'a' },
       { id: 'p2', name: 'Ama', teamId: 'b' },
     ],
     teams: [
-      { id: 'a', name: 'Kofi team', playerIds: ['p1'] },
+      { id: 'a', name: 'Team A', playerIds: ['p1'] },
       { id: 'b', name: 'Ama team', playerIds: ['p2'] },
     ],
     cards,
@@ -50,7 +50,7 @@ describe('game engine', () => {
     expect(first.roundsTotal).toBe(2);
     expect(() =>
       createSession(
-        config({ players: [first.players[0]!, { id: 'p3', name: 'kofi' }] }),
+        config({ players: [first.players[0]!, { id: 'p3', name: 'Player 1' }] }),
         mulberry32(1),
       ),
     ).toThrow('unique');
@@ -122,7 +122,7 @@ describe('game engine', () => {
     const solo = createSession(
       config({
         mode: 'solo',
-        players: [{ id: 'p1', name: 'Kofi' }],
+        players: [{ id: 'p1', name: 'Player 1' }],
         teams: [],
       }),
       mulberry32(1),

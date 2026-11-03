@@ -11,7 +11,7 @@ import {
 const sample: LobbyRpcResponse = {
   group: {
     id: 'g1',
-    name: 'Unity Youth',
+    name: 'Sample Group',
     description: null,
     photo_url: null,
     is_private: true,
@@ -24,7 +24,7 @@ const sample: LobbyRpcResponse = {
       user_id: 'u1',
       role: 'leader',
       joined_at: '2026-01-01T00:00:00Z',
-      display_name: 'Kofi',
+      display_name: 'Leader',
       avatar_key: 'sunrise',
     },
   ],
@@ -39,7 +39,7 @@ describe('lobby member mapping', () => {
     const rows = baseMembersFromRpc(sample);
     expect(rows).toHaveLength(1);
     expect(rows[0]?.role).toBe('leader');
-    expect(rows[0]?.displayName).toBe('Kofi');
+    expect(rows[0]?.displayName).toBe('Leader');
   });
 
   it('merges presence ready state', () => {

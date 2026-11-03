@@ -32,8 +32,8 @@ export default function SetupScreen() {
   const [mode, setMode] = useState<'pass' | 'team'>(preferred === 'team' ? 'team' : 'pass');
   const [minutes, setMinutes] = useState<RoundMinutes>(10);
   const [players, setPlayers] = useState<DraftPlayer[]>([
-    { id: 'p1', name: 'Kofi', color: '#FFB800' },
-    { id: 'p2', name: 'Ama', color: '#4ECDC4' },
+    { id: 'p1', name: 'Player 1', color: '#FFB800' },
+    { id: 'p2', name: 'Player 2', color: '#4ECDC4' },
   ]);
   const [draft, setDraft] = useState('');
   const [error, setError] = useState<string | null>(null);

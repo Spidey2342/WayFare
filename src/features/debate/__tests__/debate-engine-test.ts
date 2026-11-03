@@ -1,15 +1,16 @@
 import { assignSidesBalanced, validateManualSides } from '../assignSides';
 import { computeResults } from '../computeResults';
 import {
+  beginPassDebateFromReady,
+  confirmPassHandoff,
+  confirmPassTopic,
   createPassSession,
   finalizeLocalSession,
   hostEndDebate,
-  skipPrep,
+  pickPassSide,
+  publishPassVerdict,
   startDebate,
   startPrep,
-  startVoting,
-  submitPassVote,
-  tapReadyToVote,
   topicById,
 } from '../localSession';
 import { debateEarlyEndAllowed } from '../nextPhase';
@@ -89,65 +90,75 @@ describe('votes and results', () => {
 describe('phase transitions and early end', () => {
   const topic = topicById('topic-01')!;
 
-  it('ends debate when all ready', () => {
+  it('passes the phone so each debater picks a side', () => {
     let session = createPassSession(
       's1',
       topic,
       [
-        { id: 'p1', displayName: 'A' },
-        { id: 'p2', displayName: 'B' },
+        { id: 'p1', displayName: 'Judge' },
+        { id: 'p2', displayName: 'Ama' },
+        { id: 'p3', displayName: 'Sam' },
       ],
       'p1',
     );
-    const now = Date.now();
-    session = startPrep(session, now);
-    session = skipPrep(session, now);
-    session = startDebate(session, now);
-    session = tapReadyToVote(session, 'p1');
+    session = confirmPassTopic({ ...session, phase: 'picking' });
+    session = confirmPassHandoff(session);
+    session = pickPassSide(session, 'p2', 'agree');
+    session = confirmPassHandoff(session);
+    session = pickPassSide(session, 'p3', 'disagree');
+    expect(session.pass?.allSidesPicked).toBe(true);
+    session = beginPassDebateFromReady(session, 0);
     expect(session.phase).toBe('debate');
-    session = tapReadyToVote(session, 'p2');
-    expect(session.phase).toBe('voting');
   });
 
-  it('allows host end debate', () => {
+  it('allows judge to end debate into verdict (not peer voting)', () => {
     let session = createPassSession(
       's2',
       topic,
       [
-        { id: 'p1', displayName: 'A' },
-        { id: 'p2', displayName: 'B' },
+        { id: 'p1', displayName: 'Judge' },
+        { id: 'p2', displayName: 'A' },
+        { id: 'p3', displayName: 'B' },
       ],
       'p1',
     );
-    session = startDebate(startPrep(session, 0), 0);
-    session = hostEndDebate(session);
-    expect(session.phase).toBe('voting');
+    session = {
+      ...session,
+      phase: 'debate',
+      players: [
+        { id: 'p1', displayName: 'Judge', side: null },
+        { id: 'p2', displayName: 'A', side: 'agree' },
+        { id: 'p3', displayName: 'B', side: 'disagree' },
+      ],
+    };
+    session = hostEndDebate(session, 0);
+    expect(session.phase).toBe('verdict');
   });
 
-  it('runs pass voting to results', () => {
+  it('publishes judge verdict to results', () => {
     let session = createPassSession(
       's3',
       topic,
       [
-        { id: 'p1', displayName: 'A' },
-        { id: 'p2', displayName: 'B' },
+        { id: 'p1', displayName: 'Judge' },
+        { id: 'p2', displayName: 'A' },
+        { id: 'p3', displayName: 'B' },
       ],
       'p1',
     );
-    session = startVoting(
-      {
-        ...session,
-        players: [
-          { id: 'p1', displayName: 'A', side: 'agree' },
-          { id: 'p2', displayName: 'B', side: 'disagree' },
-        ],
-      },
-      0,
-    );
-    session = submitPassVote(session, 'p1', 'p2');
-    session = submitPassVote(session, 'p2', 'p1');
+    session = {
+      ...session,
+      phase: 'verdict',
+      players: [
+        { id: 'p1', displayName: 'Judge', side: null },
+        { id: 'p2', displayName: 'A', side: 'agree' },
+        { id: 'p3', displayName: 'B', side: 'disagree' },
+      ],
+    };
+    session = publishPassVerdict(session, 'agree', 'p2');
     expect(session.phase).toBe('results');
-    expect(session.results).toBeTruthy();
+    expect(session.results?.winningSides).toEqual(['agree']);
+    expect(session.scores.p2?.total).toBeGreaterThan(0);
   });
 
   it('detects timed early end', () => {

@@ -1,6 +1,10 @@
 /**
- * Debate V2 RPC load test (12 users). Requires env:
- * SUPABASE_TEST_URL, SUPABASE_TEST_ANON_KEY, SUPABASE_TEST_PASSWORD
- * Never commit keys. Creates users via Auth admin is out of scope; use pre-seeded test accounts.
+ * 12-user online debate load test (O-1). Delegates to debate-v2-acceptance.mjs.
+ * Requires .env.test — see .env.test.example.
  */
-console.log('debate-v2-load-test: configure TEST project env vars and implement account list locally.');
+import { spawnSync } from 'node:child_process';
+import { resolve } from 'node:path';
+
+const script = resolve(process.cwd(), 'scripts/debate-v2-acceptance.mjs');
+const result = spawnSync(process.execPath, [script], { stdio: 'inherit' });
+process.exit(result.status ?? 1);

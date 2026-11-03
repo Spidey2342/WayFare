@@ -26,7 +26,7 @@ describe('migratePersisted', () => {
     expect(migrated.themePreference).toBe('dark');
     expect(migrated.onboarded).toBe(true);
     expect(migrated.preferredMode).toBe('team');
-    expect(migrated.profile).toEqual({ name: 'Ama', avatarColor: '#4ECDC4' });
+    expect(migrated.profile).toEqual({ name: '', avatarColor: '#4ECDC4' });
     expect(migrated.foundingMember).toBe(true);
     expect(migrated.installPromptDismissed).toBe(true);
   });
@@ -43,14 +43,14 @@ describe('migratePersisted', () => {
     );
     expect(migrated.themePreference).toBe('light');
     expect(migrated.preferredMode).toBeNull();
-    expect(migrated.profile.name).toBe('Kofi');
+    expect(migrated.profile.name).toBe('');
   });
 
   test('adds a fresh progress record when an older save has none', () => {
     const migrated = migratePersisted({ onboarded: true, profile: { name: 'Ama' } }, 1);
     expect(migrated.progress.xp).toBe(0);
     expect(migrated.progress.badgesEarned).toEqual([]);
-    expect(migrated.profile.name).toBe('Ama');
+    expect(migrated.profile.name).toBe('');
   });
 
   test('reads learn progress fields on version 3 saves', () => {

@@ -1,0 +1,842 @@
+[
+  {
+    "id": "dt-001",
+    "text": "Phones should be allowed during church services.",
+    "category": "Church Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-002",
+    "text": "Young people should lead the main Sunday service once a month.",
+    "category": "Church Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-003",
+    "text": "Worship songs matter more than the sermon.",
+    "category": "Church Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-004",
+    "text": "Church services should be capped at two hours.",
+    "category": "Church Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-005",
+    "text": "Online church is as good as in-person church.",
+    "category": "Church Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-006",
+    "text": "It is better to serve in secret than to be seen serving.",
+    "category": "Church Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-007",
+    "text": "Churches should spend more on community projects than on buildings.",
+    "category": "Church Life",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-008",
+    "text": "Dressing in your Sunday best honors God more than dressing casually.",
+    "category": "Church Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-009",
+    "text": "Every church member should serve on at least one team.",
+    "category": "Church Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-010",
+    "text": "Testimonies should be shared more often during services.",
+    "category": "Church Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-011",
+    "text": "Church announcements should be sent by message, not read out during service.",
+    "category": "Church Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-012",
+    "text": "Altar calls are still the best way to invite people to follow Jesus.",
+    "category": "Church Life",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-013",
+    "text": "Youth should have their own service instead of sitting in the main one.",
+    "category": "Church Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-014",
+    "text": "Fasting is more powerful when a church does it together.",
+    "category": "Church Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-015",
+    "text": "Church choirs should sing more modern songs than traditional hymns.",
+    "category": "Church Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-016",
+    "text": "Everyone should be required to join a small group.",
+    "category": "Church Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-017",
+    "text": "Visiting other churches from time to time helps your faith grow.",
+    "category": "Church Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-018",
+    "text": "Church events should always include free food.",
+    "category": "Church Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-019",
+    "text": "Churches should publish how they use offerings.",
+    "category": "Church Life",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-020",
+    "text": "Quiet time with God matters more than attending church programs.",
+    "category": "Church Life",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-021",
+    "text": "Social media does more harm than good for youth ministries.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-022",
+    "text": "Christians should post about their faith online more boldly.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-023",
+    "text": "AI tools can help us study the Bible but should never replace it.",
+    "category": "Faith & Tech",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-024",
+    "text": "It is wrong to use your phone during personal prayer time.",
+    "category": "Faith & Tech",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-025",
+    "text": "Streaming a sermon is just as good as attending live.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-026",
+    "text": "Christian influencers have more impact than pastors.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-027",
+    "text": "A day off social media each week would improve our faith.",
+    "category": "Faith & Tech",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-028",
+    "text": "Gaming is a waste of time for a Christian.",
+    "category": "Faith & Tech",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-029",
+    "text": "Group chats cause more gossip than they prevent loneliness.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-030",
+    "text": "Posting about your good deeds online defeats their purpose.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-031",
+    "text": "Bible apps are better than printed Bibles.",
+    "category": "Faith & Tech",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-032",
+    "text": "Editing and filtering photos is a form of dishonesty.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-033",
+    "text": "Churches should livestream every service.",
+    "category": "Faith & Tech",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-034",
+    "text": "Christian music should be as popular as secular music.",
+    "category": "Faith & Tech",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-035",
+    "text": "Technology makes it easier to share the gospel than ever before.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-036",
+    "text": "Reading the Bible on a phone is just as good as on paper.",
+    "category": "Faith & Tech",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-037",
+    "text": "Online arguments about faith do more harm than good.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-038",
+    "text": "Parents should monitor their teenagers' phones.",
+    "category": "Faith & Tech",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-039",
+    "text": "Cancel culture has no place among Christians.",
+    "category": "Faith & Tech",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-040",
+    "text": "A video call can replace visiting a sick friend.",
+    "category": "Faith & Tech",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-041",
+    "text": "It is better to have a few close Christian friends than many acquaintances.",
+    "category": "Friendships & Relationships",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-042",
+    "text": "True friends tell you hard truths, even when it hurts.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-043",
+    "text": "You should forgive someone even if they never apologize.",
+    "category": "Friendships & Relationships",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-044",
+    "text": "Friends who don't share your faith can still make you a better person.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-045",
+    "text": "It is okay to leave a group of friends who pull you away from God.",
+    "category": "Friendships & Relationships",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-046",
+    "text": "Peer pressure is stronger today than it was for our parents.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-047",
+    "text": "Young people should still listen to their parents' advice after they turn 18.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-048",
+    "text": "Dating while at school is wise for a Christian.",
+    "category": "Friendships & Relationships",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-049",
+    "text": "Group hangouts are better than one-on-one dates for young Christians.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-050",
+    "text": "Honesty is more important than keeping the peace.",
+    "category": "Friendships & Relationships",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-051",
+    "text": "Gossip is just as serious as lying.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-052",
+    "text": "It is better to forgive quickly than to wait until you feel ready.",
+    "category": "Friendships & Relationships",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-053",
+    "text": "A mentor is more valuable than a best friend.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-054",
+    "text": "Jealousy between friends is normal and does not need to be confronted.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-055",
+    "text": "Making new friends is harder for young people today than it used to be.",
+    "category": "Friendships & Relationships",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-056",
+    "text": "Apologizing first is a sign of strength.",
+    "category": "Friendships & Relationships",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-057",
+    "text": "Siblings can be your best friends.",
+    "category": "Friendships & Relationships",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-058",
+    "text": "We should celebrate other people's success even when we are struggling.",
+    "category": "Friendships & Relationships",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-059",
+    "text": "It is okay to say no to a friend when you are overwhelmed.",
+    "category": "Friendships & Relationships",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-060",
+    "text": "Accountability partners help more than they annoy.",
+    "category": "Friendships & Relationships",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-061",
+    "text": "Working hard for money is compatible with putting God first.",
+    "category": "Money & Hustle",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-062",
+    "text": "Young people should start a side hustle before they graduate.",
+    "category": "Money & Hustle",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-063",
+    "text": "Giving to the church should come before saving for yourself.",
+    "category": "Money & Hustle",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-064",
+    "text": "Being rich makes it harder to follow Jesus.",
+    "category": "Money & Hustle",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-065",
+    "text": "It is better to earn a little honestly than a lot dishonestly.",
+    "category": "Money & Hustle",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-066",
+    "text": "A Christian should never borrow money.",
+    "category": "Money & Hustle",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-067",
+    "text": "Giving should be planned, not done only when you feel like it.",
+    "category": "Money & Hustle",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-068",
+    "text": "Entrepreneurship is a better path than a regular job for young Christians.",
+    "category": "Money & Hustle",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-069",
+    "text": "Social media influencers earn money too easily.",
+    "category": "Money & Hustle",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-070",
+    "text": "Money problems are the biggest reason young people stop serving in church.",
+    "category": "Money & Hustle",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-071",
+    "text": "Saving money is a sign of faith, not a lack of it.",
+    "category": "Money & Hustle",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-072",
+    "text": "It is wrong to charge friends and family for your services.",
+    "category": "Money & Hustle",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-073",
+    "text": "Young people should support their parents financially as soon as they can.",
+    "category": "Money & Hustle",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-074",
+    "text": "Online betting does more harm than good to young people.",
+    "category": "Money & Hustle",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-075",
+    "text": "Every young person should learn to budget before getting a job.",
+    "category": "Money & Hustle",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-076",
+    "text": "Success should be measured by impact, not income.",
+    "category": "Money & Hustle",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-077",
+    "text": "It is okay to turn down a job that goes against your values, even if you need the money.",
+    "category": "Money & Hustle",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-078",
+    "text": "Giving anonymously is better than giving publicly.",
+    "category": "Money & Hustle",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-079",
+    "text": "Free online courses are enough to start a career.",
+    "category": "Money & Hustle",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-080",
+    "text": "Contentment matters more than ambition.",
+    "category": "Money & Hustle",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-081",
+    "text": "It is okay to skip church to study for exams.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-082",
+    "text": "Campus fellowship is more important than lectures.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-083",
+    "text": "Group assignments teach more than individual ones.",
+    "category": "Campus Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-084",
+    "text": "Students should live off campus rather than in a hostel.",
+    "category": "Campus Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-085",
+    "text": "Cheating in exams is never justified.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-086",
+    "text": "Student leaders should be elected by votes, not appointed.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-087",
+    "text": "Christians should get involved in campus politics.",
+    "category": "Campus Life",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-088",
+    "text": "Studying with friends works better than studying alone.",
+    "category": "Campus Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-089",
+    "text": "Students should work part-time while studying.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-090",
+    "text": "Late-night study sessions are worth the sleep you lose.",
+    "category": "Campus Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-091",
+    "text": "Class attendance should be compulsory.",
+    "category": "Campus Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-092",
+    "text": "Exams should be replaced with projects.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-093",
+    "text": "A Christian student should speak up when classmates cheat.",
+    "category": "Campus Life",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-094",
+    "text": "Social events on campus are a distraction from school.",
+    "category": "Campus Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-095",
+    "text": "Choosing a course you love is better than choosing one that pays well.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-096",
+    "text": "Joining many clubs is better than focusing on one.",
+    "category": "Campus Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-097",
+    "text": "Internships matter more than grades.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-098",
+    "text": "Learning a trade is as valuable as getting a degree.",
+    "category": "Campus Life",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-099",
+    "text": "The pressure at university causes more stress than it is worth.",
+    "category": "Campus Life",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-100",
+    "text": "Free time should be protected as strictly as study time.",
+    "category": "Campus Life",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-101",
+    "text": "Knowing the Bible by heart matters more than living it out.",
+    "category": "Bible & Faith",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-102",
+    "text": "Reading a short passage daily beats reading a long one weekly.",
+    "category": "Bible & Faith",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-103",
+    "text": "Memorizing Scripture is still worth the effort.",
+    "category": "Bible & Faith",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-104",
+    "text": "Doubt is a normal part of faith.",
+    "category": "Bible & Faith",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-105",
+    "text": "God speaks mainly through the Bible, not through feelings.",
+    "category": "Bible & Faith",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-106",
+    "text": "Everyone should have a personal prayer routine.",
+    "category": "Bible & Faith",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-107",
+    "text": "Praying out loud is better than praying silently.",
+    "category": "Bible & Faith",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-108",
+    "text": "Christians should avoid secular music completely.",
+    "category": "Bible & Faith",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-109",
+    "text": "The Old Testament is just as important as the New Testament for young people.",
+    "category": "Bible & Faith",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-110",
+    "text": "Fasting should be kept private.",
+    "category": "Bible & Faith",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-111",
+    "text": "Prayer without action is incomplete.",
+    "category": "Bible & Faith",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-112",
+    "text": "Being kind is more convincing than winning an argument about faith.",
+    "category": "Bible & Faith",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-113",
+    "text": "Asking hard questions about faith makes it stronger.",
+    "category": "Bible & Faith",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-114",
+    "text": "Studying the Bible in a group is better than studying alone.",
+    "category": "Bible & Faith",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-115",
+    "text": "Parables teach better than direct commands.",
+    "category": "Bible & Faith",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-116",
+    "text": "God's timing matters more than our planning.",
+    "category": "Bible & Faith",
+    "difficulty": "deep",
+    "isPublished": true
+  },
+  {
+    "id": "dt-117",
+    "text": "Gratitude should be practiced daily, not only when things go well.",
+    "category": "Bible & Faith",
+    "difficulty": "light",
+    "isPublished": true
+  },
+  {
+    "id": "dt-118",
+    "text": "Worship is about more than music.",
+    "category": "Bible & Faith",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-119",
+    "text": "Church history is worth studying for young Christians.",
+    "category": "Bible & Faith",
+    "difficulty": "medium",
+    "isPublished": true
+  },
+  {
+    "id": "dt-120",
+    "text": "Silence and solitude are important for hearing from God.",
+    "category": "Bible & Faith",
+    "difficulty": "deep",
+    "isPublished": true
+  }
+]

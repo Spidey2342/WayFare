@@ -79,13 +79,13 @@ export default function DevKitScreen() {
         <TimerRing secondsLeft={32} />
         <AvatarStack
           people={[
-            { name: 'Kofi', color: palette.gold },
-            { name: 'Ama', color: palette.teal },
-            { name: 'Paul', color: palette.coral },
+            { name: 'P1', color: palette.gold },
+            { name: 'P2', color: palette.teal },
+            { name: 'P3', color: palette.coral },
           ]}
           extra={4}
         />
-        <Avatar name="Kofi" color={palette.gold} size={64} ring />
+        <Avatar name="Preview" color={palette.gold} size={64} ring />
 
         <FlipCard
           flipped={flipped}
@@ -149,7 +149,7 @@ export default function DevKitScreen() {
           <BadgeTile name="Scripture Seeker" earned icon="book-open" color="teal" />
           <BadgeTile name="Team Titan" earned={false} icon="shield" color="purple" />
         </View>
-        <PlayerRow name="Kofi" color={color} onColorChange={setColor} />
+        <PlayerRow name="Preview" color={color} onColorChange={setColor} />
         <RoundSlider value={minutes} onChange={setMinutes} />
         <DiceCube face={4} rolling={false} onPress={() => toast.show('Dice tapped')} />
         <SettingsRow

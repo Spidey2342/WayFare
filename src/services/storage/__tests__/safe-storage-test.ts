@@ -25,9 +25,9 @@ describe('createSafeStorage', () => {
     };
     const storage = createSafeStorage(driver);
 
-    await storage.setItem('name', 'Kofi');
+    await storage.setItem('name', 'alpha');
     expect(storage.isUsingMemory()).toBe(true);
-    await expect(storage.getItem('name')).resolves.toBe('Kofi');
+    await expect(storage.getItem('name')).resolves.toBe('alpha');
     await storage.removeItem('name');
     await expect(storage.getItem('name')).resolves.toBeNull();
   });

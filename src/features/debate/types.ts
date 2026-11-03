@@ -94,8 +94,25 @@ export interface LocalDebateSession {
     rating: number | null;
     soloPhase: 'pick' | 'prep' | 'agree' | 'disagree' | 'reflect' | 'done';
   };
+  /** Same-phone D5 elapsed clock (local). */
+  localClock?: {
+    debateStartedAt: number;
+    pausedAt: number | null;
+    totalPausedMs: number;
+    softTimerMinutes: number | null;
+    nudgeShown?: boolean;
+  };
   pass?: {
-    votingPlayerIndex: number;
-    voteConfirmed: boolean;
+    /** Players who must pick Agree/Disagree (everyone except the judge / host). */
+    debaterIds: string[];
+    /** Index into `debaterIds` for the current pass-the-phone turn. */
+    pickerIndex: number;
+    /** Current holder tapped "I'm {name}" before the private side pick. */
+    handoffConfirmed: boolean;
+    /** All debaters have chosen; show Ready? before START DEBATE. */
+    allSidesPicked: boolean;
+    /** @deprecated Legacy peer-vote flow */
+    votingPlayerIndex?: number;
+    voteConfirmed?: boolean;
   };
 }

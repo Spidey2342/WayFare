@@ -3,14 +3,15 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Button, Logo, Screen } from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthContext';
-import { fontFamily, palette, spacing } from '@/theme';
+import { authScreen } from '@/features/auth/authScreenTheme';
+import { fontFamily, spacing } from '@/theme';
 
 export default function AuthWelcomeScreen() {
   const router = useRouter();
   const { continueAsGuest } = useAuth();
 
   return (
-    <Screen background={palette.midnight} gutter={palette.midnight}>
+    <Screen background={authScreen.bg} gutter={authScreen.bg}>
       <View style={styles.body}>
         <Logo />
         <Text style={styles.title}>Wayfare</Text>
@@ -46,21 +47,19 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: fontFamily.headingSemi,
     fontSize: 28,
-    color: palette.white,
+    color: authScreen.text,
   },
   tagline: {
     fontFamily: fontFamily.body,
-    color: palette.white,
-    opacity: 0.85,
+    color: authScreen.muted,
     textAlign: 'center',
     marginBottom: spacing.lg,
   },
   legal: {
     fontFamily: fontFamily.body,
-    color: palette.warmGray,
+    color: authScreen.muted,
     fontSize: 12,
     textAlign: 'center',
-    marginTop: spacing.lg,
-    lineHeight: 18,
+    marginTop: spacing.md,
   },
 });

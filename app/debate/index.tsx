@@ -1,60 +1,69 @@
 import { useEffect } from 'react';
+
+import { hydrateDebateTopics } from '@/features/debate/localSession';
+import { syncTopicsSince } from '@/features/debate/topicCache';
+import { ensureOutboxFlushOnReconnect } from '@/features/debate/outbox';
+import { syncMyStats } from '@/features/debate/statsCache';
+import { useAuth } from '@/features/auth/AuthContext';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { ChevronRight, Smartphone, User, Users } from 'lucide-react-native';
 
-import { BackButton, Screen, ScreenScroll } from '@/components/ui';
+import { Screen, ScreenScroll } from '@/components/ui';
 import { GameRulesSheet } from '@/components/game/GameRulesSheet';
+import { DebateModeHeader, debateUi } from '@/features/debate/components/debateV2Ui';
 import { useGameRules } from '@/features/game/useGameRules';
-import { fontFamily, minTapTarget, palette, radii, shadows, spacing, typeScale } from '@/theme';
+import { fontFamily, minTapTarget, palette, radii, spacing, typeScale } from '@/theme';
 
 const tiles = [
   {
     id: 'solo' as const,
-    title: 'Solo',
-    body: 'Practice both sides on your own.',
+    title: 'Solo Mode',
+    body: 'Daily challenge. Pick a stance and make your case.',
     href: '/debate/solo' as const,
     icon: User,
-    tint: palette.coralSoft,
-    iconColor: palette.coral,
+    tint: debateUi.agree,
   },
   {
     id: 'pass' as const,
-    title: 'Same phone',
-    body: 'Pass the device for secret votes.',
+    title: 'Same Phone',
+    body: 'Pass the device — pick sides in person.',
     href: '/debate/pass/setup' as const,
     icon: Smartphone,
-    tint: palette.tealSoft,
-    iconColor: palette.teal,
+    tint: debateUi.disagree,
   },
   {
     id: 'online' as const,
-    title: 'Join online',
-    body: 'Room code with your group.',
+    title: 'Group Online',
+    body: 'Debate Mode with your group room.',
     href: '/debate/join' as const,
     icon: Users,
-    tint: '#FFF4D2',
-    iconColor: palette.goldDeep,
+    tint: debateUi.gold,
   },
 ];
 
 export default function DebateHubScreen() {
   const router = useRouter();
+  const { user, isGuest } = useAuth();
   const { entry, open, openRules, openIfFirstTime, closeRules } = useGameRules('debate');
 
   useEffect(() => {
     openIfFirstTime();
-  }, [openIfFirstTime]);
+    ensureOutboxFlushOnReconnect();
+    void syncTopicsSince().then(() => hydrateDebateTopics());
+    if (user && !isGuest) void syncMyStats();
+  }, [openIfFirstTime, user, isGuest]);
 
   return (
     <>
-      <Screen background={palette.offWhite} gutter={palette.offWhite}>
+      <Screen background={palette.midnightDeep} gutter={palette.midnightDeep}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <BackButton label="Back" fallback="/home" />
-          <Text style={typeScale.h1}>Debate</Text>
-          <Pressable accessibilityRole="button" onPress={openRules} style={styles.howLink}>
-            <Text style={styles.howText}>How to play</Text>
-          </Pressable>
+          <DebateModeHeader
+            title="DEBATE"
+            onBack={() => router.replace('/games' as Href)}
+            onInfo={openRules}
+          />
+          <Text style={styles.lead}>Choose how you want to play.</Text>
           <View style={styles.tiles}>
             {tiles.map((tile) => {
               const Icon = tile.icon;
@@ -65,14 +74,14 @@ export default function DebateHubScreen() {
                   onPress={() => router.push(tile.href)}
                   style={styles.tile}
                 >
-                  <View style={[styles.iconCircle, { backgroundColor: tile.tint }]}>
-                    <Icon color={tile.iconColor} size={22} />
+                  <View style={[styles.iconCircle, { borderColor: tile.tint }]}>
+                    <Icon color={tile.tint} size={22} />
                   </View>
                   <View style={styles.tileText}>
                     <Text style={styles.tileTitle}>{tile.title}</Text>
                     <Text style={styles.tileBody}>{tile.body}</Text>
                   </View>
-                  <ChevronRight color={palette.warmGray} size={20} />
+                  <ChevronRight color={debateUi.muted} size={20} />
                 </Pressable>
               );
             })}
@@ -86,27 +95,29 @@ export default function DebateHubScreen() {
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
-  howLink: { minHeight: minTapTarget, justifyContent: 'center', alignSelf: 'flex-start' },
-  howText: { fontFamily: fontFamily.bodySemi, color: palette.goldDeep, fontSize: 14 },
+  lead: { ...typeScale.bodyM, color: debateUi.muted },
   tiles: { gap: spacing.sm, marginTop: spacing.sm },
   tile: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    backgroundColor: palette.white,
-    borderRadius: radii.card,
+    backgroundColor: debateUi.card,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: debateUi.cardBorder,
     padding: spacing.lg,
     minHeight: minTapTarget + 16,
-    ...shadows.soft,
   },
   iconCircle: {
     width: 48,
     height: 48,
     borderRadius: 24,
+    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#141824',
   },
   tileText: { flex: 1, gap: 4 },
-  tileTitle: { fontFamily: fontFamily.headingSemi, fontSize: 18, color: palette.midnight },
-  tileBody: { fontFamily: fontFamily.body, fontSize: 14, color: palette.warmGray },
+  tileTitle: { fontFamily: fontFamily.headingSemi, fontSize: 18, color: palette.white },
+  tileBody: { fontFamily: fontFamily.body, fontSize: 14, color: debateUi.muted },
 });

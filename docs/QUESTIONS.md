@@ -2,27 +2,35 @@
 
 ## Frame path
 
-- Spec references `reference/design-v2/debate-v2/` numbered PNGs 1–20. That folder is **not present** in the repo.
-- UI is built from `reference/debate designs/` (read-only). Missing per-frame numbering vs spec; audit screenshots may not map 1:1 to "frame N".
+- Prompt path: `reference/design-v2/debate-v2/`. Repo ships **`reference/debate-v2/`**. Sliced frames: `docs/design-frames/debate-v2/`.
 
-## Migration filename
+## Migration filenames
 
-- Spec asked for `0005_debate_v2.sql`. **`0005_merge_before_unique_index.sql` already exists** (applied or pending). Debate V2 SQL is **`0006_debate_v2.sql`**.
+- Core: **`0006_debate_v2.sql`**, **`0007_debate_data_and_pause.sql`**, **`0008_debate_rules.sql`**, **`0009_seed_debate_topics.sql`**, **`0010_solo_pass_awards.sql`**.
 
-## Component sheet vs spec
+## Remaining gaps (post-P3)
 
-- Component sheet shows soft timer chips **30s / 60s / 90s / 120s**. Final rules specify **No limit, 3, 5, 10 minutes** only. Implementation follows the written rules.
-- Component sheet verdict subtext ("Evidence and logic supports…") differs from frame 3 "Who made the stronger case?" — frames win for group verdict UI.
-- MVP badge on frame shows "+50 PTS"; scoring spec uses **+2 MVP** — spec wins.
+| Item | Status | Notes |
+| --- | --- | --- |
+| Live online D10 layout during picking | **Open** | Full **Debate Setup / TEAMS Incomplete** panel is on `/dev/debate-v2/D10`; live judge picking still uses side boards + muted footer until valid |
+| Presence chip on every participant avatar (D3/D4 live) | **Open** | Session shows **your** chip; D10 list shows per-row chips |
+| Group player D5 (no pause/gear/Ready) | **Open** | Player variant is timer-only debating; spec screen map |
+| Email typo “Did you mean …?” Yes/No | **Open** | A1 suggests domain in sign-up; not full Yes/No link pattern |
+| Pass the judge role sheet visual QA | **Open** | `PassJudgeSheet` uses list sheet style; no pixel diff to reference |
+| Online O-1–O-9 / S-1–S-7 acceptance | **Open** | See `docs/DEBATE_REPORT.md` |
+| Restore archived groups | **Open** | No in-app restore UI (`restore_group` RPC from 0004) |
+| Server-side multi-device `connected_at` bump | **Open** | Superseded UI uses Realtime presence; DB does not rotate `connected_at` on re-login |
 
-## Topics seed file
+## Verification (done in P3)
 
-- `reference/wayfare-debate-topics/topics.json` **not found**. Keeping the existing 12 topics from `0002_debate.sql`; no invented topics.
+- Playwright D1–D10, S1–S3, O1–O3, A1–A3: **`npm run test:debate-v2-frames`** → **PASS** (2026-11-03), PNGs in `docs/audit/debate-v2/`.
+- Solo + same-phone offline: **`npm run test:debate-solo-offline`**, **`npm run test:debate-pass-offline`**.
+
+## Component sheet vs product
+
+- C07 excluded widgets: `docs/DESIGN_CONTRACT.md` DECISION #5.
+- MVP **+2 PTS**. Soft timer **3 / 5 / 10 / No limit** in sheet.
 
 ## Judge hand-over toast
 
-- Server promotes judge after 20s disconnect via `debate_touch_session` / join reload. Exact toast copy not in frames — using: "The judge role was reassigned."
-
-## Restore archived groups
-
-- Still no in-app restore UI (`restore_group` RPC exists from 0004).
+- Copy: "<name> is now the judge." (on `claim_judge` / judge promotion via reload).

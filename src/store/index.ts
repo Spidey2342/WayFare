@@ -20,6 +20,7 @@ import {
   type PersistedApp,
   type PlayModeHelpSeen,
 } from './persist';
+import { isSignedInPersist, stripServerOwnedForPersist } from './signedInPersist';
 
 interface AppActions {
   hydrated: boolean;
@@ -38,6 +39,7 @@ interface AppActions {
   toggleBook: (bookId: string) => void;
   completeQuiz: () => void;
   resetGuest: () => void;
+  clearUserSessionState: () => void;
   markChecklistItem: (id: ChecklistItemId) => void;
   dismissChecklist: () => void;
   setLocalTutorialStep: (step: number) => void;
@@ -92,6 +94,12 @@ export const useAppStore = create<AppStore>()(
       completeQuiz: () =>
         set((state) => ({ progress: applyQuizComplete(state.progress, new Date()) })),
       resetGuest: () => set({ ...defaultPersisted(), onboarded: false, hydrated: true }),
+      clearUserSessionState: () =>
+        set((state) => ({
+          ...defaultPersisted(),
+          themePreference: state.themePreference,
+          hydrated: true,
+        })),
       markChecklistItem: (id) =>
         set((state) => ({
           checklist: {
@@ -142,13 +150,13 @@ export const useAppStore = create<AppStore>()(
         themePreference: state.themePreference,
         onboarded: state.onboarded,
         preferredMode: state.preferredMode,
-        profile: state.profile,
+        profile: isSignedInPersist() ? { name: '', avatarColor: '' } : state.profile,
         installPromptDismissed: state.installPromptDismissed,
         guidelinesSeen: state.guidelinesSeen,
         foundingMember: state.foundingMember,
         notifyInterest: state.notifyInterest,
         favoriteDeckIds: state.favoriteDeckIds,
-        progress: state.progress,
+        progress: stripServerOwnedForPersist(state.progress),
         checklist: state.checklist,
         localTutorialStep: state.localTutorialStep,
         localTutorialCompleted: state.localTutorialCompleted,

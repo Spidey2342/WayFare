@@ -9,11 +9,11 @@ import { suggestEmailDomain } from '@/features/auth/emailTypoSuggest';
 import { normalizeEmail } from '@/features/auth/normalizeEmail';
 import { writeLastUsedEmail } from '@/features/auth/lastUsedEmail';
 import { googleAuthEnabled, isSupabaseConfigured, requireSupabase } from '@/services/supabase';
-import { fontFamily, palette, spacing, typeScale, useTheme } from '@/theme';
+import { authScreen } from '@/features/auth/authScreenTheme';
+import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
 export default function SignUpScreen() {
   const router = useRouter();
-  const { colors } = useTheme();
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -78,19 +78,13 @@ export default function SignUpScreen() {
   };
 
   return (
-    <Screen background={palette.offWhite} gutter={palette.offWhite}>
+    <Screen background={authScreen.bg} gutter={authScreen.bg}>
       <ScreenScroll contentContainerStyle={styles.content}>
         <BackButton label="Back" fallback="/auth/welcome" />
-        <Text style={[typeScale.h1, { color: colors.textPrimary }]}>Join the journey</Text>
+        <Text style={[typeScale.h1, { color: authScreen.text }]}>Create Account</Text>
+        <Text style={styles.tagline}>Join the world&apos;s sharpest debating community.</Text>
         <AuthField
-          label="DISPLAY NAME"
-          value={displayName}
-          onChangeText={setDisplayName}
-          autoCapitalize="words"
-          placeholder="e.g. John D."
-        />
-        <AuthField
-          label="EMAIL"
+          label="EMAIL ADDRESS"
           value={email}
           keyboardType="email-address"
           autoCapitalize="none"
@@ -114,7 +108,14 @@ export default function SignUpScreen() {
           </View>
         ) : null}
         <AuthField
-          label="PASSWORD"
+          label="FULL NAME"
+          value={displayName}
+          onChangeText={setDisplayName}
+          autoCapitalize="words"
+          placeholder="e.g. John D."
+        />
+        <AuthField
+          label="YOUR PASSWORD"
           value={password}
           secureTextEntry={!showPassword}
           onChangeText={setPassword}
@@ -130,32 +131,30 @@ export default function SignUpScreen() {
           style={styles.checkRow}
         >
           <View style={[styles.check, ageConfirmed && styles.checkOn]} />
-          <Text style={[styles.checkLabel, { color: colors.textSecondary }]}>
+          <Text style={[styles.checkLabel, { color: authScreen.muted }]}>
             I confirm that I am 13 or older and agree to the terms and privacy policy.
           </Text>
         </Pressable>
         {duplicateNotice ? (
           <View style={styles.notice}>
-            <Text style={styles.noticeText}>You already have an account.</Text>
-            <Pressable
-              onPress={() =>
-                router.push({
-                  pathname: '/auth/sign-in',
-                  params: { email: normalizeEmail(email) },
-                })
-              }
-            >
-              <Text style={styles.link}>Log in instead</Text>
-            </Pressable>
+            <Text style={styles.noticeText}>
+              You already have an account.{' '}
+              <Text
+                style={styles.link}
+                onPress={() =>
+                  router.push({
+                    pathname: '/auth/sign-in',
+                    params: { email: normalizeEmail(email) },
+                  })
+                }
+              >
+                Log in instead
+              </Text>
+            </Text>
           </View>
         ) : null}
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        <Button
-          label="Create account"
-          variant="primary"
-          disabled={loading}
-          onPress={() => void submit()}
-        />
+        <Button label="CONTINUE" variant="gold" disabled={loading} onPress={() => void submit()} />
         {googleAuthEnabled ? (
           <Button
             label="Continue with Google"
@@ -177,6 +176,12 @@ export default function SignUpScreen() {
 
 const styles = StyleSheet.create({
   content: { padding: spacing.lg, gap: spacing.md, paddingBottom: 48 },
+  tagline: {
+    fontFamily: fontFamily.body,
+    fontSize: 15,
+    color: authScreen.muted,
+    marginTop: -4,
+  },
   toggle: { fontFamily: fontFamily.bodySemi, color: palette.blue, fontSize: 14 },
   checkRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-start' },
   check: {
@@ -191,11 +196,15 @@ const styles = StyleSheet.create({
   checkLabel: { flex: 1, fontFamily: fontFamily.body, lineHeight: 22 },
   error: { color: palette.coral, fontFamily: fontFamily.body },
   notice: { gap: spacing.xs },
-  noticeText: { fontFamily: fontFamily.body, color: palette.ink },
+  noticeText: { fontFamily: fontFamily.body, color: authScreen.error },
   typoBox: { gap: spacing.xs },
   typoText: { fontFamily: fontFamily.body, color: palette.warmGray },
   typoActions: { flexDirection: 'row', gap: spacing.md },
   footer: { textAlign: 'center', fontFamily: fontFamily.body, color: palette.warmGray },
-  link: { color: palette.blue, fontFamily: fontFamily.bodySemi },
+  link: {
+    color: authScreen.gold,
+    fontFamily: fontFamily.bodySemi,
+    textDecorationLine: 'underline',
+  },
   linkMuted: { color: palette.warmGray, fontFamily: fontFamily.bodySemi },
 });
