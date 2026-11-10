@@ -1,35 +1,43 @@
 export const AUTH_RETURN_TO_KEY = 'wayfare.auth.returnTo';
 
-const AUTH_REQUIRED_PREFIXES = ['/groups'] as const;
-
 export type PlayMode = 'solo' | 'pass' | 'online';
 
 const INTRO_PATHS = ['/welcome', '/how-it-works', '/choose-mode'] as const;
 
-export function requiresAuth(pathname: string): boolean {
+const SIGNED_OUT_AUTH_PATHS = [
+  '/auth/welcome',
+  '/auth/sign-up',
+  '/auth/sign-in',
+  '/auth/reset-password',
+  '/auth/under-13',
+] as const;
+
+export function welcomePath(): '/auth/welcome' {
+  return '/auth/welcome';
+}
+
+export function isIntroPath(pathname: string): boolean {
   const path = pathname.split('?')[0] ?? pathname;
-  if (path === '/debate/solo') return false;
-  if (path.startsWith('/debate/pass')) return false;
-  if (path === '/debate' || path === '/debate/') return false;
-  if (path.startsWith('/debate/')) return true;
-  return AUTH_REQUIRED_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+  return INTRO_PATHS.some((intro) => path === intro || path.startsWith(`${intro}/`));
 }
 
-export function requiresAccountForPlayMode(mode: PlayMode): boolean {
-  return mode === 'online';
+export function isSignedOutAllowedPath(pathname: string): boolean {
+  const path = pathname.split('?')[0] ?? pathname;
+  if (SIGNED_OUT_AUTH_PATHS.some((entry) => path === entry || path.startsWith(`${entry}/`))) {
+    return true;
+  }
+  if (isIntroPath(path)) return true;
+  if (path === '/auth' || path.startsWith('/auth/')) {
+    return SIGNED_OUT_AUTH_PATHS.some((entry) => path === entry || path.startsWith(`${entry}/`));
+  }
+  if (typeof __DEV__ !== 'undefined' && __DEV__ && (path === '/dev' || path.startsWith('/dev/'))) {
+    return true;
+  }
+  return false;
 }
 
-export function unsignedEntryPath(): '/auth/sign-in' {
-  return '/auth/sign-in';
-}
-
-export function resolveAuthGateRedirect(args: {
-  pathname: string;
-  hasSession: boolean;
-}): '/auth/sign-in' | null {
-  if (args.hasSession) return null;
-  if (requiresAuth(args.pathname)) return unsignedEntryPath();
-  return null;
+export function requiresAccountForPlayMode(_mode: PlayMode): boolean {
+  return true;
 }
 
 export function introRedirectPath(pathname: string, introSeen: boolean): '/welcome' | null {

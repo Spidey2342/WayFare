@@ -21,6 +21,15 @@
 | Restore archived groups | **Open** | No in-app restore UI (`restore_group` RPC from 0004) |
 | Server-side multi-device `connected_at` bump | **Open** | Superseded UI uses Realtime presence; DB does not rotate `connected_at` on re-login |
 
+## Accounts-only copy changes (2026-11-04)
+
+| Location | Was | Now |
+| --- | --- | --- |
+| `app/auth/welcome.tsx` | "Continue without signing in" button | Removed (accounts only) |
+| `app/(tabs)/profile.tsx` privacy sheet | "Guest play stays on this device only." | "Your profile and groups sync through Supabase…" |
+| `app/(tabs)/profile.tsx` log out modal | Guest progress copy | "You will sign out of your account on this device." |
+| `src/features/debate/audit/DebateV2FramePreview.tsx` A3 | Guest merge sheet | Placeholder text (A3 removed per spec §15) |
+
 ## Verification (done in P3)
 
 - Playwright D1–D10, S1–S3, O1–O3, A1–A3: **`npm run test:debate-v2-frames`** → **PASS** (2026-11-03), PNGs in `docs/audit/debate-v2/`.
@@ -34,3 +43,12 @@
 ## Judge hand-over toast
 
 - Copy: "<name> is now the judge." (on `claim_judge` / judge promotion via reload).
+
+## S1 same-phone setup (frame gap vs Figma)
+
+| Item | Frame S1 | Product (2026-11-10) | Review |
+| --- | --- | --- | --- |
+| Remove player control | Not shown | Small **×** on each added player row (`app/debate/pass/setup.tsx`) | Compare `docs/design-frames/debate-v2/S1.png` vs runtime — confirm icon placement |
+| Add player input | Dashed **+ ADD PLAYER** only | Tapping reveals inline dashed row with `TextInput` + **ADD** confirm | Same screenshot diff as above |
+
+Screenshot for review: `docs/audit/debate-v2/S1.png` (re-capture after deploy) or local `npm run test:debate-pass-setup` against served `dist`.

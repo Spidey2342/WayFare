@@ -30,7 +30,7 @@ export function DebateModeHeader({
   onBack,
   onInfo,
 }: {
-  title?: string;
+  title?: string | null;
   onBack?: () => void;
   onInfo?: () => void;
 }) {
@@ -44,7 +44,7 @@ export function DebateModeHeader({
       >
         {onBack ? <Text style={styles.backChevron}>{'‹'}</Text> : null}
       </Pressable>
-      <Text style={styles.headerTitle}>{title}</Text>
+      {title ? <Text style={styles.headerTitle}>{title}</Text> : <View style={styles.headerSide} />}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="How debate works"
@@ -88,14 +88,17 @@ export function DebateGoldButton({
   disabled,
   loading,
   onPress,
+  testID,
 }: {
   label: string;
   disabled?: boolean;
   loading?: boolean;
   onPress?: () => void;
+  testID?: string;
 }) {
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityState={{ disabled: disabled || loading }}
       disabled={disabled || loading}

@@ -14,9 +14,9 @@ export default function AuthFrameDevScreen() {
     return (
       <Screen background={authScreen.bg} gutter={authScreen.bg}>
         <ScreenScroll contentContainerStyle={styles.content}>
-          <Avatar name="Guest User" color={palette.gold} size={72} />
-          <Text style={styles.title}>Welcome back, Guest!</Text>
-          <Text style={styles.muted}>guest@example.com</Text>
+          <Avatar name="Alex" color={palette.gold} size={72} />
+          <Text style={styles.title}>Welcome back, Alex!</Text>
+          <Text style={styles.muted}>alex@example.com</Text>
           <Text style={styles.link}>NOT YOU?</Text>
           <AuthField
             label="YOUR PASSWORD"

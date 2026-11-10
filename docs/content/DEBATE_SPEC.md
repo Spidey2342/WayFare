@@ -21,7 +21,7 @@ Frame IDs: D1-D10 (group), S1-S3 (same phone), O1-O3 (solo), A1-A3 (account), fr
 - Max 20 participants (including the judge). Design and test for 12. Minimum to start debating: 1 debater on each side (so 3 people including the judge).
 - A user can be in only ONE live online session. Joining again from another device takes over the seat.
 - Room/lobby expiry: 4 hours after last activity.
-- Same phone: 2 to 8 players, one of them is the judge.
+- Same phone: 3 to 8 players, one of them is the judge.
 
 ## 3. ONLINE STATE MACHINE (server-authoritative)
 Phases: LOBBY, TOPIC, PICKING, DEBATING, VERDICT, RESULTS, FINISHED. `round_no` starts at 1.
@@ -83,7 +83,7 @@ Rules:
 - Signed-in users: award through a server function `award_solo_debate()` (enforces the daily cap server-side); if offline, queue and send later. Guests: local only.
 
 ## 8. SAME-PHONE STATE MACHINE (local, works offline for guests)
-1. S1: add 2 to 8 players, choose exactly one judge (radio).
+1. S1: add 3 to 8 players, choose exactly one judge (radio).
 2. Topic: use the D1 layout for the judge (Shuffle, Use this topic).
 3. Side picking, for each non-judge player in order: S2 "Pass the phone to <name>" then they tap "I'm <name>" then see AGREE / DISAGREE panels (reuse D4) then choose, then the screen hides the choice.
 4. S3: summary ("Ready?") with counts and lists. "Start debate" is disabled until both sides have at least 1 player; if not, show the D10 error text and let the judge send the phone back to a player to change side.
@@ -182,3 +182,7 @@ Same phone / Solo (Playwright): full run offline with no network, end to end.
  S-5 Airplane mode: Solo works, XP shows as pending, and after reconnect it is delivered exactly once.
  S-6 A guest plays Solo, then signs up: the merge happens once and the data is in Supabase.
  S-7 Searching the code for `localStorage`/`AsyncStorage`/`persist(` shows only the storage adapter, the cache module, the outbox, and guest data. No server-owned data is written only locally.
+ ## 15. ACCOUNTS ONLY (overrides every earlier mention of guests)
+- Delete these from the spec's behavior: guest play, guest local-only XP, guest-to-account merge (section 8 and 14.1 guest rows, A3 sheet).
+- Solo, Same phone, and Online ALL require a signed-in account. Solo and Same phone still work offline once the user is signed in, using the saved session. Their results go through the outbox (14.4) and are delivered when the connection returns.
+- Outbox items and caches are keyed by user id.

@@ -2,13 +2,11 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Button, Logo, Screen } from '@/components/ui';
-import { useAuth } from '@/features/auth/AuthContext';
 import { authScreen } from '@/features/auth/authScreenTheme';
 import { fontFamily, spacing } from '@/theme';
 
 export default function AuthWelcomeScreen() {
   const router = useRouter();
-  const { continueAsGuest } = useAuth();
 
   return (
     <Screen background={authScreen.bg} gutter={authScreen.bg}>
@@ -22,14 +20,6 @@ export default function AuthWelcomeScreen() {
           onPress={() => router.push('/auth/sign-up')}
         />
         <Button label="Sign in" variant="secondary" onPress={() => router.push('/auth/sign-in')} />
-        <Button
-          label="Continue without signing in"
-          variant="ghost"
-          onPress={() => {
-            continueAsGuest();
-            router.replace('/welcome');
-          }}
-        />
         <Text style={styles.legal}>By continuing you agree to our Terms and Privacy Policy.</Text>
       </View>
     </Screen>

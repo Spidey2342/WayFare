@@ -4,20 +4,9 @@ import { avatarColorForKey } from '@/data/avatarPresets';
 import { syncMyStats, type CachedBadge, type CachedUserStats } from '@/features/debate/statsCache';
 import { levelForXp } from '@/features/journey/progress';
 import { useAuth } from '@/features/auth/AuthContext';
-import { isSupabaseConfigured } from '@/services/supabase';
 import { useAppStore } from '@/store';
 
 export type AccountPresentation =
-  | {
-      status: 'guest';
-      displayName: 'Guest';
-      avatarColor: string;
-      xp: number;
-      streakDays: number;
-      badgeIds: string[];
-      cardsPlayed: number;
-      actsOfService: number;
-    }
   | { status: 'loading' }
   | {
       status: 'ready';
@@ -32,8 +21,8 @@ export type AccountPresentation =
   | { status: 'error'; message: string; retry: () => void };
 
 export function useAccountPresentation(): AccountPresentation {
-  const { session, profile, isGuest, ready } = useAuth();
-  const guestProgress = useAppStore((state) => state.progress);
+  const { session, profile, ready } = useAuth();
+  const localProgress = useAppStore((state) => state.progress);
   const userId = session?.user?.id ?? null;
   const [stats, setStats] = useState<CachedUserStats | null>(null);
   const [badges, setBadges] = useState<CachedBadge[]>([]);
@@ -42,10 +31,9 @@ export function useAccountPresentation(): AccountPresentation {
   const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
-    if (!userId || isGuest) return undefined;
+    if (!userId) return undefined;
     let cancelled = false;
-    /* Async stats refresh after auth — loading toggles in promise callbacks only. */
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- kicks off network fetch for Supabase stats
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- network fetch for Supabase stats
     setLoading(true);
     setError(null);
     void syncMyStats(userId)
@@ -64,25 +52,9 @@ export function useAccountPresentation(): AccountPresentation {
     return () => {
       cancelled = true;
     };
-  }, [userId, isGuest, reloadToken]);
+  }, [userId, reloadToken]);
 
-  if (!ready) return { status: 'loading' };
-
-  if (!session) {
-    if (!isGuest && isSupabaseConfigured) {
-      return { status: 'loading' };
-    }
-    return {
-      status: 'guest',
-      displayName: 'Guest',
-      avatarColor: avatarColorForKey('midnight'),
-      xp: guestProgress.xp,
-      streakDays: guestProgress.streakDays,
-      badgeIds: guestProgress.badgesEarned,
-      cardsPlayed: guestProgress.cardsPlayed,
-      actsOfService: guestProgress.actsOfService,
-    };
-  }
+  if (!ready || !session) return { status: 'loading' };
 
   if (error) {
     return {
@@ -109,17 +81,12 @@ export function useAccountPresentation(): AccountPresentation {
     xp,
     streakDays,
     badgeIds,
-    cardsPlayed: guestProgress.cardsPlayed,
-    actsOfService: guestProgress.actsOfService,
+    cardsPlayed: localProgress.cardsPlayed,
+    actsOfService: localProgress.actsOfService,
   };
 }
 
 export function rankForAccount(presentation: AccountPresentation) {
-  const xp =
-    presentation.status === 'ready'
-      ? presentation.xp
-      : presentation.status === 'guest'
-        ? presentation.xp
-        : 0;
+  const xp = presentation.status === 'ready' ? presentation.xp : 0;
   return levelForXp(xp);
 }

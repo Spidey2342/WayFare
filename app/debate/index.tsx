@@ -44,15 +44,15 @@ const tiles = [
 
 export default function DebateHubScreen() {
   const router = useRouter();
-  const { user, isGuest } = useAuth();
+  const { user } = useAuth();
   const { entry, open, openRules, openIfFirstTime, closeRules } = useGameRules('debate');
 
   useEffect(() => {
     openIfFirstTime();
     ensureOutboxFlushOnReconnect();
     void syncTopicsSince().then(() => hydrateDebateTopics());
-    if (user && !isGuest) void syncMyStats();
-  }, [openIfFirstTime, user, isGuest]);
+    if (user) void syncMyStats();
+  }, [openIfFirstTime, user]);
 
   return (
     <>

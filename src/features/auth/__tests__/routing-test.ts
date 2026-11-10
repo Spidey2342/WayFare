@@ -1,41 +1,38 @@
 import {
   introRedirectPath,
+  isSignedOutAllowedPath,
   requiresAccountForPlayMode,
-  requiresAuth,
-  resolveAuthGateRedirect,
+  welcomePath,
 } from '@/features/auth/routing';
 
-describe('auth routing', () => {
-  it('requires auth for groups routes', () => {
-    expect(requiresAuth('/groups')).toBe(true);
-    expect(requiresAuth('/groups/join')).toBe(true);
-    expect(requiresAuth('/home')).toBe(false);
-    expect(requiresAuth('/debate/solo')).toBe(false);
-    expect(requiresAuth('/debate/pass/setup')).toBe(false);
-    expect(requiresAuth('/debate/abc-123')).toBe(true);
+describe('auth routing (accounts only)', () => {
+  it('allows only welcome, auth, and intro paths when signed out', () => {
+    expect(isSignedOutAllowedPath('/auth/welcome')).toBe(true);
+    expect(isSignedOutAllowedPath('/auth/sign-in')).toBe(true);
+    expect(isSignedOutAllowedPath('/auth/sign-up')).toBe(true);
+    expect(isSignedOutAllowedPath('/auth/reset-password')).toBe(true);
+    expect(isSignedOutAllowedPath('/welcome')).toBe(true);
+    expect(isSignedOutAllowedPath('/how-it-works')).toBe(true);
+    expect(isSignedOutAllowedPath('/home')).toBe(false);
+    expect(isSignedOutAllowedPath('/debate/solo')).toBe(false);
+    expect(isSignedOutAllowedPath('/profile')).toBe(false);
   });
 
-  it('redirects guests away from protected routes', () => {
-    expect(resolveAuthGateRedirect({ pathname: '/groups', hasSession: false })).toBe(
-      '/auth/sign-in',
-    );
-    expect(resolveAuthGateRedirect({ pathname: '/groups', hasSession: true })).toBeNull();
-    expect(resolveAuthGateRedirect({ pathname: '/home', hasSession: false })).toBeNull();
+  it('uses auth welcome as the unsigned entry path', () => {
+    expect(welcomePath()).toBe('/auth/welcome');
   });
 
-  it('requires account for online play only', () => {
+  it('requires account for every play mode', () => {
     expect(requiresAccountForPlayMode('online')).toBe(true);
-    expect(requiresAccountForPlayMode('solo')).toBe(false);
-    expect(requiresAccountForPlayMode('pass')).toBe(false);
+    expect(requiresAccountForPlayMode('solo')).toBe(true);
+    expect(requiresAccountForPlayMode('pass')).toBe(true);
   });
 });
 
-describe('app intro', () => {
+describe('app intro (signed in)', () => {
   it('redirects to welcome until intro is seen', () => {
     expect(introRedirectPath('/home', false)).toBe('/welcome');
     expect(introRedirectPath('/welcome', false)).toBeNull();
-    expect(introRedirectPath('/how-it-works', false)).toBeNull();
-    expect(introRedirectPath('/choose-mode', false)).toBeNull();
     expect(introRedirectPath('/home', true)).toBeNull();
     expect(introRedirectPath('/auth/sign-in', false)).toBeNull();
   });

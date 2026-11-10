@@ -30,7 +30,6 @@ import { saveLocalDebate, updateLocalDebate } from '@/features/debate/localStore
 import { awardSoloDebatesSignedIn, ensureOutboxFlushOnReconnect } from '@/features/debate/outbox';
 import { readCachedStats, syncMyStats } from '@/features/debate/statsCache';
 import type { DebateSide, LocalDebateSession } from '@/features/debate/types';
-import { useAppStore } from '@/store';
 import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
 
 function shuffleTopicId(current: string, topics: ReturnType<typeof bundledDebateTopics>) {
@@ -55,9 +54,7 @@ export default function SoloDebateScreen() {
   const [session, setSession] = useState<LocalDebateSession | null>(null);
   const [recording, setRecording] = useState(false);
   const [verdictPick, setVerdictPick] = useState<'agree' | 'disagree' | null>(null);
-  const applyDebate = useAppStore((state) => state.applyDebateAward);
-  const guestStreak = useAppStore((state) => state.progress.streakDays);
-  const { user, isGuest } = useAuth();
+  const { user } = useAuth();
   const [nowMs, setNowMs] = useState(() => Date.now());
   const [o3Xp, setO3Xp] = useState(1);
   const [o3Streak, setO3Streak] = useState(0);
@@ -77,11 +74,7 @@ export default function SoloDebateScreen() {
     if (awardStarted.current) return;
     awardStarted.current = true;
     void (async () => {
-      if (isGuest || !user) {
-        setO3Xp(1);
-        setO3Streak(Math.max(1, guestStreak));
-        return;
-      }
+      if (!user) return;
       const cached = await readCachedStats();
       const clientId = `${session.id}:solo`;
       const result = await awardSoloDebatesSignedIn(clientId);
@@ -93,7 +86,7 @@ export default function SoloDebateScreen() {
       setO3Streak(streak);
       setO3Xp(soloDisplayXp(todayCount, result.xp ?? 0));
     })();
-  }, [session, user, isGuest, guestStreak]);
+  }, [session, user]);
 
   useEffect(() => {
     const timer = setInterval(() => setNowMs(Date.now()), 1000);
@@ -130,14 +123,6 @@ export default function SoloDebateScreen() {
     if (!session) return;
     const done = soloComplete(session);
     saveLocalDebate(done);
-    if (isGuest || !user) {
-      applyDebate({
-        sessionId: done.id,
-        xpGained: 1,
-        votedThisRound: Boolean(verdictPick),
-        wasMvp: false,
-      });
-    }
     router.replace('/home');
   };
 

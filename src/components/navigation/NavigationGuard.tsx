@@ -2,80 +2,63 @@ import type { Href } from 'expo-router';
 import { Redirect, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 
+import { AuthSessionSplash } from '@/components/auth/AuthSessionSplash';
 import { useAuth } from '@/features/auth/AuthContext';
 import {
   AUTH_RETURN_TO_KEY,
   introRedirectPath,
-  resolveAuthGateRedirect,
-  unsignedEntryPath,
+  isSignedOutAllowedPath,
+  welcomePath,
 } from '@/features/auth/routing';
 import { isSupabaseConfigured } from '@/services/supabase';
 import { storage } from '@/services/storage';
 import { useAppStore } from '@/store';
 
-const GUEST_INTRO_PREFIXES = ['/welcome', '/how-it-works', '/choose-mode'];
-
-function isAuthPath(pathname: string): boolean {
-  return pathname === '/auth' || pathname.startsWith('/auth/');
-}
-
-function isGuestIntroPath(pathname: string): boolean {
-  return GUEST_INTRO_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
-  );
-}
-
-function isDevPath(pathname: string): boolean {
-  return pathname === '/dev' || pathname.startsWith('/dev/');
+function needsProfileSetup(
+  profile: {
+    display_name: string | null;
+    avatar_key: string | null;
+    age_confirmed: boolean;
+  } | null,
+): boolean {
+  if (!profile) return true;
+  return !profile.display_name?.trim() || !profile.avatar_key || !profile.age_confirmed;
 }
 
 export function NavigationGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { ready, session, profile, isGuest } = useAuth();
+  const { ready, sessionChecking, session, profile } = useAuth();
   const hydrated = useAppStore((state) => state.hydrated);
   const introSeen = useAppStore((state) => state.introSeen);
-  const guestBrowseAccepted = useAppStore((state) => state.guestBrowseAccepted);
 
   useEffect(() => {
-    if (!ready || !hydrated) return;
-    const gate = resolveAuthGateRedirect({ pathname, hasSession: !!session });
-    if (gate) {
-      void storage.setItem(AUTH_RETURN_TO_KEY, pathname);
-    }
+    if (!ready || !hydrated || !isSupabaseConfigured) return;
+    if (session) return;
+    if (isSignedOutAllowedPath(pathname)) return;
+    void storage.setItem(AUTH_RETURN_TO_KEY, pathname);
   }, [ready, hydrated, pathname, session]);
 
-  if (!ready || !hydrated) return null;
-
-  const authRedirect = resolveAuthGateRedirect({ pathname, hasSession: !!session });
-  if (authRedirect) {
-    return <Redirect href={authRedirect} />;
+  if (!hydrated || !ready || sessionChecking) {
+    return <AuthSessionSplash />;
   }
 
-  const needsSignIn =
-    isSupabaseConfigured && !session && !guestBrowseAccepted && !isAuthPath(pathname);
-
-  if (needsSignIn) {
-    if (isGuestIntroPath(pathname) || isDevPath(pathname)) {
-      return <Redirect href={unsignedEntryPath()} />;
+  if (isSupabaseConfigured && !session) {
+    if (!isSignedOutAllowedPath(pathname)) {
+      return <Redirect href={welcomePath()} />;
     }
-    if (!pathname.startsWith('/auth')) {
-      return <Redirect href={unsignedEntryPath()} />;
-    }
+    return children;
   }
 
-  const inAuth = isAuthPath(pathname);
-
-  if (session && profile && !isGuest) {
-    const needsProfile =
-      !profile.display_name?.trim() || !profile.avatar_key || !profile.age_confirmed;
-    if (needsProfile && !inAuth) {
+  if (session && needsProfileSetup(profile)) {
+    const onSetup = pathname.startsWith('/auth/profile-setup');
+    if (!onSetup) {
       return <Redirect href="/auth/profile-setup" />;
     }
   }
 
-  if (guestBrowseAccepted) {
+  if (session && profile && !needsProfileSetup(profile)) {
     const introRoute = introRedirectPath(pathname, introSeen);
-    if (introRoute && !inAuth && !isGuestIntroPath(pathname) && !isDevPath(pathname)) {
+    if (introRoute && !pathname.startsWith('/auth')) {
       return <Redirect href={introRoute} />;
     }
   }
@@ -86,7 +69,7 @@ export function NavigationGuard({ children }: { children: React.ReactNode }) {
 export async function consumeAuthReturnTo(router: { replace: (href: Href) => void }) {
   const target = await storage.getItem(AUTH_RETURN_TO_KEY);
   await storage.removeItem(AUTH_RETURN_TO_KEY);
-  if (target && target !== unsignedEntryPath()) {
+  if (target && target !== welcomePath() && !target.startsWith('/auth/welcome')) {
     router.replace(target as Href);
     return;
   }

@@ -27,7 +27,7 @@ export function PassReadyScreen({ topic, players, judgeId, canStart, onStart }: 
   return (
     <View style={styles.wrap}>
       <View style={styles.head}>
-        <Text style={typeScale.h2}>Ready?</Text>
+        <Text style={[typeScale.h2, { color: palette.white }]}>Ready?</Text>
         <View style={styles.countPill}>
           <Text style={styles.countText}>{players.length} PLAYERS</Text>
         </View>

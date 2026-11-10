@@ -50,7 +50,6 @@ import {
 import { loadLocalDebate, updateLocalDebate } from '@/features/debate/localStore';
 import { awardPassDebateSignedIn } from '@/features/debate/outbox';
 import type { DebateSide, LocalDebateSession } from '@/features/debate/types';
-import { useAppStore } from '@/store';
 import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
 export default function PassDebateSessionScreen() {
@@ -67,8 +66,7 @@ export default function PassDebateSessionScreen() {
   const [judgeSheetOpen, setJudgeSheetOpen] = useState(false);
   const [softTimerOpen, setSoftTimerOpen] = useState(false);
   const awardedRef = useRef(false);
-  const { user, isGuest } = useAuth();
-  const applyDebate = useAppStore((state) => state.applyDebateAward);
+  const { user } = useAuth();
   const rules = useDebateRulesChrome({ fallback: '/debate/pass/setup', showRulesOnMount: true });
 
   useEffect(() => {
@@ -101,15 +99,7 @@ export default function PassDebateSessionScreen() {
     const you = finishedSession.players[0];
     const xpGained = you ? (finishedSession.scores[you.id]?.total ?? 0) : 0;
     const clientId = `${finishedSession.id}:pass`;
-    if (isGuest || !user) {
-      applyDebate({
-        sessionId: finishedSession.id,
-        xpGained: Math.max(0, xpGained),
-        votedThisRound: false,
-        wasMvp: finishedSession.results?.mvpIds.includes(you?.id ?? '') ?? false,
-      });
-      return;
-    }
+    if (!user) return;
     void awardPassDebateSignedIn(clientId, Math.max(0, xpGained));
   };
 

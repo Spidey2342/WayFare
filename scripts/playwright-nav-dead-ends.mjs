@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import { chromium, devices } from 'playwright';
 
-import { guestStore } from './playwright-guest-store.mjs';
+import { persistFixture } from './playwright-persist-fixture.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
@@ -22,7 +22,7 @@ const ROUTES = [
 ];
 
 function store() {
-  return guestStore(8);
+  return persistFixture(10);
 }
 
 async function main() {

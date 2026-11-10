@@ -1,27 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { AuthField } from '@/components/auth/AuthField';
-import { GuestMergeSheet } from '@/components/auth/GuestMergeSheet';
-import { guestMergeOffer } from '@/features/auth/guestMergeOffer';
 import { authScreen } from '@/features/auth/authScreenTheme';
-import { rpcMergeGuestProgress } from '@/features/debate/api';
 import { useAuth } from '@/features/auth/AuthContext';
 import { saveProfilePatch } from '@/features/auth/saveProfilePatch';
 import { Button, Screen, ScreenScroll } from '@/components/ui';
 import { AVATAR_PRESETS } from '@/data/avatarPresets';
-import { useAppStore } from '@/store';
 import { fontFamily, palette, spacing, typeScale } from '@/theme';
 
 export default function ProfileSetupScreen() {
   const router = useRouter();
   const { user, profile, setProfileLocal, refreshProfile } = useAuth();
-  const progress = useAppStore((state) => state.progress);
-  const mergeOffer = useMemo(() => guestMergeOffer(progress), [progress]);
-  const [mergeDismissed, setMergeDismissed] = useState(false);
-  const [mergeLoading, setMergeLoading] = useState(false);
-  const mergeOpen = Boolean(mergeOffer) && !mergeDismissed;
   const [name, setName] = useState(profile?.display_name ?? '');
   const [verse, setVerse] = useState(profile?.favorite_verse ?? '');
   const [avatarKey, setAvatarKey] = useState(profile?.avatar_key ?? AVATAR_PRESETS[0].key);
@@ -89,24 +80,6 @@ export default function ProfileSetupScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Button label="All set" variant="gold" disabled={loading} onPress={() => void save()} />
       </ScreenScroll>
-      {mergeOffer ? (
-        <GuestMergeSheet
-          open={mergeOpen}
-          xp={mergeOffer.xp}
-          badgeCount={mergeOffer.badgeCount}
-          loading={mergeLoading}
-          onKeep={() => {
-            setMergeLoading(true);
-            void rpcMergeGuestProgress(
-              mergeOffer.xp,
-              progress.badgesEarned.map((id) => id),
-            )
-              .then(() => setMergeDismissed(true))
-              .finally(() => setMergeLoading(false));
-          }}
-          onStartFresh={() => setMergeDismissed(true)}
-        />
-      ) : null}
     </Screen>
   );
 }

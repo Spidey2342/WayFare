@@ -48,8 +48,8 @@ export function createPassSession(
   hostId: string,
   config: DebateConfig = DEFAULT_CONFIG,
 ): LocalDebateSession {
-  if (players.length < 2 || players.length > 8) {
-    throw new Error('Pass debate needs 2 to 8 players.');
+  if (players.length < 3 || players.length > 8) {
+    throw new Error('Pass debate needs 3 to 8 players.');
   }
   const debaterIds = players.filter((player) => player.id !== hostId).map((player) => player.id);
   return {

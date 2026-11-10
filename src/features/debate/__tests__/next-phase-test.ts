@@ -11,6 +11,7 @@ describe('nextPhase helpers', () => {
       [
         { id: 'a', displayName: 'A' },
         { id: 'b', displayName: 'B' },
+        { id: 'c', displayName: 'C' },
       ],
       'a',
     );
@@ -26,6 +27,7 @@ describe('nextPhase helpers', () => {
       [
         { id: 'a', displayName: 'A' },
         { id: 'b', displayName: 'B' },
+        { id: 'c', displayName: 'C' },
       ],
       'a',
     );
@@ -48,6 +50,7 @@ describe('nextPhase helpers', () => {
       [
         { id: 'a', displayName: 'A' },
         { id: 'b', displayName: 'B' },
+        { id: 'c', displayName: 'C' },
       ],
       'a',
     );

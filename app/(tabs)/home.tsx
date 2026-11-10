@@ -28,23 +28,19 @@ export default function HomeScreen() {
   const account = useAccountPresentation();
   const progress = useAppStore((state) => state.progress);
   const rank = rankForAccount(account);
-  const xpForJourney =
-    account.status === 'ready' ? account.xp : account.status === 'guest' ? account.xp : 0;
-  const streakForChip =
-    account.status === 'ready' || account.status === 'guest' ? account.streakDays : 0;
+  const xpForJourney = account.status === 'ready' ? account.xp : 0;
+  const streakForChip = account.status === 'ready' ? account.streakDays : 0;
   const helloLabel =
     account.status === 'loading'
       ? null
-      : account.status === 'guest'
-        ? 'Guest'
-        : account.status === 'ready' && account.displayName
-          ? account.displayName
-          : null;
+      : account.status === 'ready' && account.displayName
+        ? account.displayName
+        : null;
   const avatarName = helloLabel ?? '?';
   const avatarColor =
     account.status === 'loading'
       ? palette.line
-      : account.status === 'ready' || account.status === 'guest'
+      : account.status === 'ready'
         ? account.avatarColor
         : palette.line;
   const online = useOnline();

@@ -16,6 +16,7 @@ import {
   StatTile,
 } from '@/components/ui';
 import { useAuth } from '@/features/auth/AuthContext';
+import { welcomePath } from '@/features/auth/routing';
 import { rankForAccount, useAccountPresentation } from '@/features/auth/useAccountPresentation';
 import { badges } from '@/features/journey/progress';
 import { isSupabaseConfigured, requireSupabase } from '@/services/supabase';
@@ -25,13 +26,12 @@ import { fontFamily, palette, radii, spacing, typeScale } from '@/theme';
 export default function ProfileScreen() {
   const router = useRouter();
   const account = useAccountPresentation();
-  const { session, signOut } = useAuth();
+  const { signOut } = useAuth();
   const [sheet, setSheet] = useState<'notes' | 'privacy' | 'help' | null>(null);
   const [confirm, setConfirm] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const rank = rankForAccount(account);
-  const isGuest = account.status === 'guest';
   const loading = account.status === 'loading';
 
   return (
@@ -53,12 +53,14 @@ export default function ProfileScreen() {
           ) : (
             <>
               <Avatar
-                name={isGuest ? 'Guest' : account.displayName || '?'}
-                color={account.avatarColor}
+                name={account.status === 'ready' ? account.displayName || '?' : '?'}
+                color={account.status === 'ready' ? account.avatarColor : palette.line}
                 size={84}
                 ring
               />
-              <Text style={styles.heroName}>{isGuest ? 'Guest' : account.displayName || ' '}</Text>
+              <Text style={styles.heroName}>
+                {account.status === 'ready' ? account.displayName || ' ' : ' '}
+              </Text>
               <Text style={styles.heroRank}>{rank.displayTitle.toUpperCase()}</Text>
             </>
           )}
@@ -90,10 +92,7 @@ export default function ProfileScreen() {
               <View style={styles.sectionHead}>
                 <Text style={styles.sectionTitle}>Your badges</Text>
                 <Text style={styles.sectionMeta}>
-                  {account.status === 'ready' || account.status === 'guest'
-                    ? account.badgeIds.length
-                    : 0}{' '}
-                  / 24
+                  {account.status === 'ready' ? account.badgeIds.length : 0} / 24
                 </Text>
               </View>
               <View style={styles.badges}>
@@ -104,9 +103,7 @@ export default function ProfileScreen() {
                     icon={badge.icon}
                     color={badge.color as BadgeColorToken}
                     earned={
-                      account.status === 'ready' || account.status === 'guest'
-                        ? account.badgeIds.includes(badge.id)
-                        : false
+                      account.status === 'ready' ? account.badgeIds.includes(badge.id) : false
                     }
                   />
                 ))}
@@ -114,28 +111,14 @@ export default function ProfileScreen() {
             </>
           )}
 
-          {isGuest ? (
-            <View style={styles.guestCta}>
-              <Text style={styles.guestLead}>Sign in or create an account to sync progress.</Text>
-              <Button label="Sign in" variant="gold" onPress={() => router.push('/auth/sign-in')} />
-              <Button
-                label="Create account"
-                variant="secondary"
-                onPress={() => router.push('/auth/sign-up')}
-              />
-            </View>
-          ) : null}
-
           <Text style={styles.sectionTitle}>Account & settings</Text>
           <View style={styles.settingsCard}>
-            {session ? (
-              <SettingsRow
-                icon={<User color={palette.midnight} size={18} />}
-                title="Profile settings"
-                subtitle="Name and avatar on Wayfare"
-                onPress={() => router.push('/auth/profile-setup')}
-              />
-            ) : null}
+            <SettingsRow
+              icon={<User color={palette.midnight} size={18} />}
+              title="Profile settings"
+              subtitle="Name and avatar on Wayfare"
+              onPress={() => router.push('/auth/profile-setup')}
+            />
             <SettingsRow
               icon={<Bell color={palette.midnight} size={18} />}
               title="Notifications"
@@ -179,16 +162,14 @@ export default function ProfileScreen() {
         {sheet === 'privacy' ? (
           <>
             <Text style={styles.sheetBody}>
-              With an account, your profile and groups sync through Supabase. Guest play stays on
-              this device only.
+              Your profile and groups sync through Supabase. Delete your account to remove online
+              data.
             </Text>
-            {session ? (
-              <Button
-                label="Delete my account"
-                variant="secondary"
-                onPress={() => setConfirmDelete(true)}
-              />
-            ) : null}
+            <Button
+              label="Delete my account"
+              variant="secondary"
+              onPress={() => setConfirmDelete(true)}
+            />
           </>
         ) : null}
         {sheet === 'help' ? (
@@ -201,17 +182,13 @@ export default function ProfileScreen() {
       <AppModal
         visible={confirm}
         title="Log out?"
-        body={
-          session
-            ? 'You will sign out of your account on this device.'
-            : 'This clears guest progress stored on this device.'
-        }
+        body="You will sign out of your account on this device."
         confirmLabel="Log out"
         onConfirm={() => {
           void (async () => {
             await signOut();
             setConfirm(false);
-            router.replace('/auth/sign-in');
+            router.replace(welcomePath());
           })();
         }}
         onClose={() => setConfirm(false)}
@@ -229,7 +206,7 @@ export default function ProfileScreen() {
             }
             setConfirmDelete(false);
             setSheet(null);
-            router.replace('/auth/sign-in');
+            router.replace(welcomePath());
           })();
         }}
         onClose={() => setConfirmDelete(false)}
@@ -306,6 +283,4 @@ const styles = StyleSheet.create({
   },
   errorTitle: { fontFamily: fontFamily.bodySemi, color: palette.white, fontSize: 16 },
   errorBody: { fontFamily: fontFamily.body, color: palette.warmGray, textAlign: 'center' },
-  guestCta: { gap: spacing.sm, marginVertical: spacing.md },
-  guestLead: { fontFamily: fontFamily.body, color: palette.warmGray, lineHeight: 22 },
 });

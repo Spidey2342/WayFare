@@ -18,7 +18,7 @@ const STORE = {
     onboarded: true,
     introSeen: true,
     hydrated: true,
-    profile: { name: 'Guest', avatarColor: '#FFB800' },
+    profile: { name: '', avatarColor: '' },
     seenRules: { debate: true },
     playModeHelpSeen: { solo: true, pass: true, online: true, debate: true },
     progress: { xp: 0, streakDays: 0, badgesEarned: [] },

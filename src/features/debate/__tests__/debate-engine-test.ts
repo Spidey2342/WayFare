@@ -27,7 +27,7 @@ const rng = (seed: number) => {
 };
 
 describe('assignSidesBalanced', () => {
-  it('balances 2 to 8 players within one', () => {
+  it('balances 3 to 8 players within one', () => {
     for (let count = 2; count <= 8; count += 1) {
       const players = Array.from({ length: count }, (_, index) => ({ id: `p${index}` }));
       const sides = assignSidesBalanced(players, rng(count));
@@ -168,6 +168,7 @@ describe('phase transitions and early end', () => {
       [
         { id: 'p1', displayName: 'A' },
         { id: 'p2', displayName: 'B' },
+        { id: 'p3', displayName: 'C' },
       ],
       'p1',
     );
@@ -210,16 +211,18 @@ describe('finalize local session', () => {
       [
         { id: 'p1', displayName: 'A' },
         { id: 'p2', displayName: 'B' },
+        { id: 'p3', displayName: 'C' },
       ],
       'p1',
     );
     session = finalizeLocalSession({
       ...session,
       phase: 'voting',
-      votes: { p1: 'p2', p2: 'p1' },
+      votes: { p1: 'p2', p2: 'p1', p3: 'p2' },
       players: [
         { id: 'p1', displayName: 'A', side: 'agree' },
         { id: 'p2', displayName: 'B', side: 'disagree' },
+        { id: 'p3', displayName: 'C', side: 'agree' },
       ],
     });
     expect(session.scores.p1?.total).toBeGreaterThan(0);

@@ -1,6 +1,5 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { GuestMergeSheet } from '@/components/auth/GuestMergeSheet';
 import { Screen } from '@/components/ui';
 import { DebateResultsView } from '@/features/debate/components/DebateResultsView';
 import { PassReadyScreen } from '@/features/debate/components/PassReadyScreen';
@@ -215,9 +214,7 @@ export function DebateV2FramePreview({ frameId }: Props) {
           />
         );
       case 'S2':
-        return (
-          <PassToPlayerScreen playerName="Player 2" avatarKey="ama" onConfirm={() => undefined} />
-        );
+        return <PassToPlayerScreen playerName="Ama" avatarKey="ama" onConfirm={() => undefined} />;
       case 'S3':
         return (
           <PassReadyScreen
@@ -265,13 +262,9 @@ export function DebateV2FramePreview({ frameId }: Props) {
         );
       case 'A3':
         return (
-          <GuestMergeSheet
-            open
-            xp={24}
-            badgeCount={2}
-            onKeep={() => undefined}
-            onStartFresh={() => undefined}
-          />
+          <Text style={styles.unknown}>
+            A3 merge sheet removed (accounts only, DEBATE_SPEC section 15).
+          </Text>
         );
       default:
         return <Text style={styles.unknown}>Unknown frame {id}</Text>;

@@ -31,14 +31,12 @@ export interface PersistedApp {
   localTutorialCompleted: boolean;
   playModeHelpSeen: PlayModeHelpSeen;
   introSeen: boolean;
-  /** True only after "Continue without signing in" — not set on mere sign-out. */
-  guestBrowseAccepted: boolean;
   seenRules: Partial<Record<'debate' | 'card-game', boolean>>;
 }
 
-export const STORE_VERSION = 9;
+export const STORE_VERSION = 10;
 
-/** No default identity — empty until the user or guest flow sets one. */
+/** No default identity — empty until profile setup sets display fields locally. */
 export const EMPTY_PROFILE: Profile = { name: '', avatarColor: '' };
 
 export function defaultPersisted(): PersistedApp {
@@ -58,7 +56,6 @@ export function defaultPersisted(): PersistedApp {
     localTutorialCompleted: false,
     playModeHelpSeen: { solo: false, pass: false, online: false, debate: false },
     introSeen: false,
-    guestBrowseAccepted: false,
     seenRules: {},
   };
 }
@@ -171,7 +168,6 @@ export function migratePersisted(persisted: unknown, fromVersion: number): Persi
       record.introSeen === true ||
       record.localTutorialCompleted === true ||
       (fromVersion < 7 && record.onboarded === true),
-    guestBrowseAccepted: fromVersion >= 9 && record.guestBrowseAccepted === true ? true : false,
     seenRules: readSeenRules(record.seenRules),
   };
 }

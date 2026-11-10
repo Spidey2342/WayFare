@@ -60,3 +60,8 @@ export async function clearActiveUserSession() {
   await clearLegacyUserCaches();
   await storage.removeItem(ACTIVE_USER_KEY);
 }
+
+/** Sign-out and account delete: drop every user-scoped local cache and active user pointer. */
+export async function clearAllUserLocalData() {
+  await clearActiveUserSession();
+}

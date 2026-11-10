@@ -300,15 +300,6 @@ export async function rpcAwardPassDebate(clientId: string, xp: number) {
   return data as Record<string, unknown>;
 }
 
-export async function rpcMergeGuestProgress(xp: number, badges: string[] = []) {
-  const { data, error } = await requireSupabase().rpc('merge_guest_progress', {
-    p_xp: xp,
-    p_badges: badges,
-  });
-  if (error) throw error;
-  return data as { merged: boolean; reason?: string; xp?: number };
-}
-
 export async function fetchDebateSession(
   sessionId: string,
 ): Promise<OnlineDebateSessionRow | null> {

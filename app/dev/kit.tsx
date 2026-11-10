@@ -190,7 +190,7 @@ export default function DevKitScreen() {
         <AppModal
           visible={modal}
           title="Log out?"
-          body="This resets the local guest profile on this device."
+          body="This resets local app preferences on this device."
           confirmLabel="Log out"
           onConfirm={() => setModal(false)}
           onClose={() => setModal(false)}
